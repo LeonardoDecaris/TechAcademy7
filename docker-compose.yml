@@ -19,6 +19,8 @@ services:
     container_name: backend
     env_file:
      - ./backend/.env
+    ports:
+      - 3000:3000
     depends_on:
       - database
     networks:
