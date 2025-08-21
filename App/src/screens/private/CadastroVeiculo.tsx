@@ -1,10 +1,10 @@
 import { View, Text } from 'react-native'
 import React from 'react'
 
-export default function Perfil() {
+export default function CadastroVeiculo() {
   return (
     <View>
-      <Text>Perfil</Text>
+      <Text>CadastroVeiculo</Text>
     </View>
   )
 }

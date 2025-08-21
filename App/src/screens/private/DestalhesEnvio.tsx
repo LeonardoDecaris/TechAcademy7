@@ -1,10 +1,10 @@
 import { View, Text } from 'react-native'
 import React from 'react'
 
-export default function Perfil() {
+export default function DestalhesEnvio() {
   return (
     <View>
-      <Text>Perfil</Text>
+      <Text>DestalhesEnvio</Text>
     </View>
   )
 }
