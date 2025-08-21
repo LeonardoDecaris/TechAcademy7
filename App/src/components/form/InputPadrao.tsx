@@ -8,20 +8,27 @@ interface InputProps {
 
     // propriedade do input
     id?: string;
-    type?: KeyboardTypeOptions;
+    type?: KeyboardTypeOptions; 
     placeholder?: string;
     onChangeText?: (text: string) => void;
     value?: string;
     styleInput?: StyleProp<TextStyle>;
     secureTextEntry?: boolean;
     className?: string;
+    
+    status: 'normal' | 'error';
 }
 
-const inputPadrao = ({ label, placeholder, type, idLabel, id, onChangeText, styleLabel, styleInput, secureTextEntry, value, className }: InputProps) => {
+const inputPadrao = ({ label, placeholder, type, idLabel, id, onChangeText, styleLabel, styleInput, secureTextEntry, value, className, status }: InputProps) => {
 
     const classNameLabel = "font-semibold color-black/80 text-[14px] pl-2.5";
-    const classNameInput = "w-full p-2 font-semibold color-black/80 border border-black/40 rounded-lg ";
+    const classNameInput = "w-full p-2 font-semibold border rounded-lg ";
 
+    const StatusInput = {
+        normal: ' color-black/80 border-black/40 ',
+        error: 'color-red-500/80 border-red-500/40 '
+    }
+    
     return (
         <View className={"w-full flex flex-col"}>
 
@@ -37,7 +44,7 @@ const inputPadrao = ({ label, placeholder, type, idLabel, id, onChangeText, styl
             <TextInput
                 id={id}
                 keyboardType={type}
-                className={`${className} ${classNameInput}`}
+                className={`${className} ${classNameInput} ${StatusInput[status]}`}
                 style={styleInput}
                 placeholder={placeholder}
                 onChangeText={onChangeText}

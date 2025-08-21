@@ -2,8 +2,11 @@ import React from "react";
 import "./src/css/index.css";
 import Routes from "./src/navigation/Routes";
 
+import { AuthProvider } from "./src/context/AuthContext";
 export default function App() {
   return (
+    <AuthProvider>
       <Routes />
+    </AuthProvider>
   );
 }
