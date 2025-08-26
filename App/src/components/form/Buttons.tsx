@@ -10,14 +10,14 @@ interface ButtonProps {
 const ButtonPadrao = ({ title, onPress, typeButton, classname}: ButtonProps) => {
 
 	const buttonStyles = {
-		normal: 'bg-blue-500',
+		normal: 'bg-[#322F2F]',
 		logOutExcluir: 'bg-red-500',
 		aceite: 'bg-green-500',
 	}
 
     return(
-		<TouchableOpacity onPress={onPress} className={`py-2 rounded-lg ${buttonStyles[typeButton]} ${classname}`}>
-			<Text className={'text-white text-base text-center font-bold'}>
+		<TouchableOpacity onPress={onPress} className={`py-3 rounded-lg ${buttonStyles[typeButton]} ${classname}`}>
+			<Text className={'text-white text-center font-bold'}>
 				{title}
 			</Text>
       	</TouchableOpacity>

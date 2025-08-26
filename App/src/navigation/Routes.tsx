@@ -6,38 +6,38 @@ import { NavigationContainer } from "@react-navigation/native";
 import PrivateRoutes from "./PrivateRoutes";
 
 //  IMPORTS DE COMPONENTS PUBLICOS
-import Start from "../screens/public/Start";
-import Login from "../screens/public/Login";
-import Cadastro from "../screens/public/Cadastro";
 import EsqueciSenha from "../screens/public/EsqueciSenha";
+import Cadastro from "../screens/public/Cadastro";
+import Login from "../screens/public/Login";
+import Start from "../screens/public/Start";
 
 //  IMPORTS DE COMPONENTS PRIVADOS
-import Home from "../screens/private/Home";
 import CadastroVeiculo from "../screens/private/CadastroVeiculo";
 import DetalhesVeiculo from "../screens/private/DestalhesEnvio";
 import DetalhesFrete from "../screens/private/DetalhesFrete";
 import EditarPerfil from "../screens/private/EditarPerfil";
 import EdtarVeiculo from "../screens/private/EdtarVeiculo";
-import Fretes from "../screens/private/Fretes";
 import MeuVeiculo from "../screens/private/MeuVeiculo";
+import Fretes from "../screens/private/Fretes";
 import Perfil from "../screens/private/Perfil";
+import Home from "../screens/private/Home";
 
 
 export type RootStackParamList = {
+  EsqueciSenha: undefined;
+  Cadastro: undefined;
   Start: undefined;
   Login: undefined;
-  Cadastro: undefined;
-  EsqueciSenha: undefined;
   
-  Home: undefined;
   CadastroVeiculo: undefined;
   DetalhesVeiculo: undefined;
   DetalhesFrete: undefined;
   EditarPerfil: undefined;
   EdtarVeiculo: undefined;
-  Fretes: undefined;
   MeuVeiculo: undefined;
+  Fretes: undefined;
   Perfil: undefined;
+  Home: undefined;
 };
 
 const Stack = createNativeStackNavigator<RootStackParamList>();
@@ -45,9 +45,9 @@ const Stack = createNativeStackNavigator<RootStackParamList>();
 function Routes() {
   return (
     <NavigationContainer>
-      <Stack.Navigator initialRouteName="Login">
+      <Stack.Navigator initialRouteName="Start" screenOptions={{ headerShown: false }}>
 
-		{/* ROTAS PRIVADAS | LIBERADAS APARTIR DO LOGIN DO USUARIO */}
+				{/* ROTAS PRIVADAS | LIBERADAS APARTIR DO LOGIN DO USUARIO */}
         <Stack.Screen name="Home" options={{ title: "Cardápio Digital" }}>
           {() => (<PrivateRoutes><Home/></PrivateRoutes>)}
         </Stack.Screen>
@@ -84,11 +84,11 @@ function Routes() {
           {() => (<PrivateRoutes><Perfil/></PrivateRoutes>)}
         </Stack.Screen>
 
-		{/* ROTAS PÚBLICAS | DISPONÍVEIS SEM LOGIN */}
-        <Stack.Screen name="Start" component={Start} options={{ title: "tela de inicio para todos" }} />
-        <Stack.Screen name="Login" component={Login} options={{ title: "area de login" }}/> 
-        <Stack.Screen name="Cadastro" component={Cadastro} options={{ title: "area de cadastro" }}/> 
-        <Stack.Screen name="EsqueciSenha" component={EsqueciSenha} options={{ title: "area de esqueci senha" }} /> 
+				{/* ROTAS PÚBLICAS | DISPONÍVEIS SEM LOGIN */}
+        <Stack.Screen name="EsqueciSenha" component={EsqueciSenha} options={{title: "area de esqueci senha"}} /> 
+        <Stack.Screen name="Start" component={Start} options={{title: "tela de inicio para todos"}} />
+        <Stack.Screen name="Cadastro" component={Cadastro} options={{title: "area de cadastro"}}/> 
+        <Stack.Screen name="Login" component={Login} options={{title: "area de login"}}/> 
 
       </Stack.Navigator>
     </NavigationContainer>
