@@ -4,9 +4,9 @@ import Usuario from './usuario.model';
 import Veiculo from './veiculo.model';
 
 class Caminhoneiro extends Model {
-    public id_caminhoneiro: number | undefined;
-    public usuario_id: number | undefined;
-    public veiculo_id: number | undefined;
+    id_caminhoneiro: number | undefined;
+    usuario_id?: number | undefined;
+    veiculo_id?: number | undefined;
 }
 
 Caminhoneiro.init({
@@ -17,11 +17,11 @@ Caminhoneiro.init({
     },
     usuario_id: {
         type: DataTypes.INTEGER,
-        allowNull: false,
+        allowNull: true,
     },
     veiculo_id: {
         type: DataTypes.INTEGER,
-        allowNull: false,
+        allowNull: true,
     },
 }, {
     sequelize,

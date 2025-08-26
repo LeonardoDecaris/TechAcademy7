@@ -5,10 +5,11 @@ import ImagemEmpresa from './imagem_empresa.model';
 class Empresa extends Model {
     id_empresa: number | undefined;
     nome: string | undefined;
+    cnpj: string | undefined;
     tipo: string | undefined;
-    avaliacao: number | undefined;
+    avaliacao?: number | undefined;
     localidade: string | undefined;
-    imagemEmpresa_id: number | undefined;
+    imagemEmpresa_id?: number | undefined;
 }
 
 Empresa.init({
@@ -21,13 +22,17 @@ Empresa.init({
         type: DataTypes.STRING,
         allowNull: false,
     },
+    cnpj: {
+        type: DataTypes.STRING,
+        allowNull: false,
+    },
     tipo: {
         type: DataTypes.STRING,
         allowNull: false,
     },
     avaliacao: {
         type: DataTypes.INTEGER,
-        allowNull: false,
+        allowNull: true,
     },
     localidade: {
         type: DataTypes.STRING,

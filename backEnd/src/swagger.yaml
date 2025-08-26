@@ -655,7 +655,7 @@ paths:
             schema:
               type: object
               properties:
-                imagem:
+                imgUrl:
                   type: string
                   format: binary
       responses:
@@ -703,7 +703,7 @@ paths:
             schema:
               type: object
               properties:
-                imagem:
+                imgUrl:
                   type: string
                   format: binary
       responses:
@@ -736,7 +736,7 @@ paths:
             schema:
               type: object
               properties:
-                imagem:
+                imgUrl:
                   type: string
                   format: binary
       responses:
@@ -784,7 +784,7 @@ paths:
             schema:
               type: object
               properties:
-                imagem:
+                imgUrl:
                   type: string
                   format: binary
       responses:
@@ -817,7 +817,7 @@ paths:
             schema:
               type: object
               properties:
-                imagem:
+                imgUrl:
                   type: string
                   format: binary
       responses:
@@ -865,7 +865,7 @@ paths:
             schema:
               type: object
               properties:
-                imagem:
+                imgUrl:
                   type: string
                   format: binary
       responses:
@@ -885,7 +885,7 @@ paths:
         '204':
           description: Imagem removida
 
-  /imagem_caminhao:
+  /imgCaminhao:
     post:
       tags: [ImagemCaminhao]
       summary: Faz upload de imagem de caminhão
@@ -898,7 +898,7 @@ paths:
             schema:
               type: object
               properties:
-                imagem:
+                imgUrl:
                   type: string
                   format: binary
       responses:
@@ -973,92 +973,191 @@ components:
       properties:
         nome:
           type: string
+          example: João da Silva
         email:
           type: string
-        senha:
+          example: usuario@email.com
+        password:
           type: string
+          example: senha123
+        cpf:
+          type: string
+          example: 12345678900
+        cnh:
+          type: string
+          example: E
+        datanascimento:
+          type: string
+          format: date
+        imagemUsuario_id:
+          type: integer
+          example: 1
+
     Empresa:
       type: object
       properties:
         nome:
           type: string
+          example: Transportes XYZ
         cnpj:
           type: string
-        endereco:
+          example: 12345678000190
+        tipo:
           type: string
+          example: Transportadoras
+        avaliacao:
+          type: integer
+          example: 5
+        localidade:
+          type: string
+          example: São Paulo
+        imagemEmpresa_id:
+          type: integer
+          example: 1
+
     Caminhoneiro:
+      type: object
+      properties:
+        usuario_id:
+          type: integer
+          example: 1
+        veiculo_id:
+          type: integer
+          example: 1
+
+    Veiculo:
+      type: object
+      properties:
+        marca:
+          type: string
+          example: Volvo
+        modelo:
+          type: string
+          example: FH 540
+        placa:
+          type: string
+          example: ABC1D23
+        quilometragem:
+          type: integer
+          example: 100000
+        ano:
+          type: integer
+          example: 2020
+        capacidade:
+          type: integer
+          example: 20000
+        imagemVeiculo_id:
+          type: integer
+          example: 1
+
+    TipoCarga:
       type: object
       properties:
         nome:
           type: string
-        cpf:
-          type: string
-        telefone:
-          type: string
-    Veiculo:
-      type: object
-      properties:
-        placa:
-          type: string
-        modelo:
-          type: string
-        ano:
-          type: integer
-    TipoCarga:
-      type: object
-      properties:
-        descricao:
-          type: string
+          example: Graos
+
     VeiculoTipoCarga:
       type: object
       properties:
-        veiculoId:
+        tipoCarga_id:
           type: integer
-        tipoCargaId:
+          example: 1
+        veiculo_id:
           type: integer
+          example: 1
+
     Frete:
       type: object
       properties:
-        origem:
+        saida:
           type: string
+          example: Juranda
         destino:
           type: string
-        valor:
-          type: number
+          example: Quinta do Sol
+        valor_frete:
+          type: integer
+          example: 1000
+        data_saida:
+          type: string
+          format: date
+        data_chegada:
+          type: string
+          format: date
+        prazo:
+          type: integer
+          example: 5
+        distancia:
+          type: integer
+          example: 100
+        status_id:
+          type: integer
+          example: 1
+        caminhoneiro_id:
+          type: integer
+          example: 1
+        carga_id:
+          type: integer
+          example: 1
+        empresa_id:
+          type: integer
+          example: 1
+
     Status:
       type: object
       properties:
-        descricao:
+        nome:
           type: string
+          example: Em trânsito
+
     Carga:
       type: object
       properties:
+        nome:
+          type: string
+          example: Carga de grãos
         descricao:
           type: string
+          example: Carga de grãos para exportação
         peso:
-          type: number
+          type: integer
+          example: 1000
+        valor_carga:
+          type: integer
+          example: 5000
+        imagemCarga_id:
+          type: integer
+          example: 1
+        tipoCarga_id:
+          type: integer
+          example: 1
+
     ImagemUsuario:
       type: object
       properties:
-        imagem:
+        imgUrl:
           type: string
           format: binary
+    
     ImagemEmpresa:
       type: object
       properties:
-        imagem:
+        imgUrl:
           type: string
           format: binary
+
     ImagemCarga:
       type: object
       properties:
-        imagem:
+        imgUrl:
           type: string
           format: binary
+
     ImagemCaminhao:
       type: object
       properties:
-        imagem:
+        imgUrl:
           type: string
           format: binary
 

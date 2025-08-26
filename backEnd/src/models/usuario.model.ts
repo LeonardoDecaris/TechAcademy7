@@ -10,9 +10,9 @@ class Usuario extends Model {
     email: string | undefined;
     cpf: string | undefined;
     cnh: string | undefined;
-    datanascimento: Date | undefined;
-    imagemUsuario_id: number | undefined;
-    admin: boolean | undefined;
+    datanascimento?: Date | undefined;
+    imagemUsuario_id?: number | undefined;
+    // admin?: boolean | undefined;
 
     public async hashPassword() {
         this.password = await bcrypt.hash(this.password!, 10);
@@ -50,15 +50,16 @@ Usuario.init({
     },
     datanascimento: {
         type: DataTypes.DATE,
-        allowNull: false,
+        allowNull: true,
     },
     imagemUsuario_id: {
         type: DataTypes.INTEGER,
         allowNull: true,
     },
-    admin: {
-      type: DataTypes.BOOLEAN,
-    },
+    // admin: {
+    //     type: DataTypes.BOOLEAN,
+    //     allowNull: true,
+    // },
 }, {
     sequelize,
     tableName: 'USUARIO',
@@ -68,13 +69,13 @@ Usuario.init({
 Usuario.belongsTo(ImagemUsuario, { foreignKey: 'imagemUsuario_id', as: 'imagemUsuario' });
 
 Usuario.beforeCreate(async (user: Usuario) => {
-  await user.hashPassword();
+    await user.hashPassword();
 });
 
 Usuario.beforeUpdate(async (user: Usuario) => {
-  if (user.changed("password")) {
-    await user.hashPassword();
-  }
+    if (user.changed("password")) {
+        await user.hashPassword();
+    }
 });
 
 export default Usuario;

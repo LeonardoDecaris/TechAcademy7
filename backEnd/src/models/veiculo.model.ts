@@ -6,8 +6,9 @@ class Veiculo extends Model {
     id_veiculo: number | undefined;
     marca: string | undefined;
     modelo: string | undefined;
-    placa: string | undefined;
-    quilometragem: number | undefined;
+    placa?: string | undefined;
+    quilometragem?: number | undefined;
+    ano?: number | undefined;
     capacidade: number | undefined;
     imagemVeiculo_id: number | undefined;
 }
@@ -28,14 +29,18 @@ Veiculo.init({
     },
     placa: {
         type: DataTypes.STRING,
-        allowNull: false,
+        allowNull: true,
     },
     quilometragem: {
-        type: DataTypes.STRING,
-        allowNull: false,
+        type: DataTypes.INTEGER,
+        allowNull: true,
     },
-    tipo_carga: {
-        type: DataTypes.STRING,
+    ano: {
+        type: DataTypes.INTEGER,
+        allowNull: true,
+    },
+    capacidade: {
+        type: DataTypes.INTEGER,
         allowNull: false,
     },
     imagemVeiculo_id: {

@@ -2,8 +2,8 @@ import { Model, DataTypes } from 'sequelize';
 import sequelize from '../config/database';
 
 class Status extends Model {
-    public id_status: number | undefined;
-    public nome: string | undefined;
+    id_status: number | undefined;
+    nome: string | undefined;
 }
 
 Status.init({

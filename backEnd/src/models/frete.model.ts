@@ -7,17 +7,17 @@ import Empresa from './empresa.model';
 
 class Frete extends Model {
     id_frete: number | undefined;
-    saida: string | undefined;
-    destino: string | undefined;
-    valor_frete: number | undefined;
-    data_saida: Date | undefined;
-    data_chegada: Date | undefined;
-    prazo: number | undefined;
-    distancia: number | undefined;
-    status_id: number | undefined;
-    caminhoneiro_id: number | undefined;
-    carga_id: number | undefined;
-    empresa_id: number | undefined;
+    saida?: string | undefined;
+    destino?: string | undefined;
+    valor_frete?: number | undefined;
+    data_saida?: Date | undefined;
+    data_chegada?: Date | undefined;
+    prazo?: number | undefined;
+    distancia?: number | undefined;
+    status_id?: number | undefined;
+    caminhoneiro_id?: number | undefined;
+    carga_id?: number | undefined;
+    empresa_id?: number | undefined;
 }
 
 Frete.init({
@@ -28,43 +28,43 @@ Frete.init({
     },
     saida: {
         type: DataTypes.STRING,
-        allowNull: false,
+        allowNull: true,
     },
     destino: {
         type: DataTypes.STRING,
-        allowNull: false,
+        allowNull: true,
     },
     valor_frete: {
         type: DataTypes.INTEGER,
-        allowNull: false,
+        allowNull: true,
     },
     data_saida: {
         type: DataTypes.DATE,
-        allowNull: false,
+        allowNull: true,
     },
     data_chegada: {
         type: DataTypes.DATE,
-        allowNull: false,
+        allowNull: true,
     },
     prazo: {
         type: DataTypes.INTEGER,
-        allowNull: false,
+        allowNull: true,
     },
     distancia: {
         type: DataTypes.INTEGER,
-        allowNull: false,
+        allowNull: true,
     },
     status_id: {
         type: DataTypes.INTEGER,
-        allowNull: false,
+        allowNull: true,
     },
     caminhoneiro_id: {
         type: DataTypes.INTEGER,
-        allowNull: false,
+        allowNull: true,
     },
     carga_id: {
         type: DataTypes.INTEGER,
-        allowNull: false,
+        allowNull: true,
     },
     empresa_id: {
         type: DataTypes.INTEGER,

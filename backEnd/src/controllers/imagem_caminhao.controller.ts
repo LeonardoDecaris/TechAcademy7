@@ -3,23 +3,13 @@ import ImagemVeiculo from '../models/imagem_carga.model';
 import multer from 'multer';
 import path from 'path';
 
-// Configuração do multer
-const storage = multer.diskStorage({
-  destination: (req, file, cb) => {
-    cb(null, 'uploads/');
-  },
-  filename: (req, file, cb) => {
-    cb(null, Date.now() + path.extname(file.originalname));
-  }
-});
-export const upload = multer({ storage });
 
 export const createImagemVeiculo = async (req: Request, res: Response) => {
   try {
-    const img_url = req.file ? `/uploads/${req.file.filename}` : null;
-    if (!img_url) return res.status(400).json({ message: 'Imagem não enviada.' });
+    const imgUrl = req.file ? `/uploads/${req.file.filename}` : null;
+    if (!imgUrl) return res.status(400).json({ message: 'Imagem não enviada.' });
 
-    const imagemVeiculo = await ImagemVeiculo.create({ img_url });
+    const imagemVeiculo = await ImagemVeiculo.create({ imgUrl });
     return res.status(201).json(imagemVeiculo);
   } catch (error: any) {
     return res.status(500).json({ message: error.message });

@@ -43,7 +43,7 @@ export const getCaminhoneiroById = async (req: Request<{ id: string }>, res: Res
 export const updateCaminhoneiro = async (req: Request<{ id: string }>, res: Response) => {
     try {
         const [updated] = await Caminhoneiro.update(req.body, {
-            where: { id: req.params.id }
+            where: { id_caminhoneiro: req.params.id }
         });
         if (updated) {
             const updatedCaminhoneiro = await Caminhoneiro.findByPk(req.params.id);
@@ -61,7 +61,7 @@ export const updateCaminhoneiro = async (req: Request<{ id: string }>, res: Resp
 export const deleteCaminhoneiro = async (req: Request<{ id: string }>, res: Response) => {
     try {
         const deleted = await Caminhoneiro.destroy({
-            where: { id: req.params.id }
+            where: { id_caminhoneiro: req.params.id }
         });
         if (deleted) {
             return res.status(204).send();

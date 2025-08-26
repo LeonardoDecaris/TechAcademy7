@@ -4,18 +4,18 @@ import Veiculo from './veiculo.model';
 import TipoCarga from './tipo_carga.model';
 
 class VeiculoTipoCarga extends Model {
-    public tipoCarga_id: number | undefined;
-    public veiculo_id: number | undefined;
+    tipoCarga_id?: number | undefined;
+    veiculo_id?: number | undefined;
 }
 
 VeiculoTipoCarga.init({
     tipoCarga_id: {
         type: DataTypes.INTEGER,
-        allowNull: false,
+        allowNull: true,
     },
     veiculo_id: {
         type: DataTypes.INTEGER,
-        allowNull: false,
+        allowNull: true,
     },
 }, {
     sequelize,

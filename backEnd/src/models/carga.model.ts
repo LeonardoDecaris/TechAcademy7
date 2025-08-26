@@ -4,13 +4,13 @@ import ImagemCarga from './imagem_carga.model';
 import TipoCarga from './tipo_carga.model';
 
 class Carga extends Model {
-    public id_carga: number | undefined;
-    public nome: string | undefined;
-    public descricao: string | undefined;
-    public peso: number | undefined;
-    public valor_carga: number | undefined;
-    public imagemCarga_id: number | undefined;
-    public tipoCarga_id: number | undefined;
+    id_carga: number | undefined;
+    nome: string | undefined;
+    descricao?: string | undefined;
+    peso: number | undefined;
+    valor_carga: number | undefined;
+    imagemCarga_id?: number | undefined;
+    tipoCarga_id?: number | undefined;
 }
 
 Carga.init({
@@ -25,7 +25,7 @@ Carga.init({
     },
     descricao: {
         type: DataTypes.STRING,
-        allowNull: false,
+        allowNull: true,
     },
     peso: {
         type: DataTypes.INTEGER,

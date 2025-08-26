@@ -2,8 +2,8 @@ import { Model, DataTypes } from 'sequelize';
 import sequelize from '../config/database';
 
 class ImagemCarga extends Model {
-    public id_imagemCarga: number | undefined;
-    public imgUrl: string | undefined;
+    id_imagemCarga: number | undefined;
+    imgUrl: string | undefined;
 }
 
 ImagemCarga.init({
