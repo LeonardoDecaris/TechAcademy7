@@ -1,42 +1,35 @@
 import { Model, DataTypes } from 'sequelize';
 import sequelize from '../config/database';
-
+import Usuario from './usuario.model';
+import Veiculo from './veiculo.model';
 
 class Caminhoneiro extends Model {
-  public id!: number;
-  public nome!: string;
-  public cpf!: string;
-  public telefone!: string;
-  public createdAt!: Date;
-  public updatedAt!: Date;
+    public id_caminhoneiro: number | undefined;
+    public usuario_id: number | undefined;
+    public veiculo_id: number | undefined;
 }
 
-Caminhoneiro.init(
-  {
-    id: {
-      type: DataTypes.INTEGER,
-      autoIncrement: true,
-      primaryKey: true,
+Caminhoneiro.init({
+    id_caminhoneiro: {
+        type: DataTypes.INTEGER,
+        autoIncrement: true,
+        primaryKey: true,
     },
-    nome: {
-      type: DataTypes.STRING,
-      allowNull: false,
+    usuario_id: {
+        type: DataTypes.INTEGER,
+        allowNull: false,
     },
-    cpf: {
-      type: DataTypes.STRING,
-      allowNull: false,
-      unique: true,
+    veiculo_id: {
+        type: DataTypes.INTEGER,
+        allowNull: false,
     },
-    telefone: {
-      type: DataTypes.STRING,
-      allowNull: false,
-    },
-  },
-  {
+}, {
     sequelize,
-    tableName: 'caminhoneiros',
-    timestamps: true,
-  }
-);
+    tableName: 'CAMINHONEIRO',
+    timestamps: false,
+});
+
+Caminhoneiro.belongsTo(Usuario, { foreignKey: 'usuario_id', as: 'usuario' });
+Caminhoneiro.belongsTo(Veiculo, { foreignKey: 'veiculo_id', as: 'veiculo' });
 
 export default Caminhoneiro;

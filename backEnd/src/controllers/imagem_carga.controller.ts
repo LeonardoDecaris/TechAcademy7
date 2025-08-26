@@ -1,63 +1,77 @@
 import { Request, Response } from 'express';
-import { ImagemCarga } from '../models/imagem_carga.model';
+import ImagemCarga from '../models/imagem_carga.model';
 
-export class ImagemCargaController {
-    public async create(req: Request, res: Response): Promise<Response> {
-        try {
-            const imagemCarga = await ImagemCarga.create(req.body);
-            return res.status(201).json(imagemCarga);
-        } catch (error) {
+export const createImagemCarga = async (req: Request, res: Response) => {
+    try {
+        const imgUrl = req.file ? `/uploads/${req.file.filename}` : null;
+        if (!imgUrl) return res.status(400).json({ message: 'Imagem não enviada.' });
+
+        const imagemCarga = await ImagemCarga.create({ imgUrl });
+        return res.status(201).json(imagemCarga);
+    } catch (error) {
+        if (error instanceof Error) {
             return res.status(500).json({ message: error.message });
         }
+        return res.status(500).json({ message: 'Internal server error' });
     }
+};
 
-    public async findAll(req: Request, res: Response): Promise<Response> {
-        try {
-            const imagensCarga = await ImagemCarga.findAll();
-            return res.status(200).json(imagensCarga);
-        } catch (error) {
+export const getAllImagensCarga = async (req: Request, res: Response) => {
+    try {
+        const imagens = await ImagemCarga.findAll();
+        return res.status(200).json(imagens);
+    } catch (error) {
+        if (error instanceof Error) {
             return res.status(500).json({ message: error.message });
         }
+        return res.status(500).json({ message: 'Internal server error' });
     }
+};
 
-    public async findOne(req: Request, res: Response): Promise<Response> {
-        try {
-            const imagemCarga = await ImagemCarga.findByPk(req.params.id);
-            if (!imagemCarga) {
-                return res.status(404).json({ message: 'ImagemCarga not found' });
-            }
-            return res.status(200).json(imagemCarga);
-        } catch (error) {
+export const getImagemCargaById = async (req: Request, res: Response) => {
+    try {
+        const imagem = await ImagemCarga.findByPk(req.params.id);
+        if (!imagem) {
+            return res.status(404).json({ message: 'ImagemCarga not found' });
+        }
+        return res.status(200).json(imagem);
+    } catch (error) {
+        if (error instanceof Error) {
             return res.status(500).json({ message: error.message });
         }
+        return res.status(500).json({ message: 'Internal server error' });
     }
+};
 
-    public async update(req: Request, res: Response): Promise<Response> {
-        try {
-            const [updated] = await ImagemCarga.update(req.body, {
-                where: { id: req.params.id }
-            });
-            if (!updated) {
-                return res.status(404).json({ message: 'ImagemCarga not found' });
-            }
-            const updatedImagemCarga = await ImagemCarga.findByPk(req.params.id);
-            return res.status(200).json(updatedImagemCarga);
-        } catch (error) {
+export const updateImagemCarga = async (req: Request, res: Response) => {
+    try {
+        const imagem = await ImagemCarga.findByPk(req.params.id);
+        if (!imagem) {
+            return res.status(404).json({ message: 'ImagemCarga not found' });
+        }
+        const imgUrl = req.file ? `/uploads/${req.file.filename}` : imagem.imgUrl;
+        await imagem.update({ imgUrl });
+        return res.status(200).json(imagem);
+    } catch (error) {
+        if (error instanceof Error) {
             return res.status(500).json({ message: error.message });
         }
+        return res.status(500).json({ message: 'Internal server error' });
     }
+};
 
-    public async delete(req: Request, res: Response): Promise<Response> {
-        try {
-            const deleted = await ImagemCarga.destroy({
-                where: { id: req.params.id }
-            });
-            if (!deleted) {
-                return res.status(404).json({ message: 'ImagemCarga not found' });
-            }
-            return res.status(204).send();
-        } catch (error) {
+export const deleteImagemCarga = async (req: Request, res: Response) => {
+    try {
+        const imagem = await ImagemCarga.findByPk(req.params.id);
+        if (!imagem) {
+            return res.status(404).json({ message: 'ImagemCarga not found' });
+        }
+        await imagem.destroy();
+        return res.status(204).send();
+    } catch (error) {
+        if (error instanceof Error) {
             return res.status(500).json({ message: error.message });
         }
+        return res.status(500).json({ message: 'Internal server error' });
     }
-}
+};

@@ -1,49 +1,25 @@
 import { Model, DataTypes } from 'sequelize';
-import { sequelize } from '../database'; // Adjust the import based on your database configuration
+import sequelize from '../config/database';
 
 class ImagemCarga extends Model {
-  public id!: number;
-  public cargaId!: number;
-  public url!: string;
-  public createdAt!: Date;
-  public updatedAt!: Date;
+    public id_imagemCarga: number | undefined;
+    public imgUrl: string | undefined;
 }
 
-ImagemCarga.init(
-  {
-    id: {
-      type: DataTypes.INTEGER,
-      autoIncrement: true,
-      primaryKey: true,
+ImagemCarga.init({
+    id_imagemCarga: {
+        type: DataTypes.INTEGER,
+        autoIncrement: true,
+        primaryKey: true,
     },
-    cargaId: {
-      type: DataTypes.INTEGER,
-      allowNull: false,
-      references: {
-        model: 'cargas', // Name of the referenced table
-        key: 'id',
-      },
+    imgUrl: {
+        type: DataTypes.STRING,
+        allowNull: false,
     },
-    url: {
-      type: DataTypes.STRING,
-      allowNull: false,
-    },
-    createdAt: {
-      type: DataTypes.DATE,
-      allowNull: false,
-      defaultValue: DataTypes.NOW,
-    },
-    updatedAt: {
-      type: DataTypes.DATE,
-      allowNull: false,
-      defaultValue: DataTypes.NOW,
-    },
-  },
-  {
+}, {
     sequelize,
-    tableName: 'imagem_cargas',
-    timestamps: true,
-  }
-);
+    tableName: 'IMAGEM_CARGA',
+    timestamps: false,
+});
 
 export default ImagemCarga;

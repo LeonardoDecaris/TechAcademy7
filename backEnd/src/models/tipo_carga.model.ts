@@ -1,13 +1,13 @@
 import { Model, DataTypes } from 'sequelize';
 import sequelize from '../config/database';
 
-class Status extends Model {
-    public id_status: number | undefined;
-    public nome: string | undefined;
+class TipoCarga extends Model {
+    id_tipo: number | undefined;
+    nome: string | undefined;
 }
 
-Status.init({
-    id_status: {
+TipoCarga.init({
+    id_tipo: {
         type: DataTypes.INTEGER,
         autoIncrement: true,
         primaryKey: true,
@@ -18,8 +18,8 @@ Status.init({
     },
 }, {
     sequelize,
-    tableName: 'STATUS',
+    tableName: 'TIPO_CARGA',
     timestamps: false,
 });
 
-export default Status;
+export default TipoCarga;

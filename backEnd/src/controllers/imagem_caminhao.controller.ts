@@ -1,5 +1,5 @@
 import { Request, Response } from 'express';
-import ImagemUsuario from '../models/imagem_usuario.model';
+import ImagemVeiculo from '../models/imagem_carga.model';
 import multer from 'multer';
 import path from 'path';
 
@@ -14,35 +14,35 @@ const storage = multer.diskStorage({
 });
 export const upload = multer({ storage });
 
-export const createImagemUsuario = async (req: Request, res: Response) => {
+export const createImagemVeiculo = async (req: Request, res: Response) => {
   try {
     const img_url = req.file ? `/uploads/${req.file.filename}` : null;
     if (!img_url) return res.status(400).json({ message: 'Imagem não enviada.' });
 
-    const imagemUsuario = await ImagemUsuario.create({ img_url });
-    return res.status(201).json(imagemUsuario);
+    const imagemVeiculo = await ImagemVeiculo.create({ img_url });
+    return res.status(201).json(imagemVeiculo);
   } catch (error: any) {
     return res.status(500).json({ message: error.message });
   }
 };
 
-export const getAllImagensUsuario = async (req: Request, res: Response) => {
+export const getAllImagensVeiculo = async (req: Request, res: Response) => {
   try {
-    const imagens = await ImagemUsuario.findAll();
+    const imagens = await ImagemVeiculo.findAll();
     return res.json(imagens);
   } catch (error: any) {
     return res.status(500).json({ message: error.message });
   }
 };
 
-export const getImagemUsuarioById = async (req: Request, res: Response) => {
+export const getImagemVeiculoById = async (req: Request, res: Response) => {
   // Implementar lógica para obter imagem por ID
 };
 
-export const updateImagemUsuario = async (req: Request, res: Response) => {
+export const updateImagemVeiculo = async (req: Request, res: Response) => {
   // Implementar lógica para atualizar imagem
 };
 
-export const deleteImagemUsuario = async (req: Request, res: Response) => {
+export const deleteImagemVeiculo = async (req: Request, res: Response) => {
   // Implementar lógica para deletar imagem
 };

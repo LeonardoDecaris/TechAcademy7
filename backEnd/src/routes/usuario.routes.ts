@@ -1,13 +1,12 @@
 import { Router } from 'express';
-import UsuarioController from '../controllers/usuario.controller';
+import { createUsuario, getAllUsuarios, getUsuarioById, updateUsuario, deleteUsuario } from '../controllers/usuario.controller';
+import { authMiddleware } from '../middleware/authMiddleware';
 
 const router = Router();
-const usuarioController = new UsuarioController();
-
-router.get('/', usuarioController.getAll);
-router.get('/:id', usuarioController.getById);
-router.post('/', usuarioController.create);
-router.put('/:id', usuarioController.update);
-router.delete('/:id', usuarioController.delete);
+router.post('/usuario', createUsuario);
+router.get('/usuario', getAllUsuarios);
+router.get('/usuario/:id', getUsuarioById);
+router.put('/usuario/:id', updateUsuario);
+router.delete('/usuario/:id', authMiddleware, deleteUsuario);
 
 export default router;

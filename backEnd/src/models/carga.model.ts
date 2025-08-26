@@ -1,49 +1,55 @@
 import { Model, DataTypes } from 'sequelize';
-import { sequelize } from '../database'; // Adjust the import based on your database configuration
+import sequelize from '../config/database';
+import ImagemCarga from './imagem_carga.model';
+import TipoCarga from './tipo_carga.model';
 
 class Carga extends Model {
-  public id!: number;
-  public descricao!: string;
-  public peso!: number;
-  public volume!: number;
-  public dataCarga!: Date;
-
-  // Define any associations here
-  public static associate(models: any) {
-    // Example: Carga.belongsTo(models.Empresa, { foreignKey: 'empresaId' });
-  }
+    public id_carga: number | undefined;
+    public nome: string | undefined;
+    public descricao: string | undefined;
+    public peso: number | undefined;
+    public valor_carga: number | undefined;
+    public imagemCarga_id: number | undefined;
+    public tipoCarga_id: number | undefined;
 }
 
-Carga.init(
-  {
-    id: {
-      type: DataTypes.INTEGER,
-      autoIncrement: true,
-      primaryKey: true,
+Carga.init({
+    id_carga: {
+        type: DataTypes.INTEGER,
+        autoIncrement: true,
+        primaryKey: true,
+    },
+    nome: {
+        type: DataTypes.STRING,
+        allowNull: false,
     },
     descricao: {
-      type: DataTypes.STRING,
-      allowNull: false,
+        type: DataTypes.STRING,
+        allowNull: false,
     },
     peso: {
-      type: DataTypes.FLOAT,
-      allowNull: false,
+        type: DataTypes.INTEGER,
+        allowNull: false,
     },
-    volume: {
-      type: DataTypes.FLOAT,
-      allowNull: false,
+    valor_carga: {
+        type: DataTypes.INTEGER,
+        allowNull: false,
     },
-    dataCarga: {
-      type: DataTypes.DATE,
-      allowNull: false,
+    imagemCarga_id: {
+        type: DataTypes.INTEGER,
+        allowNull: true,
     },
-  },
-  {
+    tipoCarga_id: {
+        type: DataTypes.INTEGER,
+        allowNull: true,
+    },
+}, {
     sequelize,
-    modelName: 'Carga',
-    tableName: 'cargas',
-    timestamps: true,
-  }
-);
+    tableName: 'CARGA',
+    timestamps: false,
+});
+
+Carga.belongsTo(ImagemCarga, { foreignKey: 'imagemCarga_id', as: 'imagemCarga' });
+Carga.belongsTo(TipoCarga, { foreignKey: 'tipoCarga_id', as: 'tipoCarga' });
 
 export default Carga;

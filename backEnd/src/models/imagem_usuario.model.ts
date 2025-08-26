@@ -1,35 +1,25 @@
 import { Model, DataTypes } from 'sequelize';
-import { sequelize } from '../database'; // Adjust the import based on your database configuration
+import sequelize from '../config/database';
 
 class ImagemUsuario extends Model {
-  public id!: number;
-  public usuarioId!: number;
-  public url!: string;
-  public createdAt!: Date;
-  public updatedAt!: Date;
+    public id_imagem: number | undefined;
+    public imgUrl: string | undefined;
 }
 
-ImagemUsuario.init(
-  {
-    id: {
-      type: DataTypes.INTEGER,
-      autoIncrement: true,
-      primaryKey: true,
+ImagemUsuario.init({
+    id_imagem: {
+        type: DataTypes.INTEGER,
+        autoIncrement: true,
+        primaryKey: true,
     },
-    usuarioId: {
-      type: DataTypes.INTEGER,
-      allowNull: false,
+    imgUrl: {
+        type: DataTypes.STRING,
+        allowNull: false,
     },
-    url: {
-      type: DataTypes.STRING,
-      allowNull: false,
-    },
-  },
-  {
+}, {
     sequelize,
-    tableName: 'imagem_usuario',
-    timestamps: true,
-  }
-);
+    tableName: 'IMAGEM_USUARIO',
+    timestamps: false,
+});
 
 export default ImagemUsuario;

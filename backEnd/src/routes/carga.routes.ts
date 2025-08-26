@@ -1,13 +1,12 @@
 import { Router } from 'express';
-import CargaController from '../controllers/carga.controller';
+import { createCarga, getAllCargas, getCargaById, updateCarga, deleteCarga } from '../controllers/carga.controller';
+import { authMiddleware } from '../middleware/authMiddleware';
 
 const router = Router();
-const cargaController = new CargaController();
-
-router.get('/', cargaController.getAll.bind(cargaController));
-router.get('/:id', cargaController.getById.bind(cargaController));
-router.post('/', cargaController.create.bind(cargaController));
-router.put('/:id', cargaController.update.bind(cargaController));
-router.delete('/:id', cargaController.delete.bind(cargaController));
+router.post('/carga', authMiddleware, createCarga);
+router.get('/carga', authMiddleware, getAllCargas);
+router.get('/carga/:id', authMiddleware, getCargaById);
+router.put('/carga/:id', authMiddleware, updateCarga);
+router.delete('/carga/:id', authMiddleware, deleteCarga);
 
 export default router;

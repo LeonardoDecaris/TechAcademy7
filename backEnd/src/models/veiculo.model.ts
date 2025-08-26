@@ -1,46 +1,55 @@
 import { Model, DataTypes } from 'sequelize';
-import { sequelize } from '../database'; // Adjust the import based on your database configuration
+import sequelize from '../config/database';
+import ImagemVeiculo from './imagem.caminhao';
 
 class Veiculo extends Model {
-  public id!: number;
-  public modelo!: string;
-  public marca!: string;
-  public ano!: number;
-  public placa!: string;
-  public createdAt!: Date;
-  public updatedAt!: Date;
+    id_veiculo: number | undefined;
+    marca: string | undefined;
+    modelo: string | undefined;
+    placa: string | undefined;
+    quilometragem: number | undefined;
+    capacidade: number | undefined;
+    imagemVeiculo_id: number | undefined;
 }
 
-Veiculo.init(
-  {
-    id: {
-      type: DataTypes.INTEGER,
-      autoIncrement: true,
-      primaryKey: true,
-    },
-    modelo: {
-      type: DataTypes.STRING,
-      allowNull: false,
+Veiculo.init({
+    id_veiculo: {
+        type: DataTypes.INTEGER,
+        autoIncrement: true,
+        primaryKey: true,
     },
     marca: {
-      type: DataTypes.STRING,
-      allowNull: false,
+        type: DataTypes.STRING,
+        allowNull: false,
     },
-    ano: {
-      type: DataTypes.INTEGER,
-      allowNull: false,
+    modelo: {
+        type: DataTypes.STRING,
+        allowNull: false,
     },
     placa: {
-      type: DataTypes.STRING,
-      allowNull: false,
-      unique: true,
+        type: DataTypes.STRING,
+        allowNull: false,
     },
-  },
-  {
+    quilometragem: {
+        type: DataTypes.STRING,
+        allowNull: false,
+    },
+    tipo_carga: {
+        type: DataTypes.STRING,
+        allowNull: false,
+    },
+    imagemVeiculo_id: {
+        type: DataTypes.INTEGER,
+        allowNull: true,
+    },
+
+}, {
     sequelize,
-    tableName: 'veiculos',
-    timestamps: true,
-  }
-);
+    tableName: 'VEICULO',
+    timestamps: false,
+});
+
+Veiculo.belongsTo(ImagemVeiculo, { foreignKey: 'imagemVeiculo_id', as: 'imagemVeiculo' });
+
 
 export default Veiculo;

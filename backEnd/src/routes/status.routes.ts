@@ -1,13 +1,12 @@
 import { Router } from 'express';
-import StatusController from '../controllers/status.controller';
+import { createStatus, getAllStatus, getStatusById, updateStatus, deleteStatus } from '../controllers/status.controller';
+import { authMiddleware } from '../middleware/authMiddleware';
 
 const router = Router();
-const statusController = new StatusController();
-
-router.get('/', statusController.getAll.bind(statusController));
-router.get('/:id', statusController.getById.bind(statusController));
-router.post('/', statusController.create.bind(statusController));
-router.put('/:id', statusController.update.bind(statusController));
-router.delete('/:id', statusController.delete.bind(statusController));
+router.post('/status', authMiddleware, createStatus);
+router.get('/status', authMiddleware, getAllStatus);
+router.get('/status/:id', authMiddleware, getStatusById);
+router.put('/status/:id', authMiddleware, updateStatus);
+router.delete('/status/:id', authMiddleware, deleteStatus);
 
 export default router;

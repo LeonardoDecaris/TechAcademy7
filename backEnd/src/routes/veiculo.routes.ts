@@ -1,13 +1,12 @@
 import { Router } from 'express';
-import VeiculoController from '../controllers/veiculo.controller';
+import { createVeiculo, getAllVeiculos, getVeiculoById, updateVeiculo, deleteVeiculo } from '../controllers/veiculo.controller';
+import { authMiddleware } from '../middleware/authMiddleware';
 
 const router = Router();
-const veiculoController = new VeiculoController();
-
-router.get('/', veiculoController.getAll);
-router.get('/:id', veiculoController.getById);
-router.post('/', veiculoController.create);
-router.put('/:id', veiculoController.update);
-router.delete('/:id', veiculoController.delete);
+router.post('/veiculo', authMiddleware, createVeiculo);
+router.get('/veiculo', authMiddleware, getAllVeiculos);
+router.get('/veiculo/:id', authMiddleware, getVeiculoById);
+router.put('/veiculo/:id', authMiddleware, updateVeiculo);
+router.delete('/veiculo/:id', authMiddleware, deleteVeiculo);
 
 export default router;

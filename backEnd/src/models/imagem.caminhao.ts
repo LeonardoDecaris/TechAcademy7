@@ -1,25 +1,25 @@
 import { Model, DataTypes } from 'sequelize';
 import sequelize from '../config/database';
 
-class Status extends Model {
-    public id_status: number | undefined;
-    public nome: string | undefined;
+class ImagemVeiculo extends Model {
+    public id_imagemVeiculo: number | undefined;
+    public imgUrl: string | undefined;
 }
 
-Status.init({
-    id_status: {
+ImagemVeiculo.init({
+    id_imagemVeiculo: {
         type: DataTypes.INTEGER,
         autoIncrement: true,
         primaryKey: true,
     },
-    nome: {
+    imgUrl: {
         type: DataTypes.STRING,
         allowNull: false,
     },
 }, {
     sequelize,
-    tableName: 'STATUS',
+    tableName: 'IMAGEM_VEICULO',
     timestamps: false,
 });
 
-export default Status;
+export default ImagemVeiculo;

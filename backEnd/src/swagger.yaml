@@ -1,0 +1,1072 @@
+openapi: 3.0.0
+info:
+  title: TechAcademy7 API
+  version: 1.0.0
+  description: API para gerenciamento de cargas, caminhoneiros, empresas, fretes, usuários, status, veículos, tipos de carga e imagens.
+servers:
+  - url: http://localhost:3000
+
+tags:
+  - name: Auth
+  - name: Usuario
+  - name: Empresa
+  - name: Caminhoneiro
+  - name: Veiculo
+  - name: TipoCarga
+  - name: VeiculoTipoCarga
+  - name: Frete
+  - name: Status
+  - name: Carga
+  - name: ImagemUsuario
+  - name: ImagemEmpresa
+  - name: ImagemCarga
+  - name: ImagemCaminhao
+
+paths:
+  /login:
+    post:
+      tags: [Auth]
+      summary: Realiza login do usuário (autenticação JWT)
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [email, password]
+              properties:
+                email:
+                  type: string
+                  example: usuario@email.com
+                password:
+                  type: string
+                  example: senha123
+      responses:
+        '200':
+          description: Login realizado com sucesso
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  token:
+                    type: string
+                    description: JWT token de autenticação
+        '401':
+          description: Credenciais inválidas
+
+  /usuario:
+    post:
+      tags: [Usuario]
+      summary: Cria um novo usuário
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Usuario'
+      responses:
+        '201':
+          description: Usuário criado com sucesso
+    get:
+      tags: [Usuario]
+      summary: Lista todos os usuários
+      responses:
+        '200':
+          description: Lista de usuários
+
+  /usuario/{id}:
+    get:
+      tags: [Usuario]
+      summary: Busca usuário por ID
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema: { type: integer }
+      responses:
+        '200':
+          description: Usuário encontrado
+        '404':
+          description: Usuário não encontrado
+    put:
+      tags: [Usuario]
+      summary: Atualiza usuário por ID
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema: { type: integer }
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Usuario'
+      responses:
+        '200':
+          description: Usuário atualizado
+    delete:
+      tags: [Usuario]
+      summary: Remove usuário por ID (requer autenticação)
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema: { type: integer }
+      responses:
+        '204':
+          description: Usuário removido
+
+  /empresa:
+    post:
+      tags: [Empresa]
+      summary: Cria uma nova empresa
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Empresa'
+      responses:
+        '201':
+          description: Empresa criada
+    get:
+      tags: [Empresa]
+      summary: Lista todas as empresas
+      security:
+        - bearerAuth: []
+      responses:
+        '200':
+          description: Lista de empresas
+
+  /empresa/{id}:
+    get:
+      tags: [Empresa]
+      summary: Busca empresa por ID
+      security:
+        - bearerAuth: []
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema: { type: integer }
+      responses:
+        '200':
+          description: Empresa encontrada
+        '404':
+          description: Empresa não encontrada
+    put:
+      tags: [Empresa]
+      summary: Atualiza empresa por ID
+      security:
+        - bearerAuth: []
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema: { type: integer }
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Empresa'
+      responses:
+        '200':
+          description: Empresa atualizada
+    delete:
+      tags: [Empresa]
+      summary: Remove empresa por ID
+      security:
+        - bearerAuth: []
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema: { type: integer }
+      responses:
+        '204':
+          description: Empresa removida
+
+  /caminhoneiro:
+    post:
+      tags: [Caminhoneiro]
+      summary: Cria um novo caminhoneiro
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Caminhoneiro'
+      responses:
+        '201':
+          description: Caminhoneiro criado
+    get:
+      tags: [Caminhoneiro]
+      summary: Lista todos os caminhoneiros
+      responses:
+        '200':
+          description: Lista de caminhoneiros
+
+  /caminhoneiro/{id}:
+    get:
+      tags: [Caminhoneiro]
+      summary: Busca caminhoneiro por ID
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema: { type: integer }
+      responses:
+        '200':
+          description: Caminhoneiro encontrado
+        '404':
+          description: Caminhoneiro não encontrado
+    put:
+      tags: [Caminhoneiro]
+      summary: Atualiza caminhoneiro por ID
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema: { type: integer }
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Caminhoneiro'
+      responses:
+        '200':
+          description: Caminhoneiro atualizado
+    delete:
+      tags: [Caminhoneiro]
+      summary: Remove caminhoneiro por ID
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema: { type: integer }
+      responses:
+        '204':
+          description: Caminhoneiro removido
+
+  /veiculo:
+    post:
+      tags: [Veiculo]
+      summary: Cria um novo veículo
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Veiculo'
+      responses:
+        '201':
+          description: Veículo criado
+    get:
+      tags: [Veiculo]
+      summary: Lista todos os veículos
+      security:
+        - bearerAuth: []
+      responses:
+        '200':
+          description: Lista de veículos
+
+  /veiculo/{id}:
+    get:
+      tags: [Veiculo]
+      summary: Busca veículo por ID
+      security:
+        - bearerAuth: []
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema: { type: integer }
+      responses:
+        '200':
+          description: Veículo encontrado
+        '404':
+          description: Veículo não encontrado
+    put:
+      tags: [Veiculo]
+      summary: Atualiza veículo por ID
+      security:
+        - bearerAuth: []
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema: { type: integer }
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Veiculo'
+      responses:
+        '200':
+          description: Veículo atualizado
+    delete:
+      tags: [Veiculo]
+      summary: Remove veículo por ID
+      security:
+        - bearerAuth: []
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema: { type: integer }
+      responses:
+        '204':
+          description: Veículo removido
+
+  /tipo_carga:
+    post:
+      tags: [TipoCarga]
+      summary: Cria um novo tipo de carga
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/TipoCarga'
+      responses:
+        '201':
+          description: Tipo de carga criado
+    get:
+      tags: [TipoCarga]
+      summary: Lista todos os tipos de carga
+      responses:
+        '200':
+          description: Lista de tipos de carga
+
+  /tipo_carga/{id}:
+    get:
+      tags: [TipoCarga]
+      summary: Busca tipo de carga por ID
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema: { type: integer }
+      responses:
+        '200':
+          description: Tipo de carga encontrado
+        '404':
+          description: Tipo de carga não encontrado
+    put:
+      tags: [TipoCarga]
+      summary: Atualiza tipo de carga por ID
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema: { type: integer }
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/TipoCarga'
+      responses:
+        '200':
+          description: Tipo de carga atualizado
+    delete:
+      tags: [TipoCarga]
+      summary: Remove tipo de carga por ID
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema: { type: integer }
+      responses:
+        '204':
+          description: Tipo de carga removido
+
+  /veiculo_tipo_carga:
+    post:
+      tags: [VeiculoTipoCarga]
+      summary: Associa veículo a tipo de carga (N para N)
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                veiculoId:
+                  type: integer
+                  example: 1
+                tipoCargaId:
+                  type: integer
+                  example: 2
+      responses:
+        '201':
+          description: Associação criada
+    get:
+      tags: [VeiculoTipoCarga]
+      summary: Lista todas as associações veículo-tipo de carga
+      responses:
+        '200':
+          description: Lista de associações
+
+  /veiculo_tipo_carga/{id}:
+    get:
+      tags: [VeiculoTipoCarga]
+      summary: Busca associação por ID
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema: { type: integer }
+      responses:
+        '200':
+          description: Associação encontrada
+        '404':
+          description: Associação não encontrada
+    delete:
+      tags: [VeiculoTipoCarga]
+      summary: Remove associação por ID
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema: { type: integer }
+      responses:
+        '204':
+          description: Associação removida
+
+  /frete:
+    post:
+      tags: [Frete]
+      summary: Cria um novo frete
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Frete'
+      responses:
+        '201':
+          description: Frete criado
+    get:
+      tags: [Frete]
+      summary: Lista todos os fretes
+      security:
+        - bearerAuth: []
+      responses:
+        '200':
+          description: Lista de fretes
+
+  /frete/{id}:
+    get:
+      tags: [Frete]
+      summary: Busca frete por ID
+      security:
+        - bearerAuth: []
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema: { type: integer }
+      responses:
+        '200':
+          description: Frete encontrado
+        '404':
+          description: Frete não encontrado
+    put:
+      tags: [Frete]
+      summary: Atualiza frete por ID
+      security:
+        - bearerAuth: []
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema: { type: integer }
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Frete'
+      responses:
+        '200':
+          description: Frete atualizado
+    delete:
+      tags: [Frete]
+      summary: Remove frete por ID
+      security:
+        - bearerAuth: []
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema: { type: integer }
+      responses:
+        '204':
+          description: Frete removido
+
+  /status:
+    post:
+      tags: [Status]
+      summary: Cria um novo status
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Status'
+      responses:
+        '201':
+          description: Status criado
+    get:
+      tags: [Status]
+      summary: Lista todos os status
+      responses:
+        '200':
+          description: Lista de status
+
+  /status/{id}:
+    get:
+      tags: [Status]
+      summary: Busca status por ID
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema: { type: integer }
+      responses:
+        '200':
+          description: Status encontrado
+        '404':
+          description: Status não encontrado
+    put:
+      tags: [Status]
+      summary: Atualiza status por ID
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema: { type: integer }
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Status'
+      responses:
+        '200':
+          description: Status atualizado
+    delete:
+      tags: [Status]
+      summary: Remove status por ID
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema: { type: integer }
+      responses:
+        '204':
+          description: Status removido
+
+  /carga:
+    post:
+      tags: [Carga]
+      summary: Cria uma nova carga
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Carga'
+      responses:
+        '201':
+          description: Carga criada
+    get:
+      tags: [Carga]
+      summary: Lista todas as cargas
+      responses:
+        '200':
+          description: Lista de cargas
+
+  /carga/{id}:
+    get:
+      tags: [Carga]
+      summary: Busca carga por ID
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema: { type: integer }
+      responses:
+        '200':
+          description: Carga encontrada
+        '404':
+          description: Carga não encontrada
+    put:
+      tags: [Carga]
+      summary: Atualiza carga por ID
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema: { type: integer }
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Carga'
+      responses:
+        '200':
+          description: Carga atualizada
+    delete:
+      tags: [Carga]
+      summary: Remove carga por ID
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema: { type: integer }
+      responses:
+        '204':
+          description: Carga removida
+
+  /imagem_usuario:
+    post:
+      tags: [ImagemUsuario]
+      summary: Faz upload de imagem de usuário
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              properties:
+                imagem:
+                  type: string
+                  format: binary
+      responses:
+        '201':
+          description: Imagem criada
+    get:
+      tags: [ImagemUsuario]
+      summary: Lista todas as imagens de usuário
+      security:
+        - bearerAuth: []
+      responses:
+        '200':
+          description: Lista de imagens
+
+  /imagem_usuario/{id}:
+    get:
+      tags: [ImagemUsuario]
+      summary: Busca imagem de usuário por ID
+      security:
+        - bearerAuth: []
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema: { type: integer }
+      responses:
+        '200':
+          description: Imagem encontrada
+        '404':
+          description: Imagem não encontrada
+    put:
+      tags: [ImagemUsuario]
+      summary: Atualiza imagem de usuário por ID
+      security:
+        - bearerAuth: []
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema: { type: integer }
+      requestBody:
+        required: true
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              properties:
+                imagem:
+                  type: string
+                  format: binary
+      responses:
+        '200':
+          description: Imagem atualizada
+    delete:
+      tags: [ImagemUsuario]
+      summary: Remove imagem de usuário por ID
+      security:
+        - bearerAuth: []
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema: { type: integer }
+      responses:
+        '204':
+          description: Imagem removida
+
+  /imagem_empresa:
+    post:
+      tags: [ImagemEmpresa]
+      summary: Faz upload de imagem de empresa
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              properties:
+                imagem:
+                  type: string
+                  format: binary
+      responses:
+        '201':
+          description: Imagem criada
+    get:
+      tags: [ImagemEmpresa]
+      summary: Lista todas as imagens de empresa
+      security:
+        - bearerAuth: []
+      responses:
+        '200':
+          description: Lista de imagens
+
+  /imagem_empresa/{id}:
+    get:
+      tags: [ImagemEmpresa]
+      summary: Busca imagem de empresa por ID
+      security:
+        - bearerAuth: []
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema: { type: integer }
+      responses:
+        '200':
+          description: Imagem encontrada
+        '404':
+          description: Imagem não encontrada
+    put:
+      tags: [ImagemEmpresa]
+      summary: Atualiza imagem de empresa por ID
+      security:
+        - bearerAuth: []
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema: { type: integer }
+      requestBody:
+        required: true
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              properties:
+                imagem:
+                  type: string
+                  format: binary
+      responses:
+        '200':
+          description: Imagem atualizada
+    delete:
+      tags: [ImagemEmpresa]
+      summary: Remove imagem de empresa por ID
+      security:
+        - bearerAuth: []
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema: { type: integer }
+      responses:
+        '204':
+          description: Imagem removida
+
+  /imagem_carga:
+    post:
+      tags: [ImagemCarga]
+      summary: Faz upload de imagem de carga
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              properties:
+                imagem:
+                  type: string
+                  format: binary
+      responses:
+        '201':
+          description: Imagem criada
+    get:
+      tags: [ImagemCarga]
+      summary: Lista todas as imagens de carga
+      security:
+        - bearerAuth: []
+      responses:
+        '200':
+          description: Lista de imagens
+
+  /imagem_carga/{id}:
+    get:
+      tags: [ImagemCarga]
+      summary: Busca imagem de carga por ID
+      security:
+        - bearerAuth: []
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema: { type: integer }
+      responses:
+        '200':
+          description: Imagem encontrada
+        '404':
+          description: Imagem não encontrada
+    put:
+      tags: [ImagemCarga]
+      summary: Atualiza imagem de carga por ID
+      security:
+        - bearerAuth: []
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema: { type: integer }
+      requestBody:
+        required: true
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              properties:
+                imagem:
+                  type: string
+                  format: binary
+      responses:
+        '200':
+          description: Imagem atualizada
+    delete:
+      tags: [ImagemCarga]
+      summary: Remove imagem de carga por ID
+      security:
+        - bearerAuth: []
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema: { type: integer }
+      responses:
+        '204':
+          description: Imagem removida
+
+  /imagem_caminhao:
+    post:
+      tags: [ImagemCaminhao]
+      summary: Faz upload de imagem de caminhão
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              properties:
+                imagem:
+                  type: string
+                  format: binary
+      responses:
+        '201':
+          description: Imagem criada
+    get:
+      tags: [ImagemCaminhao]
+      summary: Lista todas as imagens de caminhão
+      security:
+        - bearerAuth: []
+      responses:
+        '200':
+          description: Lista de imagens
+
+  /imagem_caminhao/{id}:
+    get:
+      tags: [ImagemCaminhao]
+      summary: Busca imagem de caminhão por ID
+      security:
+        - bearerAuth: []
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema: { type: integer }
+      responses:
+        '200':
+          description: Imagem encontrada
+        '404':
+          description: Imagem não encontrada
+    put:
+      tags: [ImagemCaminhao]
+      summary: Atualiza imagem de caminhão por ID
+      security:
+        - bearerAuth: []
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema: { type: integer }
+      requestBody:
+        required: true
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              properties:
+                imagem:
+                  type: string
+                  format: binary
+      responses:
+        '200':
+          description: Imagem atualizada
+    delete:
+      tags: [ImagemCaminhao]
+      summary: Remove imagem de caminhão por ID
+      security:
+        - bearerAuth: []
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema: { type: integer }
+      responses:
+        '204':
+          description: Imagem removida
+
+components:
+  schemas:
+    Usuario:
+      type: object
+      properties:
+        nome:
+          type: string
+        email:
+          type: string
+        senha:
+          type: string
+    Empresa:
+      type: object
+      properties:
+        nome:
+          type: string
+        cnpj:
+          type: string
+        endereco:
+          type: string
+    Caminhoneiro:
+      type: object
+      properties:
+        nome:
+          type: string
+        cpf:
+          type: string
+        telefone:
+          type: string
+    Veiculo:
+      type: object
+      properties:
+        placa:
+          type: string
+        modelo:
+          type: string
+        ano:
+          type: integer
+    TipoCarga:
+      type: object
+      properties:
+        descricao:
+          type: string
+    VeiculoTipoCarga:
+      type: object
+      properties:
+        veiculoId:
+          type: integer
+        tipoCargaId:
+          type: integer
+    Frete:
+      type: object
+      properties:
+        origem:
+          type: string
+        destino:
+          type: string
+        valor:
+          type: number
+    Status:
+      type: object
+      properties:
+        descricao:
+          type: string
+    Carga:
+      type: object
+      properties:
+        descricao:
+          type: string
+        peso:
+          type: number
+    ImagemUsuario:
+      type: object
+      properties:
+        imagem:
+          type: string
+          format: binary
+    ImagemEmpresa:
+      type: object
+      properties:
+        imagem:
+          type: string
+          format: binary
+    ImagemCarga:
+      type: object
+      properties:
+        imagem:
+          type: string
+          format: binary
+    ImagemCaminhao:
+      type: object
+      properties:
+        imagem:
+          type: string
+          format: binary
+
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+
+security:
+  - bearerAuth: []

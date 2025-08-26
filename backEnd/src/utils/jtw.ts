@@ -2,12 +2,12 @@ import dotenv from 'dotenv';
 dotenv.config();
 
 import jwt from "jsonwebtoken";
-import UserModel from "../models/UserModel";
+import Usuario from "../models/usuario.model";
 
 const JWT_SECRET = process.env.JWT_SECRET!
 const JWT_EXPIRES_IN = "7d"
 
-export const generateToken = (user: UserModel): string => {
+export const generateToken = (user: Usuario): string => {
   return jwt.sign({ user }, JWT_SECRET, { expiresIn: JWT_EXPIRES_IN });
 };
 

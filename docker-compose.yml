@@ -1,3 +1,4 @@
+version: '3.8'
 services:
   database:
     image: mysql:8.0
@@ -13,12 +14,14 @@ services:
       interval: 10s
       timeout: 5s
       retries: 5
+    ports:
+      - 3306:3306
 
   backend:
-    build: ./backEnd  
+    build: ./backEnd
     container_name: backend
     env_file:
-     - ./backend/.env
+      - ./backEnd/.env
     ports:
       - 3000:3000
     depends_on:
@@ -26,20 +29,9 @@ services:
     networks:
       - app-network
 
-  nginx:
-    build: ./nginx
-    container_name: nginx
-    depends_on:
-      - backend
-    ports:
-      - 80:80
-    networks:
-      - app-network
-
 volumes:
   db_data:
-    driver: local
 
 networks:
-  app-network: 
-    driver: bridge 
+  app-network:
+    driver: bridge

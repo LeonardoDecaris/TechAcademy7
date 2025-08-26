@@ -1,13 +1,12 @@
 import { Router } from 'express';
-import EmpresaController from '../controllers/empresa.controller';
+import { createEmpresa, getAllEmpresas, getEmpresaById, updateEmpresa, deleteEmpresa } from '../controllers/empresa.controller';
+import { authMiddleware } from '../middleware/authMiddleware';
 
 const router = Router();
-const empresaController = new EmpresaController();
-
-router.post('/', empresaController.create);
-router.get('/', empresaController.findAll);
-router.get('/:id', empresaController.findOne);
-router.put('/:id', empresaController.update);
-router.delete('/:id', empresaController.delete);
+router.post('/empresa', authMiddleware, createEmpresa);
+router.get('/empresa', authMiddleware, getAllEmpresas);
+router.get('/empresa/:id', authMiddleware, getEmpresaById);
+router.put('/empresa/:id', authMiddleware, updateEmpresa);
+router.delete('/empresa/:id', authMiddleware, deleteEmpresa);
 
 export default router;
