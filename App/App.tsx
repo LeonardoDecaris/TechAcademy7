@@ -1,5 +1,5 @@
 import React from "react";
-import "./src/css/index.css";
+import "./src/css/global.css"
 import Routes from "./src/navigation/Routes";
 
 import { AuthProvider } from "./src/context/AuthContext";
