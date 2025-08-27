@@ -4,6 +4,7 @@ import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import { NavigationContainer } from "@react-navigation/native";
 
 import PrivateRoutes from "./PrivateRoutes";
+import MainTabs from "./MainTabs";
 
 //  IMPORTS DE COMPONENTS PUBLICOS
 import EsqueciSenha from "../screens/public/EsqueciSenha";
@@ -18,9 +19,7 @@ import DetalhesFrete from "../screens/private/DetalhesFrete";
 import EditarPerfil from "../screens/private/EditarPerfil";
 import EdtarVeiculo from "../screens/private/EdtarVeiculo";
 import MeuVeiculo from "../screens/private/MeuVeiculo";
-import Fretes from "../screens/private/Fretes";
-import Perfil from "../screens/private/Perfil";
-import Home from "../screens/private/Home";
+import { StatusBar } from "react-native";
 
 
 export type RootStackParamList = {
@@ -38,6 +37,7 @@ export type RootStackParamList = {
   Fretes: undefined;
   Perfil: undefined;
   Home: undefined;
+  MainTabs: undefined;
 };
 
 const Stack = createNativeStackNavigator<RootStackParamList>();
@@ -45,50 +45,48 @@ const Stack = createNativeStackNavigator<RootStackParamList>();
 function Routes() {
   return (
     <NavigationContainer>
-      <Stack.Navigator initialRouteName="Start" screenOptions={{ headerShown: false }}>
-
-				{/* ROTAS PRIVADAS | LIBERADAS APARTIR DO LOGIN DO USUARIO */}
-        <Stack.Screen name="Home" options={{ title: "Cardápio Digital" }}>
-          {() => (<PrivateRoutes><Home/></PrivateRoutes>)}
+      <StatusBar barStyle="dark-content" backgroundColor="#ffffff" />
+      <Stack.Navigator initialRouteName="MainTabs" screenOptions={{ headerBackVisible: false }}>
+        
+        {/* Tabs principais: Home, Fretes, Perfil */}
+        <Stack.Screen name="MainTabs" options={{ headerShown: false }}>
+          {() => (
+            // <PrivateRoutes>
+              <MainTabs />
+            // </PrivateRoutes>
+          )}
         </Stack.Screen>
 
-        <Stack.Screen name="CadastroVeiculo" options={{ title: "Cardápio Digital" }}>
+        {/* ROTAS PRIVADAS | LIBERADAS APARTIR DO LOGIN DO USUARIO */}
+        <Stack.Screen name="CadastroVeiculo">
           {() => (<PrivateRoutes><CadastroVeiculo/></PrivateRoutes>)}
         </Stack.Screen>
 
-        <Stack.Screen name="DetalhesVeiculo" options={{ title: "Cardápio Digital" }}>
+        <Stack.Screen name="DetalhesVeiculo">
           {() => (<PrivateRoutes><DetalhesVeiculo/></PrivateRoutes>)}
         </Stack.Screen>
 
-        <Stack.Screen name="DetalhesFrete" options={{ title: "Cardápio Digital" }}>
+        <Stack.Screen name="DetalhesFrete">
           {() => (<PrivateRoutes><DetalhesFrete/></PrivateRoutes>)}
         </Stack.Screen>
 
-        <Stack.Screen name="EditarPerfil" options={{ title: "Cardápio Digital" }}>
+        <Stack.Screen name="EditarPerfil">
           {() => (<PrivateRoutes><EditarPerfil/></PrivateRoutes>)}
         </Stack.Screen>
 
-        <Stack.Screen name="EdtarVeiculo" options={{ title: "Cardápio Digital" }}>
+        <Stack.Screen name="EdtarVeiculo">
           {() => (<PrivateRoutes><EdtarVeiculo/></PrivateRoutes>)}
         </Stack.Screen>
 
-        <Stack.Screen name="Fretes" options={{ title: "Cardápio Digital" }}>
-          {() => (<PrivateRoutes><Fretes/></PrivateRoutes>)}
-        </Stack.Screen>
-
-        <Stack.Screen name="MeuVeiculo" options={{ title: "Cardápio Digital" }}>
+        <Stack.Screen name="MeuVeiculo">
           {() => (<PrivateRoutes><MeuVeiculo/></PrivateRoutes>)}
         </Stack.Screen>
 
-        <Stack.Screen name="Perfil" options={{ title: "Cardápio Digital" }}>
-          {() => (<PrivateRoutes><Perfil/></PrivateRoutes>)}
-        </Stack.Screen>
-
-				{/* ROTAS PÚBLICAS | DISPONÍVEIS SEM LOGIN */}
-        <Stack.Screen name="EsqueciSenha" component={EsqueciSenha} options={{title: "area de esqueci senha"}} /> 
-        <Stack.Screen name="Start" component={Start} options={{title: "tela de inicio para todos"}} />
-        <Stack.Screen name="Cadastro" component={Cadastro} options={{title: "area de cadastro"}}/> 
-        <Stack.Screen name="Login" component={Login} options={{title: "area de login"}}/> 
+        {/* ROTAS PÚBLICAS | DISPONÍVEIS SEM LOGIN */}
+        <Stack.Screen name="EsqueciSenha" component={EsqueciSenha} options={{ headerBackVisible: false, headerShown: false,  }} />
+        <Stack.Screen name="Start" component={Start} options={{ headerBackVisible: false, headerShown: false }} />
+        <Stack.Screen name="Cadastro" component={Cadastro} options={{ headerBackVisible: false, headerShown: false }} />
+        <Stack.Screen name="Login" component={Login} options={{ headerBackVisible: false, headerShown: false }} />
 
       </Stack.Navigator>
     </NavigationContainer>

@@ -2,7 +2,22 @@ import { useState } from "react";
 import api from "../../service/ApiAxios";
 import { useForm } from "react-hook-form";
 
-import { validarNome, validarCPF, validarEmail, validarPassword, validacaoComfirmarPassword } from "../../utils/Validacao";
+import { 
+	validarNome,
+	validarCPF,
+	validarEmail,
+	validarPassword,
+	validacaoComfirmarPassword
+} from "../../utils/Validacao";
+
+
+import { useNavigation } from '@react-navigation/native'
+import { RootStackParamList } from '@/src/navigation/Routes'
+import { NativeStackNavigationProp } from '@react-navigation/native-stack'
+import Cadastro from "@/src/screens/public/Cadastro";
+
+type NavigationProp = NativeStackNavigationProp<RootStackParamList>
+
 
 export type FormValues = {
 	nome: string;
@@ -14,10 +29,16 @@ export type FormValues = {
 };
 
 function useHookRegister() {
+	const navigation = useNavigation<NavigationProp>()
 
 	const { control, handleSubmit, watch, formState: { errors }} = useForm<FormValues>({ mode: "onSubmit" });
 	const [errorMessage, setErrorMessage] = useState<string | null>(null);
 	const password = watch("password");
+
+	const handleNavigation = {
+		login: () => navigation.navigate('Login'),
+	}
+
 
 	const handleCadastro = async (data: FormValues) => {
 		try {
@@ -28,6 +49,8 @@ function useHookRegister() {
 				senha: data.password,
 				dataNascimento: data.dataNascimento,
 			});
+
+			handleNavigation.login();
 		} catch (error) {
 			setErrorMessage("Erro ao se registrar");
 			console.log(error);

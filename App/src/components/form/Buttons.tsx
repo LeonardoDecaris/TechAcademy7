@@ -24,7 +24,6 @@ const ButtonPadrao = ({ title, onPress, typeButton, classname}: ButtonProps) => 
     )
 }
 
-
 const ButtonUpload =  ({ title, onPress, classname}: ButtonProps) => {
 
 	const buttonStyles = "py-2 rounded-lg border border-black";
