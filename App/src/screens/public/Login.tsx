@@ -1,6 +1,7 @@
 import React from 'react'
+import AlertError from '@/src/components/modal/AlertError'
 import InputAuth from '@/src/components/form/InputAuth'
-import { Text, TouchableOpacity, View } from 'react-native'
+import { Text, TouchableOpacity, View, Alert, Modal, Button } from 'react-native'
 import { ButtonPadrao } from '@/src/components/form/Buttons'
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view'
 import { useNavigation } from '@react-navigation/native'
@@ -11,68 +12,72 @@ import useHookLogin from '@/src/hooks/post/loginUsuario'
 type NavigationProp = NativeStackNavigationProp<RootStackParamList>
 
 function Login() {
-  const navigation = useNavigation<NavigationProp>()
-  const { control, handleSubmit, handleLogin, rules, errorMessage } = useHookLogin()
+	const navigation = useNavigation<NavigationProp>()
+	const { control, handleSubmit, handleLogin, rules, errorMessage, setErrorMessage } = useHookLogin()
 
-  const handleNavigation = {
-    Cadastro: () => navigation.navigate('Cadastro'),
-    EsqueciSenha: () => navigation.navigate('EsqueciSenha'),
-  }
+	const handleNavigation = {
+		Cadastro: () => navigation.navigate('Cadastro'),
+		EsqueciSenha: () => navigation.navigate('EsqueciSenha'),
+	}
 
+	return (
+		<>
+			<AlertError
+				visible={!!errorMessage}
+				message={errorMessage}
+				onClose={() => setErrorMessage(null)}
+			/>
+			
+			<KeyboardAwareScrollView
+				contentContainerStyle={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}
+				className='px-5 bg-white'
+				enableOnAndroid={true}
+			>
+				<View className='mb-10 '>
+					<Text className='text-[48px] text-black text-center font-bold'>Login</Text>
+					<Text className='text-center text-sm text-black/80 font-medium'>É hora de começar</Text>
+				</View>
 
-  return (
-    <KeyboardAwareScrollView
-      contentContainerStyle={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}
-      className='px-5 bg-white'
-      enableOnAndroid={true}
-    >
-      <View className='mb-10 '>
-        <Text className='text-[48px] text-black text-center font-bold'>Login</Text>
-        <Text className='text-center text-sm text-black/80 font-medium'>É hora de começar</Text>
-      </View>
+				<View className='w-full flex-col gap-2.5'>
+					<InputAuth
+						control={control}
+						name="email"
+						id='email'
+						placeholder='Email'
+						label='Email'
+						rules={rules.email}
+					/>
+					<InputAuth
+						control={control}
+						name="password"
+						id='password'
+						placeholder='Senha'
+						label='Senha'
+						secureTextEntry={true}
+						rules={rules.password}
+					/>
+				</View>
 
-      <View className='w-full flex-col gap-2.5'>
-        <InputAuth
-          control={control}
-          name="email"
-          id='email'
-          placeholder='Email'
-          label='Email'
-          rules={rules.email}
-        />
-        <InputAuth
-          control={control}
-          name="password"
-          id='password'
-          placeholder='Senha'
-          label='Senha'
-          secureTextEntry={true}
-          rules={rules.password}
-        />
-        {errorMessage && (
-          <Text className='text-red-500 text-xs pl-2.5'>{errorMessage}</Text>
-        )}
-      </View>
+				<ButtonPadrao
+					title='Entrar'
+					onPress={handleSubmit(handleLogin)}
+					typeButton='normal'
+					classname='w-full my-[20px]'
+				/>
 
-      <ButtonPadrao
-        title='Entrar'
-        onPress={handleSubmit(handleLogin)}
-        typeButton='normal'
-        classname='w-full my-[20px]'
-      />
+				<View className='w-full flex-row justify-between'>
+					<TouchableOpacity onPress={handleNavigation.Cadastro}>
+						<Text className='font-medium'>Cadastre-se</Text>
+					</TouchableOpacity>
 
-      <View className='w-full flex-row justify-between'>
-        <TouchableOpacity onPress={handleNavigation.Cadastro}>
-          <Text className='font-medium'>Cadastre-se</Text>
-        </TouchableOpacity>
+					<TouchableOpacity onPress={handleNavigation.EsqueciSenha}>
+						<Text className='font-medium'>Esqueceu a senha?</Text>
+					</TouchableOpacity>
+				</View>
 
-        <TouchableOpacity onPress={handleNavigation.EsqueciSenha}>
-          <Text className='font-medium'>Esqueceu a senha?</Text>
-        </TouchableOpacity>
-      </View>
-
-    </KeyboardAwareScrollView>
-  )
+			</KeyboardAwareScrollView>
+		</>
+	)
 }
-  
+
 export default Login;
