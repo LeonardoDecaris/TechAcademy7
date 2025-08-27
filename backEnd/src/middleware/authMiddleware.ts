@@ -33,12 +33,11 @@ export const authMiddleware = (
 
   try {
     const decoded = verifyToken(token);
-    if (!decoded.user || !decoded.user.admin) {
+    if (!decoded.user) {
       return res.status(403).json({
-        message: "Acesso negado. Permissão de administrador necessária"
+        message: "Acesso negado. Usuário não autenticado."
       });
     }
-  
     req.user = decoded.user;
     next();
   } catch (error) {

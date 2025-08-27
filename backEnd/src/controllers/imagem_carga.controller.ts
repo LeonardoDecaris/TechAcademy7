@@ -1,4 +1,6 @@
 import { Request, Response } from 'express';
+import fs from 'fs';
+import path from 'path';
 import ImagemCarga from '../models/imagem_carga.model';
 
 export const createImagemCarga = async (req: Request, res: Response) => {
@@ -49,7 +51,21 @@ export const updateImagemCarga = async (req: Request, res: Response) => {
         if (!imagem) {
             return res.status(404).json({ message: 'ImagemCarga not found' });
         }
-        const imgUrl = req.file ? `/uploads/${req.file.filename}` : imagem.imgUrl;
+
+        let imgUrl = imagem.imgUrl;
+
+        // Se chegou uma nova imagem, deleta a antiga do disco
+        if (req.file) {
+            // Remove a barra inicial para evitar problemas de path
+            if (imagem.imgUrl) {
+                const oldImagePath = path.join(__dirname, '..', '..', imagem.imgUrl.replace(/^\//, ''));
+                if (fs.existsSync(oldImagePath)) {
+                    fs.unlinkSync(oldImagePath);
+                }
+            }
+            imgUrl = `/uploads/${req.file.filename}`;
+        }
+
         await imagem.update({ imgUrl });
         return res.status(200).json(imagem);
     } catch (error) {
@@ -66,6 +82,15 @@ export const deleteImagemCarga = async (req: Request, res: Response) => {
         if (!imagem) {
             return res.status(404).json({ message: 'ImagemCarga not found' });
         }
+
+        // Deleta o arquivo do disco se existir
+        if (imagem.imgUrl) {
+            const imagePath = path.join(__dirname, '..', '..', imagem.imgUrl.replace(/^\//, ''));
+            if (fs.existsSync(imagePath)) {
+                fs.unlinkSync(imagePath);
+            }
+        }
+
         await imagem.destroy();
         return res.status(204).send();
     } catch (error) {

@@ -1,6 +1,6 @@
 import { Model, DataTypes } from 'sequelize';
 import sequelize from '../config/database';
-import ImagemVeiculo from './imagem.caminhao';
+import ImagemVeiculo from './imagem.caminhao.model';
 
 class Veiculo extends Model {
     id_veiculo: number | undefined;
