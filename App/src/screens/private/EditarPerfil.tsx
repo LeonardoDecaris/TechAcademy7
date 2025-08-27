@@ -18,8 +18,6 @@ function EditarPerfil() {
   const navigation = useNavigation<NavigationProp>();
   const { control, handleSubmit, rules, handleCadastro } = useHookRegister();
 
-  const styleTitle = "text-[20px] text-black text-center font-bold";
-
   return (
     <SafeAreaView className="flex-1 bg-white px-5">
       <KeyboardAwareScrollView
@@ -30,8 +28,6 @@ function EditarPerfil() {
         }}
         enableOnAndroid={true}
       >
-        <Text className={styleTitle}>Meus Dados</Text>
-
         <View className="w-full flex-col gap-2.5">
           <InputAuth
             id="nome"
@@ -61,6 +57,8 @@ function EditarPerfil() {
           <InputAuthData
             id="dataNascimento"
             name="dataNascimento"
+            label="Data de Nascimento"
+            placeholder="Data de Nascimento"
             control={control}
             rules={rules.dataNascimento}
           />
