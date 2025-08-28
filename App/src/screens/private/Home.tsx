@@ -6,9 +6,12 @@ import { TouchableOpacity, SafeAreaView, Text, View } from 'react-native';
 import Constants from 'expo-constants';
 import { Ionicons } from '@expo/vector-icons';
 import { useAuth } from '@/src/context/AuthContext';
+import GetdadosUsuario from '@/src/hooks/get/GetDadosUsuario';
+import AcessoRapido from '@/src/components/base/AcessoRapido';
+import CardMeuContrato from '@/src/components/cards/CardMeuContrato';
+
 import { useNavigation } from '@react-navigation/native';
 import { RootStackParamList } from '@/src/navigation/Routes';
-import GetdadosUsuario from '@/src/hooks/get/GetDadosUsuario';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 
 type NavigationProp = NativeStackNavigationProp<RootStackParamList>
@@ -21,7 +24,10 @@ function Home() {
     const logoStyle = "text-[20px] font-bold text-white"
 
     const navigation = useNavigation<NavigationProp>()
-    const handleNavigation = { perfil: () => navigation.navigate('Perfil') }
+    const handleNavigation = {
+         perfil: () => navigation.navigate('Perfil'),
+         detalheFrete: () => navigation.navigate('DetalhesFrete')
+    }
     
     const { logout } = useAuth();
     const { DadosUsuario, getUserById, iniciaisUsuario, nomeExibicao } = GetdadosUsuario();
@@ -63,6 +69,20 @@ function Home() {
                     </TouchableOpacity>
 
                 </View>
+                
+                <CardMeuContrato
+                   nome="Reboque Caçamba"
+                   tipo="Cascalho"
+                   peso="14"
+                   saida="São Paulo"
+                   destino="Rio de Janeiro"
+                   logoEmpresa=""
+                   imagemCarga=""
+                   valor="1.500,00"
+                />
+
+                <AcessoRapido onPress={handleNavigation.detalheFrete} title='Detalhes do frete' />
+
             </ScrollView>
         </SafeAreaView>
     )

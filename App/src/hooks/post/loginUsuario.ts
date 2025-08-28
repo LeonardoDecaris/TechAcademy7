@@ -3,9 +3,9 @@ import api from "../../service/ApiAxios"
 
 import { useForm } from "react-hook-form";
 import { useAuth } from "@/src/context/AuthContext";
+import { validarEmail } from "../../utils/Validacao";
 import { useNavigation } from "@react-navigation/core";
 import { RootStackParamList } from "@/src/navigation/Routes";
-import { validarEmail, validarPassword } from "../../utils/Validacao";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 
 type NavigationProp = NativeStackNavigationProp<RootStackParamList>

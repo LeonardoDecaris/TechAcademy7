@@ -65,8 +65,9 @@ function Routes() {
         <Stack.Screen name="DetalhesVeiculo">
           {() => (<PrivateRoutes><DetalhesVeiculo/></PrivateRoutes>)}
         </Stack.Screen>
-
-        <Stack.Screen name="DetalhesFrete">
+        <Stack.Screen
+          name="DetalhesFrete"
+          options={{ headerTitle: "Detalhes do Frete", headerTitleAlign: "center", headerBackVisible: true }}>
           {() => (<PrivateRoutes><DetalhesFrete/></PrivateRoutes>)}
         </Stack.Screen>
 

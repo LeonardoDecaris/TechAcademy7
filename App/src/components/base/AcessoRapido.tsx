@@ -8,11 +8,11 @@ interface Props {
 const AcessoRapido = ({ title, onPress }: Props) => {
 
     const containerStyle = 'flex-row justify-between items-center';
-    const textStyle = 'text-base font-bold text-[#322F2F]';
-    const buttonStyle = 'bg-[#322F2F] px-1 py-3 rounded-full';
+    const textStyle = ' font-bold text-[#322F2F]';
+    const buttonStyle = 'bg-[#322F2F] p-3 rounded-[8px]';
 
     return (
-        <View className={containerStyle} style={{ flex: 1 }}>
+        <View className={containerStyle} style={{ flex: 1, paddingHorizontal: 10, paddingVertical: 24 }}>
             <Text className={textStyle}>
                 {title}
             </Text>
