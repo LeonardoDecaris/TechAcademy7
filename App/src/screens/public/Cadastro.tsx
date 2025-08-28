@@ -1,4 +1,4 @@
-import React from 'react'
+import React from "react";
 
 import { Text, View } from 'react-native'
 import InputAuth from '@/src/components/form/InputAuth'
@@ -12,18 +12,18 @@ import useHookRegister from '@/src/hooks/post/cadastroUsuario'
 import { NativeStackNavigationProp } from '@react-navigation/native-stack'
 import AlertNotificacao from '@/src/components/modal/AlertrNotificacao'
 
-type NavigationProp = NativeStackNavigationProp<RootStackParamList>
+type NavigationProp = NativeStackNavigationProp<RootStackParamList>;
 
 function Cadastro() {
 	const navigation = useNavigation<NavigationProp>()
 	const { control, handleSubmit, rules, handleCadastro, Notificacao, Status, successVisible, onSuccessDismiss } = useHookRegister()
 
-	const styleSubTitle = 'text-center text-sm text-black/80 font-medium';
-	const styleTitle = 'text-[48px] text-black text-center font-bold';
+  const styleSubTitle = "text-center text-sm text-black/80 font-medium";
+  const styleTitle = "text-[48px] text-black text-center font-bold";
 
-	const handleNavigation = {
-		login: () => navigation.navigate('Login')
-	}
+  const handleNavigation = {
+    login: () => navigation.navigate("Login"),
+  };
 
 	return (
 		<KeyboardAwareScrollView contentContainerStyle={{ flex: 1, justifyContent: 'center', alignItems: 'center', paddingHorizontal: 20, backgroundColor: 'white' }} >
@@ -114,4 +114,3 @@ function Cadastro() {
 }
 
 export default Cadastro;
-

@@ -17,7 +17,7 @@ import CadastroVeiculo from "../screens/private/CadastroVeiculo";
 import DetalhesVeiculo from "../screens/private/DestalhesEnvio";
 import DetalhesFrete from "../screens/private/DetalhesFrete";
 import EditarPerfil from "../screens/private/EditarPerfil";
-import EdtarVeiculo from "../screens/private/EdtarVeiculo";
+import EdtarVeiculo from "../screens/private/EditarVeiculo";
 import MeuVeiculo from "../screens/private/MeuVeiculo";
 import { StatusBar } from "react-native";
 
