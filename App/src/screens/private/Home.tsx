@@ -1,28 +1,34 @@
-import React, { useMemo } from 'react';
+import React, { useEffect } from 'react';
 
-import { ScrollView } from 'react-native';
-import { TouchableOpacity, SafeAreaView, Text, View  } from 'react-native';
+import { Image, ScrollView } from 'react-native';
+import { TouchableOpacity, SafeAreaView, Text, View } from 'react-native';
 
-import Constants from 'expo-constants'; 
+import Constants from 'expo-constants';
 import { Ionicons } from '@expo/vector-icons';
 import { useAuth } from '@/src/context/AuthContext';
 import { useNavigation } from '@react-navigation/native';
 import { RootStackParamList } from '@/src/navigation/Routes';
-import CardMeuContrato from '@/src/components/cards/CardMeuContrato';
+import GetdadosUsuario from '@/src/hooks/get/GetDadosUsuario';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
-import { getDisplayName, getInitials } from '@/src/hooks/get/GetDadosHome';
 
 type NavigationProp = NativeStackNavigationProp<RootStackParamList>
 
-const statusBarHeight = Constants.statusBarHeight; 
+const statusBarHeight = Constants.statusBarHeight;
 
 function Home() {
-    const { userName, logout } = useAuth();
+
+    const BlocoLogoStyle = "h-[50px] w-[50px] rounded-full bg-gray-300 items-center justify-center"
+    const logoStyle = "text-[20px] font-bold text-white"
+
     const navigation = useNavigation<NavigationProp>()
     const handleNavigation = { perfil: () => navigation.navigate('Perfil') }
+    
+    const { logout } = useAuth();
+    const { DadosUsuario, getUserById, iniciaisUsuario, nomeExibicao } = GetdadosUsuario();
 
-    const displayName = useMemo(() => getDisplayName(userName ?? undefined), [userName]);
-    const initials = useMemo(() => getInitials(userName ?? undefined), [userName]);
+    useEffect(() => {
+        getUserById();
+    }, [getUserById]);
 
     const handleLogout = async () => {
         try {
@@ -33,40 +39,30 @@ function Home() {
         }
     };
 
+    
     return (
         <SafeAreaView style={{ flex: 1, backgroundColor: '#FFFFFF' }}>
-            <ScrollView contentContainerStyle={{ paddingHorizontal: 20, marginTop: statusBarHeight + 10}}>
+            <ScrollView contentContainerStyle={{ paddingHorizontal: 20, marginTop: statusBarHeight + 10 }}>
                 <View className='flex-row items-center justify-between pb-10'>
-
                     <View className='flex-row items-center gap-2.5'>
-                       
-                        <TouchableOpacity onPress={handleNavigation.perfil} className='h-[50px] w-[50px] rounded-full bg-gray-300 items-center justify-center'>
-                            <Text className='text-[16px] font-bold'>
-                                {initials}
-                            </Text>
+
+                        <TouchableOpacity onPress={handleNavigation.perfil} className={BlocoLogoStyle}>
+                            {DadosUsuario?.imagemUsuario_id?.url ? (
+                                <Image source={{ uri: DadosUsuario.imagemUsuario_id.url }} className='w-[50px] h-[50px] rounded-full' />
+                            ) : (
+                                <Text className={logoStyle}>{iniciaisUsuario}</Text>
+                            )}
                         </TouchableOpacity>
 
-                        <Text className='text-[20px] font-bold'>
-                          Hello, {displayName}!
-                        </Text>
+                        <Text className='text-[20px] font-bold'>Hello, {nomeExibicao ?? 'Usuário'}!</Text>
+
                     </View>
 
                     <TouchableOpacity onPress={handleLogout} accessibilityLabel="Logout">
-                        <Ionicons name="log-out-outline" size={24} color="black" />
+                        <Ionicons name="log-out-outline" size={30} color="black" />
                     </TouchableOpacity>
 
                 </View>
-
-                <CardMeuContrato
-                    nome="Reboque Caçamba"
-                    tipo="Cascalho"
-                    peso="14t"
-                    saida="Campo Mourão PR"
-                    destino="Rio de Janeiro"
-                    logoEmpresa="https://example.com/logo.png"
-                    imagemCarga="https://example.com/carga.png"
-                    valor="4000"
-                />
             </ScrollView>
         </SafeAreaView>
     )
