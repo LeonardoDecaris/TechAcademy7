@@ -38,7 +38,7 @@ function Cadastro() {
 					   <InputAuth
 						   id='nome'
 						   name="nome"
-						   label='Nome'
+						   label='Nome completo'
 						   placeholder='Nome completo'
 						   control={control}
 						   rules={rules.nome}
