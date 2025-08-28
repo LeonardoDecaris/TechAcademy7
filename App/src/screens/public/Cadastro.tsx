@@ -99,7 +99,7 @@ function Cadastro() {
 					visible={successVisible}
 					status={Status}
 					messagem={Notificacao}
-					duration={1000}
+					duration={1500}
 					onDismiss={onSuccessDismiss}
 				/>
 

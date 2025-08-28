@@ -40,19 +40,19 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     loadAuthData();
   }, []);
 
-  const login = async (token: string) => {
-    await SecureStore.setItemAsync("authToken", token);
+  const login = (token: string) => {
+    SecureStore.setItemAsync("authToken", token);
 
     const userData = decodeToken(token);
     if (userData) {
-      await SecureStore.setItemAsync("userId", userData.id || "");
-      await SecureStore.setItemAsync("userName", userData.nome || "");
-      setUserId(userData.id || null);
+      SecureStore.setItemAsync("userId", userData.id_usuario || "");
+      SecureStore.setItemAsync("userName", userData.nome || "");
+      setUserId(userData.id_usuario || null);
       setUserName(userData.nome || null);
     }
     setToken(token);
   };
-
+  
   const logout = async () => {
     await SecureStore.deleteItemAsync("authToken");
     await SecureStore.deleteItemAsync("userId");

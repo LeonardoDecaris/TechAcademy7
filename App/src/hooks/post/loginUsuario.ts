@@ -25,17 +25,32 @@ function useHookLogin() {
 	const [successVisible, setSuccessVisible] = useState(false);
 	const [Notificacao, setNotificacao] = useState<string>('');
 	const [Status, setStatus] = useState<boolean>(false);
-	
+
+	const [lockUntil, setLockUntil] = useState<number | null>(null);
+	const [failedAttempts, setFailedAttempts] = useState(0);
+
 	const handleLogin = async (data: FormValuesLogin) => {
+		
+		if (lockUntil && Date.now() < lockUntil) {
+			const remainingMs = lockUntil - Date.now();
+			const seconds = Math.ceil(remainingMs / 1000);
+			setStatus(false);
+			setNotificacao(`Muitas tentativas de login. Tente novamente em ${seconds} segundos.`);
+			setSuccessVisible(true);
+			return;
+		}
+
 		try {
 			const response = await api.post("login", {
 				email: data.email,
 				password: data.password,
 			});
 
-
 			const { token } = response.data;
 			login(token);
+
+			setFailedAttempts(0);
+			setLockUntil(null);
 
 			setStatus(true);
 			setNotificacao("Login realizado com sucesso!");
@@ -43,8 +58,19 @@ function useHookLogin() {
 			
 		} catch (error) {
 			console.log(error);
+
+			const attempts = failedAttempts + 1;
+			setFailedAttempts(attempts);
+
 			setStatus(false);
-			setNotificacao("Erro: Email ou senha inválidos.");
+
+			if (attempts >= 5) {
+				const until = Date.now() + 1 * 60 * 1000; 
+				setLockUntil(until);
+				setNotificacao("Muitas tentativas de login. Tente novamente em 1 minuto.");
+			} else {
+				setNotificacao("Erro: Email ou senha inválidos.");
+			}
 			setSuccessVisible(true);
 		}
 	};
