@@ -1,21 +1,22 @@
 import React from 'react'
 
-import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view'
-import { ButtonPadrao } from '@/src/components/form/Buttons'
 import { Text, View } from 'react-native'
 import InputAuth from '@/src/components/form/InputAuth'
+import { ButtonPadrao } from '@/src/components/form/Buttons'
+import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view'
 
-import { NativeStackNavigationProp } from '@react-navigation/native-stack'
-import useHookRegister from '@/src/hooks/post/cadastroUsuario'
-import { RootStackParamList } from '@/src/navigation/Routes'
-import { useNavigation } from '@react-navigation/native'
 import { TouchableOpacity } from 'react-native'
+import { useNavigation } from '@react-navigation/native'
+import { RootStackParamList } from '@/src/navigation/Routes'
+import useHookRegister from '@/src/hooks/post/cadastroUsuario'
+import { NativeStackNavigationProp } from '@react-navigation/native-stack'
+import AlertNotificacao from '@/src/components/modal/AlertrNotificacao'
 
 type NavigationProp = NativeStackNavigationProp<RootStackParamList>
 
 function Cadastro() {
 	const navigation = useNavigation<NavigationProp>()
-	const { control, handleSubmit, rules, handleCadastro} = useHookRegister()
+	const { control, handleSubmit, rules, handleCadastro, Notificacao, Status, successVisible, onSuccessDismiss } = useHookRegister()
 
 	const styleSubTitle = 'text-center text-sm text-black/80 font-medium';
 	const styleTitle = 'text-[48px] text-black text-center font-bold';
@@ -93,6 +94,13 @@ function Cadastro() {
 					typeButton='normal'
 					classname='w-full my-[20px]'
 					onPress={handleSubmit(handleCadastro)}
+				/>
+				<AlertNotificacao
+					visible={successVisible}
+					status={Status}
+					messagem={Notificacao}
+					duration={1000}
+					onDismiss={onSuccessDismiss}
 				/>
 
 				<View className='w-full flex-row justify-end'>
