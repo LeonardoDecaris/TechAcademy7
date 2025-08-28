@@ -3,7 +3,7 @@ import { Text, View } from "react-native";
 
 function Fretes() {
   return (
-    <View>
+    <View className='flex-1 items-center justify-center'>
       <Text>Frete</Text>
     </View>
   )

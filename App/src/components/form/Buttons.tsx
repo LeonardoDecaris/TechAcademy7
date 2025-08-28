@@ -7,7 +7,7 @@ interface ButtonProps {
 	classname?: string;
 }
 
-const ButtonPadrao = ({ title, onPress, typeButton, classname}: ButtonProps) => {
+const ButtonPadrao = ({ title, onPress, typeButton, classname, }: ButtonProps) => {
 
 	const buttonStyles = {
 		normal: 'bg-[#322F2F]',
@@ -23,7 +23,6 @@ const ButtonPadrao = ({ title, onPress, typeButton, classname}: ButtonProps) => 
       	</TouchableOpacity>
     )
 }
-
 
 const ButtonUpload =  ({ title, onPress, classname}: ButtonProps) => {
 
