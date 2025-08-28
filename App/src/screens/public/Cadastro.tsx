@@ -2,11 +2,10 @@ import React from 'react'
 
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view'
 import { ButtonPadrao } from '@/src/components/form/Buttons'
-import { SafeAreaView, Text, View } from 'react-native'
+import { Text, View } from 'react-native'
 import InputAuth from '@/src/components/form/InputAuth'
 
 import { NativeStackNavigationProp } from '@react-navigation/native-stack'
-import InputAuthData from '@/src/components/form/InputAuthData'
 import useHookRegister from '@/src/hooks/post/cadastroUsuario'
 import { RootStackParamList } from '@/src/navigation/Routes'
 import { useNavigation } from '@react-navigation/native'
@@ -26,22 +25,21 @@ function Cadastro() {
 	}
 
 	return (
-		<SafeAreaView className='flex-1 bg-white px-5'>
-			<KeyboardAwareScrollView contentContainerStyle={{ flex: 1, justifyContent: 'center', alignItems: 'center' }} enableOnAndroid={true}>
+		<KeyboardAwareScrollView contentContainerStyle={{ flex: 1, justifyContent: 'center', alignItems: 'center', paddingHorizontal: 20, backgroundColor: 'white' }} >
 
 				<View className='mb-10'>
 					<Text className={styleTitle}>Cadastre-se</Text>
 					<Text className={styleSubTitle}>Vamos começar</Text>
 				</View>
 
-				<View className='w-full flex-col gap-2.5'>
+				<View className='w-full flex flex-col gap-2.5'>
 
 					   <InputAuth
-						   id='nome' 
-						   name="nome" 
+						   id='nome'
+						   name="nome"
 						   label='Nome'
-						   placeholder='Nome completo' 
-						   control={control}  
+						   placeholder='Nome completo'
+						   control={control}
 						   rules={rules.nome}
 					   />
 
@@ -79,11 +77,13 @@ function Cadastro() {
 						   secureTextEntry={true}
 						   rules={rules.confirmaSenha}
 					   />
-					   <InputAuthData
-						   id='dataNascimento'
-						   name="dataNascimento"
+					   <InputAuth
+						   id='cnh'
+						   name="cnh"
+						   label='CNH'
+						   placeholder='CNH'
 						   control={control}
-						   rules={rules.dataNascimento}
+						   rules={rules.cnh}
 					   />
 
 				</View>
@@ -101,8 +101,7 @@ function Cadastro() {
 					</TouchableOpacity>
 				</View>
 
-			</KeyboardAwareScrollView>
-		</SafeAreaView>
+		</KeyboardAwareScrollView>
 	)
 }
 

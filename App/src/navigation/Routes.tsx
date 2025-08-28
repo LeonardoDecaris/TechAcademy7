@@ -46,14 +46,14 @@ function Routes() {
   return (
     <NavigationContainer>
       <StatusBar barStyle="dark-content" backgroundColor="#ffffff" />
-      <Stack.Navigator initialRouteName="MainTabs" screenOptions={{ headerBackVisible: false }}>
+      <Stack.Navigator initialRouteName="Start" screenOptions={{ headerBackVisible: false }}>
         
         {/* Tabs principais: Home, Fretes, Perfil */}
         <Stack.Screen name="MainTabs" options={{ headerShown: false }}>
           {() => (
-            // <PrivateRoutes>
+            <PrivateRoutes>
               <MainTabs />
-            // </PrivateRoutes>
+            </PrivateRoutes>
           )}
         </Stack.Screen>
 

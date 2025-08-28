@@ -68,11 +68,3 @@ export function validarNome(nome: string): string | true {
   
   return true;
 }
-
-export function validacaoComfirmarPassword(senha: string, comfirmaPassword: string): string | true {
-    if(senha === comfirmaPassword) {
-      return "As senhas não se iquais"
-    }
-    
-  return true;
-}

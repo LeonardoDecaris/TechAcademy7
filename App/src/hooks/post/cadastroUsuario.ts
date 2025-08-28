@@ -2,19 +2,13 @@ import { useState } from "react";
 import api from "../../service/ApiAxios";
 import { useForm } from "react-hook-form";
 
-import { 
-	validarNome,
-	validarCPF,
-	validarEmail,
-	validarPassword,
-	validacaoComfirmarPassword
-} from "../../utils/Validacao";
+import { validarNome, validarCPF, validarEmail, validarPassword } from "../../utils/Validacao";
 
 
 import { useNavigation } from '@react-navigation/native'
 import { RootStackParamList } from '@/src/navigation/Routes'
 import { NativeStackNavigationProp } from '@react-navigation/native-stack'
-import Cadastro from "@/src/screens/public/Cadastro";
+
 
 type NavigationProp = NativeStackNavigationProp<RootStackParamList>
 
@@ -25,7 +19,7 @@ export type FormValues = {
 	email: string;
 	password: string;
 	confirmaSenha: string;
-	dataNascimento: string;	
+	cnh: string;
 };
 
 function useHookRegister() {
@@ -42,18 +36,19 @@ function useHookRegister() {
 
 	const handleCadastro = async (data: FormValues) => {
 		try {
-			await api.post("/users", {
+			await api.post("usuario", {
 				nome: data.nome,
 				cpf: data.cpf,
 				email: data.email,
-				senha: data.password,
-				dataNascimento: data.dataNascimento,
+				password: data.password,
+				cnh: data.cnh,
+				datanascimento: new Date().toISOString(),
 			});
 
 			handleNavigation.login();
-		} catch (error) {
-			setErrorMessage("Erro ao se registrar");
-			console.log(error);
+		} catch (error: any) {
+			console.error("Erro ao realizar cadastro:", error);
+			setErrorMessage("Erro ao se registrar: " + (error.response?.data?.message || error.message));
 		}
 	};
 
@@ -64,31 +59,31 @@ function useHookRegister() {
 		errorMessage,
 		setErrorMessage,
 		errors,
-		   rules: {
-			   nome: {
-				   validate: validarNome,
-				   required: "Nome é obrigatório",
-			   },
-			   cpf: {
-				   validate: validarCPF,
-				   required: "CPF é obrigatório",
-			   },
-			   email: {
-				   validate: validarEmail,
-				   required: "Email é obrigatório",
-			   },
-			   password: {
-				   validate: validarPassword,
-				   required: "Senha é obrigatória",
-			   },
-			   confirmaSenha: {
-				   validate: (value: string) => validacaoComfirmarPassword(value, password),
-				   required: "Confirmação de senha é obrigatória",
-			   },
-			   dataNascimento: {
-				   required: "Data de nascimento é obrigatória"
-			   }
-		   },
+		rules: {
+			nome: {
+				validate: validarNome,
+				required: "Nome é obrigatório",
+			},
+			cpf: {
+				validate: validarCPF,
+				required: "CPF é obrigatório",
+			},
+			email: {
+				validate: validarEmail,
+				required: "Email é obrigatório",
+			},
+			password: {
+				validate: validarPassword,
+				required: "Senha é obrigatória",
+			},
+			confirmaSenha: {
+				validate: (value: string) => value === password || "As senhas não coincidem",
+				required: "Confirmação de senha é obrigatória",
+			},
+			cnh: {
+				required: "CNH é obrigatória",
+			},
+		},
 	};
 }
 
