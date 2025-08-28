@@ -1,34 +1,27 @@
-import React from "react";
-import { useNavigation } from "@react-navigation/native";
 import { useAuth } from "../context/AuthContext";
-import { NativeStackNavigationProp } from "@react-navigation/native-stack";
-
-// Defina os tipos das rotas para o navigation
-type RootStackParamList = {
-  LoginScreen: undefined;
-  [key: string]: undefined | object;
-};
-
-type NavigationProp = NativeStackNavigationProp<RootStackParamList>;
+import React, { useEffect } from "react";
+import { useNavigation } from "@react-navigation/native";
 
 interface Props {
   children: React.ReactNode;
 }
 
-const PrivateRoutes = ({ children }: Props) => {
+const PrivateRoute = ({ children }: Props) => {
   const { isAuthenticated } = useAuth();
-  const navigation = useNavigation<NavigationProp>();
+  const navigation = useNavigation();
 
-  if (!isAuthenticated) {
-    // Redireciona para a tela de login se não estiver autenticado
-    navigation.reset({
-      index: 0,
-      routes: [{ name: "LoginScreen" }],
-    });
-    return null;
-  }
+  useEffect(() => {
+    if (!isAuthenticated) {
+      navigation.reset({
+        index: 0,
+        routes: [{ name: "Login" as never }],
+      });
+    }
+  }, [isAuthenticated, navigation]);
+
+  if (!isAuthenticated) return null;
 
   return <>{children}</>;
 };
 
-export default PrivateRoutes;
+export default PrivateRoute;

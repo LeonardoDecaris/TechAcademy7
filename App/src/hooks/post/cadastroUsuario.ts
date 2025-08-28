@@ -9,9 +9,7 @@ import { useNavigation } from '@react-navigation/native'
 import { RootStackParamList } from '@/src/navigation/Routes'
 import { NativeStackNavigationProp } from '@react-navigation/native-stack'
 
-
 type NavigationProp = NativeStackNavigationProp<RootStackParamList>
-
 
 export type FormValues = {
 	nome: string;
@@ -24,15 +22,15 @@ export type FormValues = {
 
 function useHookRegister() {
 	const navigation = useNavigation<NavigationProp>()
+	const handleNavigation = { login: () => navigation.navigate('Login') }
 
 	const { control, handleSubmit, watch, formState: { errors }} = useForm<FormValues>({ mode: "onSubmit" });
-	const [errorMessage, setErrorMessage] = useState<string | null>(null);
 	const password = watch("password");
 
-	const handleNavigation = {
-		login: () => navigation.navigate('Login'),
-	}
-
+	
+	const [successVisible, setSuccessVisible] = useState(false);
+	const [Notificacao, setNotificacao] = useState(String);
+	const [Status, setStatus] = useState(false);
 
 	const handleCadastro = async (data: FormValues) => {
 		try {
@@ -44,20 +42,33 @@ function useHookRegister() {
 				cnh: data.cnh,
 				datanascimento: new Date().toISOString(),
 			});
+			setStatus(true);
+			setNotificacao("Cadastro realizado com sucesso!");
+			setSuccessVisible(true);
 
-			handleNavigation.login();
 		} catch (error: any) {
+			setStatus(false);
+			setNotificacao("Erro ao se registrar");
 			console.error("Erro ao realizar cadastro:", error);
-			setErrorMessage("Erro ao se registrar: " + (error.response?.data?.message || error.message));
 		}
 	};
 
+
+	const onSuccessDismiss = () => {
+		setSuccessVisible(false);
+		if (Status) {
+			handleNavigation.login();
+		}
+	};
+	
 	return {
-		control,
-		handleSubmit,
+		onSuccessDismiss,
 		handleCadastro,
-		errorMessage,
-		setErrorMessage,
+		successVisible,
+		handleSubmit,
+		Notificacao,
+		control,
+		Status,
 		errors,
 		rules: {
 			nome: {

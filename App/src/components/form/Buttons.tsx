@@ -7,7 +7,7 @@ interface ButtonProps {
 	classname?: string;
 }
 
-const ButtonPadrao = ({ title, onPress, typeButton, classname}: ButtonProps) => {
+const ButtonPadrao = ({ title, onPress, typeButton, classname, }: ButtonProps) => {
 
 	const buttonStyles = {
 		normal: 'bg-[#322F2F]',
