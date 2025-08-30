@@ -10,6 +10,7 @@ import { useAuth } from '@/src/context/AuthContext';
 
 import AcessoRapido from '@/src/components/base/AcessoRapido';
 import CardMeuContrato from '@/src/components/cards/CardMeuContrato';
+import AlertLogout from '@/src/components/modal/AlertLogout';
 
 import { useNavigation } from '@react-navigation/native';
 import { RootStackParamList } from '@/src/navigation/Routes';
@@ -29,6 +30,7 @@ function Home() {
     const navigation = useNavigation<NavigationProp>()
     
     const [refreshing, setRefreshing] = useState(false);
+    const [showLogout, setShowLogout] = useState(false);
     const { dadosUsuario, getDadosUsuario, iniciasNomeUsuario, nomeAbreviado } = useGetDadosUsuario();
 
     const imagemUrl = dadosUsuario?.imagemUsuario?.imgUrl ? `${BASE_URL}${dadosUsuario.imagemUsuario.imgUrl}` : '';
@@ -69,7 +71,7 @@ function Home() {
                             <Text className='text-[20px] font-bold'>Hello, {nomeAbreviado ?? 'Usuário'}!</Text>
                         </View>
 
-                        <TouchableOpacity onPress={handleLogout} accessibilityLabel="Logout">
+                        <TouchableOpacity onPress={() => setShowLogout(true)} accessibilityLabel="Logout">
                             <Ionicons name="log-out-outline" size={30} color="black" />
                         </TouchableOpacity>
 
@@ -88,8 +90,18 @@ function Home() {
                 />
 
                 <AcessoRapido onPress={handleNavigation.detalheFrete} title='Detalhes do frete' />
+                
 
             </ScrollView>
+
+            <AlertLogout
+                visible={showLogout}
+                onCancel={() => setShowLogout(false)}
+                onConfirm={async () => {
+                    setShowLogout(false);
+                    await handleLogout();
+                }}
+            />
         </SafeAreaView>
     )
 }

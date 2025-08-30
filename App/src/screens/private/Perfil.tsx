@@ -6,11 +6,13 @@ import Constants from 'expo-constants';
 import AcessoRapidoPerfil from '@/src/components/base/AcessoRapidoPerfil';
 import { ScrollView, SafeAreaView, RefreshControl, Image, Text, View } from 'react-native'
 
-import { useNavigation } from '@react-navigation/native'
-import { RootStackParamList } from '@/src/navigation/Routes'
-import { NativeStackNavigationProp } from '@react-navigation/native-stack'
 import { useAuth } from '@/src/context/AuthContext';
+import { useNavigation } from '@react-navigation/native';
+import { RootStackParamList } from '@/src/navigation/Routes';
+import { NativeStackNavigationProp } from '@react-navigation/native-stack';
+
 import { ButtonPadrao } from '@/src/components/form/Buttons';
+import LogoutModal from '@/src/components/modal/AlertLogout';
 import useGetDadosUsuario from '@/src/hooks/get/GetDadosUsuario';
 
 type NavigationProp = NativeStackNavigationProp<RootStackParamList>;
@@ -19,16 +21,17 @@ const statusBarHeight = Constants.statusBarHeight;
 
 export default function Perfil() {
 	
-	const { logout } = useAuth();
 	const navigation = useNavigation<NavigationProp>()
+	const { logout } = useAuth();
+	const [modalVisible, setModalVisible] = useState(false);
+	const [loggingOut, setLoggingOut] = useState(false);
 	const handleNavigation = { editarPerfil: () => navigation.navigate("EditarPerfil") };
-	const handleLogout = async () => { await logout(); navigation.reset({ index: 0, routes: [{ name: 'Login' as never }] }); };
 
-	const logoStyle = "h-24 w-24 absolute -bottom-24 left-1/2 transform -translate-x-1/2 -translate-y-1/2 rounded-full ";
+	const logoStyle = "w-28 h-28 absolute -bottom-[90px] left-1/2 transform -translate-x-1/2 -translate-y-1/2 rounded-full ";
 	const logoInical = "rounded-full bg-gray-200 items-center justify-center"
 
 	const [refreshing, setRefreshing] = useState(false);
-    const {  dadosUsuario, iniciasNomeUsuario, nomeAbreviado, getDadosUsuario, } = useGetDadosUsuario();
+    const { dadosUsuario, iniciasNomeUsuario, nomeAbreviado, getDadosUsuario, } = useGetDadosUsuario();
 
 	const imagemUrl = dadosUsuario?.imagemUsuario?.imgUrl ? `${BASE_URL}${dadosUsuario.imagemUsuario.imgUrl}` : ''
 
@@ -42,7 +45,16 @@ export default function Perfil() {
         getDadosUsuario();
     }, [getDadosUsuario]);
 
-
+	const handleConfirmLogout = async () => {
+		try {
+			setLoggingOut(true);
+			await logout();
+			setModalVisible(false);
+			navigation.reset({ index: 0, routes: [{ name: 'Login' as never }] });
+		} finally {
+			setLoggingOut(false);
+		}
+	};
 
 	return (
 		<SafeAreaView style={{ flex: 1, backgroundColor: '#FFFFFF' }}>
@@ -50,7 +62,7 @@ export default function Perfil() {
 				<View className="w-full relative">
 					<Image source={require('../../assets/image/bg.png')} style={{ width: "100%", height: 130 }} className='rounded-2xl'/>
 					 {imagemUrl ? (
-						<Image source={{ uri: imagemUrl }} className={`${logoStyle}`} />
+						<Image source={{ uri: imagemUrl }} className={`${logoStyle}`}  />
 					) : (
 						<View className={`${logoStyle} ${logoInical} shadow-[0_2px_6px_rgba(0,0,0,0.25)] `}>
 							<Text className='font-bold text-black text-3xl'>{iniciasNomeUsuario}</Text>
@@ -67,18 +79,26 @@ export default function Perfil() {
 
 				<View className='py-2.5 gap-4'>
 					<AcessoRapidoPerfil titulo="Meus dados" onPress={handleNavigation.editarPerfil} />
-					<AcessoRapidoPerfil titulo="Configurações" onPress={handleLogout} />
+					<AcessoRapidoPerfil titulo="Configurações" onPress={() => {}} />
 				</View>
 
 				<Text className='text-[12px] text-black/60 font-semibold pt-5 pl-5'>Funcionamento do sistema</Text>
-					<View className='flex-1 justify-end'>
+				
+					<View className='items-end'>
 						<ButtonPadrao
 							title="Logout"
 							typeButton="logOutExcluir"
-							classname="flex-1"
-							onPress={handleLogout}
+							classname="px-5"
+							 onPress={() => setModalVisible(true)}
 						/>
 					</View>
+
+					<LogoutModal
+						visible={modalVisible}
+						loading={loggingOut}
+						onCancel={() => setModalVisible(false)}
+						onConfirm={handleConfirmLogout}
+					/>
 			</ScrollView>
 		</SafeAreaView>
 	)

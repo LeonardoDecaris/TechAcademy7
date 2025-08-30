@@ -4,17 +4,23 @@ import Animated, {
     FadeOut,
     FadeInUp,
     FadeOutDown,
+    FadeInDown,
+    FadeOutUp,
 } from 'react-native-reanimated';
 
-// Presets (400ms)
+const BASE_DURATION = 400;
+
+// Presets (1000ms)
 export const enter = {
-    fade: FadeIn.duration(400),
-    fadeUp: FadeInUp.duration(400),
+    fade: FadeIn.duration(BASE_DURATION),
+    fadeUp: FadeInUp.duration(BASE_DURATION),
+    fadeDown: FadeInDown.duration(BASE_DURATION),
 };
 
 export const exit = {
-    fade: FadeOut.duration(400),
-    fadeUp: FadeOutDown.duration(400),
+    fade: FadeOut.duration(BASE_DURATION),
+    fadeUp: FadeOutDown.duration(BASE_DURATION),
+    fadeDown: FadeOutUp.duration(BASE_DURATION),
 };
 
 export type AnimatedViewProps = React.ComponentProps<typeof Animated.View>;
@@ -36,17 +42,25 @@ export function FadeUp(
     return React.createElement(AnimatedView, { entering, exiting, ...rest });
 }
 
+export function FadeDown(
+    { entering = enter.fadeDown, exiting = exit.fadeDown, ...rest }: AnimatedViewProps & EnterExit
+) {
+    return React.createElement(AnimatedView, { entering, exiting, ...rest });
+}
+
 const animation = {
     ...Animated,
     enter,
     exit,
     Fade,
     FadeUp,
+    FadeDown,
 } as typeof Animated & {
     enter: typeof enter;
     exit: typeof exit;
     Fade: typeof Fade;
     FadeUp: typeof FadeUp;
+    FadeDown: typeof FadeDown;
 };
 
 export default animation;
