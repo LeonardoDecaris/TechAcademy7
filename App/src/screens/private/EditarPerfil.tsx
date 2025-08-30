@@ -26,7 +26,7 @@ function EditarPerfil() {
 	const { userId } = useAuth();
 	const { iniciasNomeUsuario, dadosUsuario, getDadosUsuario } = useGetDadosUsuario();
 	const { control, handleSubmit, rules, setValue, handleEditar, successVisible, closeSuccessNotification, notification, success } = useEditarUsuario(userId ?? "");
-	const imagemUrl = dadosUsuario?.image?.imgUrl ? `${BASE_URL}${dadosUsuario.image.imgUrl}` : null;
+	const imagemUrl = dadosUsuario?.imagemUsuario?.imgUrl ? `${BASE_URL}${dadosUsuario.imagemUsuario.imgUrl}` : ''
 
 	useEffect(() => {
 		getDadosUsuario();

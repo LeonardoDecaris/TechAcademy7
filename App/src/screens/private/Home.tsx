@@ -8,13 +8,13 @@ import Constants from 'expo-constants';
 import { Ionicons } from '@expo/vector-icons';
 import { useAuth } from '@/src/context/AuthContext';
 
-import GetdadosUsuario from '@/src/hooks/get/GetDadosUsuario';
 import AcessoRapido from '@/src/components/base/AcessoRapido';
 import CardMeuContrato from '@/src/components/cards/CardMeuContrato';
 
 import { useNavigation } from '@react-navigation/native';
 import { RootStackParamList } from '@/src/navigation/Routes';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
+import useGetDadosUsuario from '@/src/hooks/get/GetDadosUsuario';
 
 type NavigationProp = NativeStackNavigationProp<RootStackParamList>
 
@@ -29,8 +29,9 @@ function Home() {
     const navigation = useNavigation<NavigationProp>()
     
     const [refreshing, setRefreshing] = useState(false);
-    const { dadosUsuario, getDadosUsuario, iniciasNomeUsuario, nomeAbreviado } = GetdadosUsuario();
-    const imagemUrl = dadosUsuario?.image?.imgUrl ? `${BASE_URL}${dadosUsuario.image.imgUrl}` : null;
+    const { dadosUsuario, getDadosUsuario, iniciasNomeUsuario, nomeAbreviado } = useGetDadosUsuario();
+
+    const imagemUrl = dadosUsuario?.imagemUsuario?.imgUrl ? `${BASE_URL}${dadosUsuario.imagemUsuario.imgUrl}` : '';
 
     const handleNavigation = {
         perfil: () => navigation.navigate('Perfil'),
@@ -73,7 +74,7 @@ function Home() {
                         </TouchableOpacity>
 
                     </View>
-
+   
                 <CardMeuContrato
                     motorista={dadosUsuario?.nome}
                     nome="Reboque Caçamba"

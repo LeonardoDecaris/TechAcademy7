@@ -3,7 +3,6 @@ import { RefreshControl } from "react-native";
 import { Image, SafeAreaView, ScrollView, Text, TouchableOpacity, View } from "react-native";
 
 import { BASE_URL } from '@env';
-import GetdadosUsuario from "@/src/hooks/get/GetDadosUsuario";
 
 import Constants from "expo-constants";
 import CardCarga from "@/src/components/cards/CardGarca";
@@ -24,7 +23,7 @@ function DetalhesFrete() {
     }
 
     const { dadosUsuario, getDadosUsuario, nomeAbreviado, iniciasNomeUsuario } = useGetDadosUsuario();
-    const imagemUrl = dadosUsuario?.image?.imgUrl ? `${BASE_URL}${dadosUsuario.image.imgUrl}` : null;
+    const imagemUrl = dadosUsuario?.imagemUsuario?.imgUrl ? `${BASE_URL}${dadosUsuario.imagemUsuario.imgUrl}` : ''
 
     const [refreshing, setRefreshing] = useState(false);
     const onRefresh = useCallback(async () => {
@@ -69,7 +68,6 @@ function DetalhesFrete() {
                     imagemCarga=""
                     valor="1.500,00"
                 />
-
 
             </ScrollView>
         </SafeAreaView>

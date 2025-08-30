@@ -62,7 +62,7 @@ function useLoginUsuario() {
         setSuccessVisible(true);
 
         setTimeout(navigateToHome, 1200);
-      } catch (error: unknown) {
+      } catch (error) {
         const attempts = failedAttempts + 1;
         setFailedAttempts(attempts);
         setSuccess(false);
@@ -75,7 +75,7 @@ function useLoginUsuario() {
           setNotification("Erro: Email ou senha inválidos.");
         }
         setSuccessVisible(true);
-        console.error("Login error:", error);
+        console.log("Login error:", error);
       }
     },
     [failedAttempts, lockUntil, login, navigateToHome]

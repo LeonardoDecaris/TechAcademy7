@@ -52,10 +52,10 @@ function useCadastroUsuario() {
         setSuccessVisible(true);
 
         setTimeout(navigateToLogin, 1200);
-      } catch (error: unknown) {
+      } catch (error) {
         setSuccess(false);
         setNotification("Erro ao realizar cadastro");
-        console.error("Registration error:", error);
+        console.log("Registration error:", error);
       }
     },
     [navigateToLogin]

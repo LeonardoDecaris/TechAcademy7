@@ -64,7 +64,7 @@ function Login() {
 					visible={successVisible}
 					status={success}
 					messagem={notification}
-					duration={1000}
+					duration={1100}
 					onDismiss={closeSuccessNotification}
 				/>
 

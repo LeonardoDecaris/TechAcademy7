@@ -30,7 +30,7 @@ export default function Perfil() {
 	const [refreshing, setRefreshing] = useState(false);
     const {  dadosUsuario, iniciasNomeUsuario, nomeAbreviado, getDadosUsuario, } = useGetDadosUsuario();
 
-	const imagemUrl = dadosUsuario?.image?.imgUrl ? `${BASE_URL}${dadosUsuario.image.imgUrl}` : null;
+	const imagemUrl = dadosUsuario?.imagemUsuario?.imgUrl ? `${BASE_URL}${dadosUsuario.imagemUsuario.imgUrl}` : ''
 
     const onRefresh = useCallback(async () => {
         setRefreshing(true);

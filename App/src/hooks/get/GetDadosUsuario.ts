@@ -5,18 +5,18 @@ import { useAuth } from "@/src/context/AuthContext";
 import { getInitials, getDisplayName } from "@/src/utils/funcoes";
 
 interface UserImage {
-  id: number;
+  id_imagem: number;
   imgUrl: string;
 }
 
 interface User {
-  id: number;
+  id_usuario: number;
   nome: string;
   email: string;
   cpf: string;
   cnh: string;
-  imageId: number | null;
-  image: UserImage | null;
+  imagemUsuario_id: number | null;
+  imagemUsuario: UserImage | null;
 }
 
 /**
@@ -25,7 +25,7 @@ interface User {
  */
 function useGetDadosUsuario() {
   const { userId } = useAuth();
-  const [dadosUsuario, setDadosUsuario] = useState<User | null>(null);
+  const [dadosUsuario, setDadosUsuario] = useState<User>();
 
   const getDadosUsuario = useCallback(async () => {
     if (!userId) {
