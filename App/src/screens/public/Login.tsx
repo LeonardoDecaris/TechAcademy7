@@ -1,6 +1,6 @@
 import React from 'react'
 import InputAuth from '@/src/components/form/InputAuth'
-import { Text, TouchableOpacity, View } from 'react-native'
+import { SafeAreaView, Text, TouchableOpacity, View } from 'react-native'
 import { ButtonPadrao } from '@/src/components/form/Buttons'
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view'
 import { useNavigation } from '@react-navigation/native'
@@ -22,10 +22,9 @@ function Login() {
 	}
 
 	return (
-			
+		<SafeAreaView style={{ flex: 1, paddingHorizontal: 20, backgroundColor: '#FFFFFF' }}>
 			<KeyboardAwareScrollView
 				contentContainerStyle={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}
-				className='px-5 bg-white'
 			>
 				<View className='mb-10 '>
 					<Text className='text-[48px] text-black text-center font-bold'>Login</Text>
@@ -33,6 +32,7 @@ function Login() {
 				</View>
 
 				<View className='w-full flex-col gap-2.5'>
+
 					<InputAuth
 						control={control}
 						name="email"
@@ -45,11 +45,13 @@ function Login() {
 						control={control}
 						name="password"
 						id='password'
+						config='password'
 						placeholder='Senha'
 						label='Senha'
 						secureTextEntry={true}
 						rules={rules.password}
 					/>
+					
 				</View>
 
 				<ButtonPadrao
@@ -62,7 +64,7 @@ function Login() {
 					visible={successVisible}
 					status={Status}
 					messagem={Notificacao}
-					duration={1500}
+					duration={1000}
 					onDismiss={onSuccessDismiss}
 				/>
 
@@ -77,6 +79,7 @@ function Login() {
 				</View>
 
 			</KeyboardAwareScrollView>
+		</SafeAreaView>
 	)
 }
 

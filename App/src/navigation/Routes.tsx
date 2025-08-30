@@ -37,7 +37,7 @@ export type RootStackParamList = {
   Fretes: undefined;
   Perfil: undefined;
   Home: undefined;
-  MainTabs: undefined;
+   MainTabs: { screen?: string } | undefined; 
 };
 
 const Stack = createNativeStackNavigator<RootStackParamList>();
@@ -71,7 +71,8 @@ function Routes() {
           {() => (<PrivateRoutes><DetalhesFrete/></PrivateRoutes>)}
         </Stack.Screen>
 
-        <Stack.Screen name="EditarPerfil">
+        <Stack.Screen name="EditarPerfil"
+          options={{ headerTitle: "Editar Perfil", headerTitleAlign: "center", headerBackVisible: true }}>
           {() => (<PrivateRoutes><EditarPerfil/></PrivateRoutes>)}
         </Stack.Screen>
 

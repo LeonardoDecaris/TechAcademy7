@@ -32,9 +32,13 @@ function useHookRegister() {
 	const [Notificacao, setNotificacao] = useState(String);
 	const [Status, setStatus] = useState(false);
 
+	const onSuccessDismiss = () => {
+		setSuccessVisible(false);
+	};
+	
 	const handleCadastro = async (data: FormValues) => {
 		try {
-			await api.post("usuario", {
+			await api.post("/usuario", {
 				nome: data.nome,
 				cpf: data.cpf,
 				email: data.email,
@@ -46,6 +50,10 @@ function useHookRegister() {
 			setNotificacao("Cadastro realizado com sucesso!");
 			setSuccessVisible(true);
 
+			setTimeout(() => {
+				handleNavigation.login();
+			}, 1200);
+
 		} catch (error: any) {
 			setStatus(false);
 			setNotificacao("Erro ao se registrar");
@@ -53,14 +61,6 @@ function useHookRegister() {
 		}
 	};
 
-
-	const onSuccessDismiss = () => {
-		setSuccessVisible(false);
-		if (Status) {
-			handleNavigation.login();
-		}
-	};
-	
 	return {
 		onSuccessDismiss,
 		handleCadastro,

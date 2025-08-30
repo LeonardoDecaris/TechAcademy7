@@ -1,5 +1,6 @@
 import { Request, Response } from 'express';
 import Usuario from '../models/usuario.model';
+import ImagemUsuario from '../models/imagem_usuario.model';
 
 export const createUsuario = async (req: Request, res: Response) => {
     try {
@@ -27,10 +28,17 @@ export const getAllUsuarios = async (req: Request, res: Response) => {
 
 export const getUsuarioById = async (req: Request, res: Response) => {
     try {
-        const usuario = await Usuario.findByPk(req.params.id);
-        if (!usuario) {
-            return res.status(404).json({ message: 'Usuario not found' });
-        }
+        const usuario = await Usuario.findOne({
+            where: { id_usuario: req.params.id },
+            include: [
+                {
+                    model: ImagemUsuario,
+                    as: 'imagemUsuario',
+                    required: false
+                }
+            ]
+        });
+        if (!usuario) return res.status(404).json({ message: 'Usuário não encontrado.' });
         return res.status(200).json(usuario);
     } catch (error) {
         if (error instanceof Error) {

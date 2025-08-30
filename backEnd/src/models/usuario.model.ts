@@ -12,7 +12,6 @@ class Usuario extends Model {
     cnh: string | undefined;
     datanascimento?: Date | undefined;
     imagemUsuario_id?: number | undefined;
-    // admin?: boolean | undefined;
 
     public async hashPassword() {
         this.password = await bcrypt.hash(this.password!, 10);
@@ -56,10 +55,6 @@ Usuario.init({
         type: DataTypes.INTEGER,
         allowNull: true,
     },
-    // admin: {
-    //     type: DataTypes.BOOLEAN,
-    //     allowNull: true,
-    // },
 }, {
     sequelize,
     tableName: 'USUARIO',

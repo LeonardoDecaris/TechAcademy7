@@ -18,3 +18,12 @@ export function getDisplayName(fullName?: string): string | undefined {
   if (parts.length === 2) return `${parts[0]} ${parts[1]}`;
   return `${parts[0]} ${parts[parts.length - 1]}`;
 }
+
+export const maskCpf = (value: string) => {
+    return value
+        .replace(/\D/g, "") 
+        .replace(/(\d{3})(\d)/, "$1.$2")
+        .replace(/(\d{3})(\d)/, "$1.$2")
+        .replace(/(\d{3})(\d{1,2})$/, "$1-$2")
+        .slice(0, 14); 
+};
