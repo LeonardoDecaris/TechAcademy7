@@ -1,6 +1,9 @@
+import { useState } from "react";
 
-import { KeyboardTypeOptions, Text, TextInput, View } from "react-native";
+import { maskCpf } from "@/src/utils/funcoes";
+import Entypo from "@expo/vector-icons/build/Entypo";
 import { Control, Controller, RegisterOptions } from "react-hook-form";
+import { KeyboardTypeOptions, Text, TextInput, TouchableOpacity, View } from "react-native";
 
 interface PropsLabel {
     label?: string;
@@ -13,6 +16,7 @@ interface PropsInput {
     secureTextEntry?: boolean;
     type?: KeyboardTypeOptions;
     inputProps?: Partial<React.ComponentProps<typeof TextInput>>;
+    desabilitar?: boolean;
 }
 
 interface PropsController extends PropsLabel, PropsInput {
@@ -21,14 +25,18 @@ interface PropsController extends PropsLabel, PropsInput {
     control: Control<any>;
     rules?: RegisterOptions;
     status?: 'normal' | 'error';
+    config?: "padrao" | "password" | "cpf";
 }
 
 
-const InputAuth = ({ label, labelProps, name, control, rules, span, status, status: statusProp, id, type, placeholder, secureTextEntry, inputProps, ...rest }: PropsController) => {
+const InputAuth = ({ label, labelProps, name, control, rules, span, status, status: statusProp, id, type, placeholder, secureTextEntry, inputProps, config, desabilitar, ...rest }: PropsController) => {
 
     const spanStyle = "text-red-500 text-[10px] pl-2.5";
     const labelStyle = "font-semibold text-[14px] pl-2.5";
     const inputStyle = "w-full p-2.5 font-semibold border rounded-lg bg-white";
+
+    const inputPasswordStyle = "w-[85%] p-2.5 font-semibold border rounded-lg bg-white";
+    const mostrarPasswordStyle = "flex items-center justify-center py-2 px-2 border border-black/40 rounded-lg bg-white shadow-[0_2px_4px_rgba(0,0,0,0.25)]";
 
     const StatusInput = {
         normal: ' text-black/80 border-black/40 shadow-[0_2px_4px_rgba(0,0,0,0.25)] ',
@@ -38,23 +46,40 @@ const InputAuth = ({ label, labelProps, name, control, rules, span, status, stat
     return (
         <Controller control={control} name={name} rules={rules} render={({ field: { onChange, value }, fieldState: { error } }) => {
              const status = error ? 'error' : (statusProp || 'normal');
+             const trataOnChange = (text: string) => { if (config === "cpf") { const masked = maskCpf(text); onChange(masked); } else { onChange(text); } };
 
                 return (
                     <View className="w-full flex flex-col">
 
                         <Text children={label} className={`${labelStyle} ${status === 'error' ? 'text-red-500/80' : 'text-black/80'}`}  {...labelProps} />
-
-                        <TextInput
-                            id={id}
-                            keyboardType={type}
-                            placeholder={placeholder}
-                            className={`${inputStyle} ${StatusInput[status]}`}
-                            onChangeText={onChange}
-                            secureTextEntry={secureTextEntry}
-                            value={value}
-                            {...rest}
-                            {...inputProps}
-                        />
+                        
+                        {config === "password" ? (
+                            <PasswordInput
+                                id={id}
+                                type={type}
+                                placeholder={placeholder}
+                                inputPasswordStyle={inputPasswordStyle}
+                                statusInput={StatusInput[status]}
+                                onChange={onChange}
+                                value={value}
+                                rest={rest}
+                                inputProps={inputProps}
+                                mostrarPasswordStyle={mostrarPasswordStyle}
+                            />
+                        ) : (
+                            <TextInput
+                                id={id}
+                                keyboardType={type}
+                                placeholder={placeholder}
+                                className={`${inputStyle} ${StatusInput[status]}`}
+                                onChangeText={trataOnChange}
+                                secureTextEntry={secureTextEntry}
+                                editable={!desabilitar}
+                                value={value}
+                                {...rest}
+                                {...inputProps}
+                            />
+                        )}
 
                         {error?.message || span ? (
                             <Text  className={spanStyle} children={error?.message || span} />
@@ -64,6 +89,33 @@ const InputAuth = ({ label, labelProps, name, control, rules, span, status, stat
                 );
             }}
         />
+    );
+};
+
+const PasswordInput = ({ id, type,  placeholder, inputPasswordStyle, statusInput, onChange, value, rest, inputProps, mostrarPasswordStyle}: any) => {
+    const [showPassword, setShowPassword] = useState(false);
+
+    return (
+        <View className="w-full flex-row items-center gap-1.5 justify-between ">
+            <TextInput
+                id={id}
+                keyboardType={type}
+                placeholder={placeholder}
+                className={`${inputPasswordStyle} ${statusInput}`}
+                onChangeText={onChange}
+                secureTextEntry={!showPassword}
+                value={value}
+                {...rest}
+                {...inputProps}
+            />
+            <TouchableOpacity onPress={() => setShowPassword((prev) => !prev)} className={mostrarPasswordStyle}>
+                {showPassword ? (
+                    <Entypo name="eye-with-line" size={24} color="black" />
+                ) : (
+                    <Entypo name="eye" size={24} color="black" />
+                )}
+            </TouchableOpacity>
+        </View>
     );
 };
 

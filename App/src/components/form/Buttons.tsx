@@ -3,11 +3,11 @@ import { Text, TouchableOpacity } from "react-native";
 interface ButtonProps {
 	title: string;
 	onPress?: () => void;
-	typeButton: 'normal' | 'logOutExcluir' | 'aceite';
+	typeButton?: 'normal' | 'logOutExcluir' | 'aceite';
 	classname?: string;
 }
 
-const ButtonPadrao = ({ title, onPress, typeButton, classname, }: ButtonProps) => {
+const ButtonPadrao = ({ title, onPress, typeButton = "normal", classname, }: ButtonProps) => {
 
 	const buttonStyles = {
 		normal: 'bg-[#322F2F]',
@@ -26,8 +26,8 @@ const ButtonPadrao = ({ title, onPress, typeButton, classname, }: ButtonProps) =
 
 const ButtonUpload =  ({ title, onPress, classname}: ButtonProps) => {
 
-	const buttonStyles = "py-2 rounded-lg border border-black";
-	const titleStyles = "text-black text-base text-center font-bold";
+	const buttonStyles = "py-2 px-4 rounded-lg border border-black bg-[#322F2F]";
+	const titleStyles = "text-white text-base text-center font-bold";
 
     return (
 		<TouchableOpacity onPress={onPress} className={`${buttonStyles} ${classname}`}>

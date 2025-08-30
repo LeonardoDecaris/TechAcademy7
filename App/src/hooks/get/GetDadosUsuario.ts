@@ -4,16 +4,18 @@ import { useState, useCallback, useMemo } from "react";
 import { getInitials, getDisplayName } from "@/src/utils/funcoes";
 
 interface mapImagemUsuario {
-	id: number;
-	url: string;
+    id_imagem: number;
+    imgUrl: string;
 }
 
 interface mapUsers {
-	id: string;
-	nome: string;
-	email: string;
-	cpf: string;
-	imagemUsuario_id: mapImagemUsuario;
+    id_usuario: number;
+    nome: string;
+    email: string;
+    cpf: string;
+    cnh: string;
+    imagemUsuario_id: number | null;
+    imagemUsuario: mapImagemUsuario | null;
 }
 
 function GetdadosUsuario() {
@@ -22,7 +24,7 @@ function GetdadosUsuario() {
 
     const getUserById = useCallback(async () => {
         try {
-            const { data } = await api.get(`usuario/${userId}`);
+            const { data } = await api.get(`/usuario/${userId}`);
             SetDadosUsuario(data);
         } catch (error) {
             console.log(error);

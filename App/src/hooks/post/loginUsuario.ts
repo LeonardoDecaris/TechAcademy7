@@ -29,6 +29,10 @@ function useHookLogin() {
 	const [lockUntil, setLockUntil] = useState<number | null>(null);
 	const [failedAttempts, setFailedAttempts] = useState(0);
 
+	const onSuccessDismiss = () => {
+		setSuccessVisible(false);
+	};
+
 	const handleLogin = async (data: FormValuesLogin) => {
 		
 		if (lockUntil && Date.now() < lockUntil) {
@@ -41,7 +45,7 @@ function useHookLogin() {
 		}
 
 		try {
-			const response = await api.post("login", {
+			const response = await api.post("/login", {
 				email: data.email,
 				password: data.password,
 			});
@@ -55,7 +59,11 @@ function useHookLogin() {
 			setStatus(true);
 			setNotificacao("Login realizado com sucesso!");
 			setSuccessVisible(true);
-			
+
+			setTimeout(() => {
+					handleNavigation.home();
+			}, 1200);
+
 		} catch (error) {
 			console.log(error);
 
@@ -72,14 +80,6 @@ function useHookLogin() {
 				setNotificacao("Erro: Email ou senha inválidos.");
 			}
 			setSuccessVisible(true);
-		}
-	};
-	
-
-	const onSuccessDismiss = () => {
-		setSuccessVisible(false);
-		if(Status) {
-			handleNavigation.home();
 		}
 	};
 	

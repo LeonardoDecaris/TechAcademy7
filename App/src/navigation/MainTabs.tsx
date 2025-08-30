@@ -12,7 +12,7 @@ export default function MainTabs() {
     <Tab.Navigator
       screenOptions={({ route }) => ({
         tabBarIcon: ({ color, size }) => {
-          let iconName: keyof typeof Ionicons.glyphMap = 'home-outline';
+          let iconName: React.ComponentProps<typeof Ionicons>['name'] = 'home-outline';
           if (route.name === 'Home') {
             iconName = 'home-outline';
           } else if (route.name === 'Fretes') {
@@ -23,6 +23,27 @@ export default function MainTabs() {
           return <Ionicons name={iconName} size={size} color={color} />;
         },
         headerShown: false,
+        tabBarStyle: {
+          display: 'flex',
+          justifyContent: 'center',
+          position: 'absolute',
+          bottom: 10,
+          height: 60,
+          borderRadius: 15,
+          backgroundColor: 'rgba(255, 255, 255, 0.9)',
+          shadowColor: '#000',
+          shadowOffset: { width: 0, height: 10 },
+          shadowOpacity: 0.25,
+          shadowRadius: 10,
+          elevation: 5,
+          paddingBottom: 0,
+          borderTopWidth: 0,
+        },
+        tabBarItemStyle: {
+          padding: 5,
+        },
+        tabBarActiveTintColor: '#007AFF',
+        tabBarInactiveTintColor: '#8E8E93',
       })}
     >
       <Tab.Screen name="Home" component={Home} />

@@ -2,6 +2,7 @@ import { Text, View } from "react-native";
 import CardCarga from "./CardGarca";
 
 interface CardCargaProps {
+    motorista?: string;
     nome?: string;
     tipo?: string;
     peso?: string;
@@ -22,7 +23,7 @@ const CardMeuContrato = (props: CardCargaProps) => {
                 <Text className="text-lg font-bold">Contrato atual</Text>
 
                 <Text className="text-[12px] font-medium">
-                    Motorista: <Text className="text-black font-normal">Lucas Carvalho Pedrozo</Text>
+                    Motorista: <Text className="text-black font-normal">{props.motorista}</Text>
                 </Text>
                 
                 <Text className="text-[12px] font-medium">
