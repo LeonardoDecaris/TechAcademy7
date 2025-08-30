@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useState } from "react";
+import { use, useCallback, useEffect, useState } from "react";
 import { RefreshControl } from "react-native";
 import { Image, SafeAreaView, ScrollView, Text, TouchableOpacity, View } from "react-native";
 
@@ -10,6 +10,7 @@ import CardCarga from "@/src/components/cards/CardGarca";
 import { useNavigation } from '@react-navigation/native';
 import { RootStackParamList } from '@/src/navigation/Routes';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
+import useGetDadosUsuario from "@/src/hooks/get/GetDadosUsuario";
 
 
 type NavigationProp = NativeStackNavigationProp<RootStackParamList>
@@ -22,21 +23,19 @@ function DetalhesFrete() {
         perfil: () => navigation.getParent()?.navigate('Perfil'),
     }
 
-    const { DadosUsuario, getUserById, iniciaisUsuario, nomeExibicao } = GetdadosUsuario();
-    const imagemUrl = DadosUsuario?.imagemUsuario?.imgUrl ? `${BASE_URL}${DadosUsuario.imagemUsuario.imgUrl}` : null;
+    const { dadosUsuario, getDadosUsuario, nomeAbreviado, iniciasNomeUsuario } = useGetDadosUsuario();
+    const imagemUrl = dadosUsuario?.image?.imgUrl ? `${BASE_URL}${dadosUsuario.image.imgUrl}` : null;
 
     const [refreshing, setRefreshing] = useState(false);
     const onRefresh = useCallback(async () => {
         setRefreshing(true);
-        await getUserById();
+        await getDadosUsuario();
         setRefreshing(false);
-    }, [getUserById]);
+    }, [getDadosUsuario]);
 
     useEffect(() => {
-        getUserById()
-    }, [getUserById])
-
-    
+        getDadosUsuario()
+    }, [getDadosUsuario]);
 
     return (
          <SafeAreaView style={{ flex: 1, backgroundColor: '#FFFFFF' }}>
@@ -48,14 +47,14 @@ function DetalhesFrete() {
                         {imagemUrl ? (
                             <Image source={{ uri: imagemUrl }} className='w-20 h-20 rounded-full' />
                         ) : (
-                            <Text className="">{iniciaisUsuario}</Text>
+                            <Text className="">{iniciasNomeUsuario}</Text>
                         )}
                     </TouchableOpacity>
 
                     <View>
-                        <Text className='text-base font-bold'>{nomeExibicao}</Text>
-                        <Text className='text-[12px] font-semibold text-black/60'>{DadosUsuario?.email}</Text>
-                        <Text className='text-[12px] font-semibold text-black/60'>Categoria: {DadosUsuario?.cnh}</Text>
+                        <Text className='text-base font-bold'>{nomeAbreviado}</Text>
+                        <Text className='text-[12px] font-semibold text-black/60'>{dadosUsuario?.email}</Text>
+                        <Text className='text-[12px] font-semibold text-black/60'>Categoria: {dadosUsuario?.cnh}</Text>
                     </View>
 
                 </View>

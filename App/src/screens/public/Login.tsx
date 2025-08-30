@@ -6,15 +6,15 @@ import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view
 import { useNavigation } from '@react-navigation/native'
 import { RootStackParamList } from '@/src/navigation/Routes'
 import { NativeStackNavigationProp } from '@react-navigation/native-stack'
-import useHookLogin from '@/src/hooks/post/loginUsuario'
 import AlertNotificacao from '@/src/components/modal/AlertrNotificacao'
+import useLoginUsuario from '@/src/hooks/post/loginUsuario'
 
 
 type NavigationProp = NativeStackNavigationProp<RootStackParamList>
 
 function Login() {
 	const navigation = useNavigation<NavigationProp>()
-	const { control, handleSubmit, handleLogin, rules, successVisible, Notificacao, Status, onSuccessDismiss } = useHookLogin()
+	const { control, handleSubmit, handleLogin, rules, successVisible, closeSuccessNotification, notification, success } = useLoginUsuario()
 
 	const handleNavigation = {
 		Cadastro: () => navigation.navigate('Cadastro'),
@@ -51,7 +51,7 @@ function Login() {
 						secureTextEntry={true}
 						rules={rules.password}
 					/>
-					
+
 				</View>
 
 				<ButtonPadrao
@@ -62,10 +62,10 @@ function Login() {
 				/>
 				<AlertNotificacao
 					visible={successVisible}
-					status={Status}
-					messagem={Notificacao}
+					status={success}
+					messagem={notification}
 					duration={1000}
-					onDismiss={onSuccessDismiss}
+					onDismiss={closeSuccessNotification}
 				/>
 
 				<View className='w-full flex-row justify-between'>

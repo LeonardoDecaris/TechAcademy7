@@ -8,16 +8,16 @@ import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view
 import { TouchableOpacity } from 'react-native'
 import { useNavigation } from '@react-navigation/native'
 import { RootStackParamList } from '@/src/navigation/Routes'
-import useHookRegister from '@/src/hooks/post/cadastroUsuario'
 import { NativeStackNavigationProp } from '@react-navigation/native-stack'
 import AlertNotificacao from '@/src/components/modal/AlertrNotificacao'
 import DropDown from "@/src/components/form/DropDown";
+import useCadastroUsuario from "@/src/hooks/post/cadastroUsuario";
 
 type NavigationProp = NativeStackNavigationProp<RootStackParamList>;
 
 function Cadastro() {
 	const navigation = useNavigation<NavigationProp>()
-	const { control, handleSubmit, rules, handleCadastro, Notificacao, Status, successVisible, onSuccessDismiss } = useHookRegister()
+	const { control, handleSubmit, rules, handleCadastro, closeSuccessNotification, success , successVisible, notification } = useCadastroUsuario()
 
   const styleSubTitle = "text-center text-sm text-black/80 font-medium";
   const styleTitle = "text-[48px] text-black text-center font-bold";
@@ -109,10 +109,10 @@ function Cadastro() {
 				/>
 				<AlertNotificacao
 					visible={successVisible}
-					status={Status}
-					messagem={Notificacao}
+					status={success}
+					messagem={notification}
 					duration={1000}
-					onDismiss={onSuccessDismiss}
+					onDismiss={closeSuccessNotification}
 				/>
 
 				<View className='w-full flex-row justify-end'>
