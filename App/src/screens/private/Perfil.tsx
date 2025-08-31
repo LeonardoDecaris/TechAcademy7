@@ -58,7 +58,7 @@ export default function Perfil() {
 
 	return (
 		<SafeAreaView style={{ flex: 1, backgroundColor: '#FFFFFF' }}>
-			<ScrollView contentContainerStyle={{ paddingHorizontal: 20, marginTop: statusBarHeight + 10}} refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} />}>
+			<ScrollView contentContainerStyle={{ paddingHorizontal: 6, marginTop: statusBarHeight + 10, paddingBottom: 140 }} refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} />}>
 				<View className="w-full relative">
 					<Image source={require('../../assets/image/bg.png')} style={{ width: "100%", height: 130 }} className='rounded-2xl'/>
 					 {imagemUrl ? (
