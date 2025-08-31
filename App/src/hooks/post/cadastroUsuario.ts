@@ -1,101 +1,107 @@
-import { useState } from "react";
+import { useState, useCallback } from "react";
+
 import api from "../../service/ApiAxios";
 import { useForm } from "react-hook-form";
-
 import { validarNome, validarCPF, validarEmail, validarPassword } from "../../utils/Validacao";
 
+import { useNavigation } from "@react-navigation/native";
+import { RootStackParamList } from "@/src/navigation/Routes";
+import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 
-import { useNavigation } from '@react-navigation/native'
-import { RootStackParamList } from '@/src/navigation/Routes'
-import { NativeStackNavigationProp } from '@react-navigation/native-stack'
+type NavigationProp = NativeStackNavigationProp<RootStackParamList>;
 
-type NavigationProp = NativeStackNavigationProp<RootStackParamList>
-
-export type FormValues = {
-	nome: string;
-	cpf: string;
-	email: string;
-	password: string;
-	confirmaSenha: string;
-	cnh: string;
-};
-
-function useHookRegister() {
-	const navigation = useNavigation<NavigationProp>()
-	const handleNavigation = { login: () => navigation.navigate('Login') }
-
-	const { control, handleSubmit, watch, formState: { errors }} = useForm<FormValues>({ mode: "onSubmit" });
-	const password = watch("password");
-
-	
-	const [successVisible, setSuccessVisible] = useState(false);
-	const [Notificacao, setNotificacao] = useState(String);
-	const [Status, setStatus] = useState(false);
-
-	const handleCadastro = async (data: FormValues) => {
-		try {
-			await api.post("usuario", {
-				nome: data.nome,
-				cpf: data.cpf,
-				email: data.email,
-				password: data.password,
-				cnh: data.cnh,
-				datanascimento: new Date().toISOString(),
-			});
-			setStatus(true);
-			setNotificacao("Cadastro realizado com sucesso!");
-			setSuccessVisible(true);
-
-		} catch (error: any) {
-			setStatus(false);
-			setNotificacao("Erro ao se registrar");
-			console.error("Erro ao realizar cadastro:", error);
-		}
-	};
-
-
-	const onSuccessDismiss = () => {
-		setSuccessVisible(false);
-		if (Status) {
-			handleNavigation.login();
-		}
-	};
-	
-	return {
-		onSuccessDismiss,
-		handleCadastro,
-		successVisible,
-		handleSubmit,
-		Notificacao,
-		control,
-		Status,
-		errors,
-		rules: {
-			nome: {
-				validate: validarNome,
-				required: "Nome é obrigatório",
-			},
-			cpf: {
-				validate: validarCPF,
-				required: "CPF é obrigatório",
-			},
-			email: {
-				validate: validarEmail,
-				required: "Email é obrigatório",
-			},
-			password: {
-				validate: validarPassword,
-				required: "Senha é obrigatória",
-			},
-			confirmaSenha: {
-				validate: (value: string) => value === password || "As senhas não coincidem",
-				required: "Confirmação de senha é obrigatória",
-			},
-			cnh: {
-				required: "CNH é obrigatória",
-			},
-		},
-	};
+interface FormValuesCadastro {
+  nome: string;
+  cpf: string;
+  email: string;
+  password: string;
+  confirmaSenha: string;
+  cnh: string;
 }
 
-export default useHookRegister;
+/**
+ * Custom hook to manage user registration form and submission.
+ * @returns An object containing form control, submission handlers, and notification state.
+ */
+function useCadastroUsuario() {
+  const navigation = useNavigation<NavigationProp>();
+  const { control, handleSubmit, watch, formState: { errors } } = useForm<FormValuesCadastro>({ mode: "onSubmit" });
+  const password = watch("password");
+
+  const [success, setSuccess] = useState(false);
+  const [notification, setNotification] = useState("");
+  const [successVisible, setSuccessVisible] = useState(false);
+
+  const navigateToLogin = useCallback(() => {
+    navigation.navigate("Login");
+  }, [navigation]);
+
+  const handleCadastro = useCallback(
+    async (data: FormValuesCadastro) => {
+      try {
+        await api.post("/usuario", {
+          nome: data.nome,
+          cpf: data.cpf,
+          email: data.email,
+          password: data.password,
+          cnh: data.cnh,
+          datanascimento: new Date().toISOString(),
+        });
+        setSuccess(true);
+        setNotification("Cadastro realizado com sucesso!");
+        setSuccessVisible(true);
+
+        setTimeout(navigateToLogin, 1200);
+      } catch (error) {
+        setSuccess(false);
+        setNotification("Erro ao realizar cadastro");
+        console.log("Registration error:", error);
+      }
+    },
+    [navigateToLogin]
+  );
+
+  const closeSuccessNotification = useCallback(() => {
+    setSuccessVisible(false);
+  }, []);
+
+  const rules = {
+    nome: {
+      validate: validarNome,
+      required: "Nome é obrigatório",
+    },
+    cpf: {
+      validate: validarCPF,
+      required: "CPF é obrigatório",
+    },
+    email: {
+      validate: validarEmail,
+      required: "Email é obrigatório",
+    },
+    password: {
+      validate: validarPassword,
+      required: "Senha é obrigatória",
+    },
+    confirmaSenha: {
+      validate: (value: string) => value === password || "As senhas não coincidem",
+      required: "Confirmação de senha é obrigatória",
+    },
+    cnh: {
+      required: "CNH é obrigatória",
+    },
+  };
+
+  return {
+    control,
+    handleSubmit,
+    errors,
+    rules,
+    success,
+    notification,
+    successVisible,
+    closeSuccessNotification,
+    handleCadastro,
+  };
+}
+
+export default useCadastroUsuario;

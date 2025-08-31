@@ -16,8 +16,9 @@ import Start from "../screens/public/Start";
 import CadastroVeiculo from "../screens/private/CadastroVeiculo";
 import DetalhesVeiculo from "../screens/private/DestalhesEnvio";
 import DetalhesFrete from "../screens/private/DetalhesFrete";
+import DetalhesEnvio from "../screens/private/DestalhesEnvio";
+import EditarVeiculo from "../screens/private/EditarVeiculo";
 import EditarPerfil from "../screens/private/EditarPerfil";
-import EdtarVeiculo from "../screens/private/EditarVeiculo";
 import MeuVeiculo from "../screens/private/MeuVeiculo";
 import { StatusBar } from "react-native";
 
@@ -30,14 +31,15 @@ export type RootStackParamList = {
   
   CadastroVeiculo: undefined;
   DetalhesVeiculo: undefined;
+  EditarVeiculo: undefined;
+  DetalhesEnvio: undefined;
   DetalhesFrete: undefined;
   EditarPerfil: undefined;
-  EdtarVeiculo: undefined;
   MeuVeiculo: undefined;
   Fretes: undefined;
   Perfil: undefined;
   Home: undefined;
-  MainTabs: undefined;
+   MainTabs: { screen?: string } | undefined; 
 };
 
 const Stack = createNativeStackNavigator<RootStackParamList>();
@@ -49,7 +51,7 @@ function Routes() {
       <Stack.Navigator initialRouteName="Start" screenOptions={{ headerBackVisible: false }}>
         
         {/* Tabs principais: Home, Fretes, Perfil */}
-        <Stack.Screen name="MainTabs" options={{ headerShown: false }}>
+        <Stack.Screen name="MainTabs" options={{ headerShown: false, }}>
           {() => (
             <PrivateRoutes>
               <MainTabs />
@@ -65,18 +67,26 @@ function Routes() {
         <Stack.Screen name="DetalhesVeiculo">
           {() => (<PrivateRoutes><DetalhesVeiculo/></PrivateRoutes>)}
         </Stack.Screen>
+
         <Stack.Screen
           name="DetalhesFrete"
           options={{ headerTitle: "Detalhes do Frete", headerTitleAlign: "center", headerBackVisible: true }}>
           {() => (<PrivateRoutes><DetalhesFrete/></PrivateRoutes>)}
         </Stack.Screen>
 
-        <Stack.Screen name="EditarPerfil">
+        <Stack.Screen
+          name="DetalhesEnvio"
+          options={{ headerTitle: "Detalhes do Envio", headerTitleAlign: "center", headerBackVisible: true }}>
+          {() => (<PrivateRoutes><DetalhesEnvio/></PrivateRoutes>)}
+        </Stack.Screen>
+
+        <Stack.Screen name="EditarPerfil"
+          options={{ headerTitle: "Editar Perfil", headerTitleAlign: "center", headerBackVisible: true }}>
           {() => (<PrivateRoutes><EditarPerfil/></PrivateRoutes>)}
         </Stack.Screen>
 
-        <Stack.Screen name="EdtarVeiculo">
-          {() => (<PrivateRoutes><EdtarVeiculo/></PrivateRoutes>)}
+        <Stack.Screen name="EditarVeiculo">
+          {() => (<PrivateRoutes><EditarVeiculo/></PrivateRoutes>)}
         </Stack.Screen>
 
         <Stack.Screen name="MeuVeiculo">

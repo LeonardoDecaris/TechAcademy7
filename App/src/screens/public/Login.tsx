@@ -1,20 +1,20 @@
 import React from 'react'
 import InputAuth from '@/src/components/form/InputAuth'
-import { Text, TouchableOpacity, View } from 'react-native'
+import { SafeAreaView, Text, TouchableOpacity, View } from 'react-native'
 import { ButtonPadrao } from '@/src/components/form/Buttons'
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view'
 import { useNavigation } from '@react-navigation/native'
 import { RootStackParamList } from '@/src/navigation/Routes'
 import { NativeStackNavigationProp } from '@react-navigation/native-stack'
-import useHookLogin from '@/src/hooks/post/loginUsuario'
 import AlertNotificacao from '@/src/components/modal/AlertrNotificacao'
+import useLoginUsuario from '@/src/hooks/post/loginUsuario'
 
 
 type NavigationProp = NativeStackNavigationProp<RootStackParamList>
 
 function Login() {
 	const navigation = useNavigation<NavigationProp>()
-	const { control, handleSubmit, handleLogin, rules, successVisible, Notificacao, Status, onSuccessDismiss } = useHookLogin()
+	const { control, handleSubmit, handleLogin, rules, successVisible, closeSuccessNotification, notification, success } = useLoginUsuario()
 
 	const handleNavigation = {
 		Cadastro: () => navigation.navigate('Cadastro'),
@@ -22,10 +22,9 @@ function Login() {
 	}
 
 	return (
-			
+		<SafeAreaView style={{ flex: 1, paddingHorizontal: 20, backgroundColor: '#FFFFFF' }}>
 			<KeyboardAwareScrollView
 				contentContainerStyle={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}
-				className='px-5 bg-white'
 			>
 				<View className='mb-10 '>
 					<Text className='text-[48px] text-black text-center font-bold'>Login</Text>
@@ -33,6 +32,7 @@ function Login() {
 				</View>
 
 				<View className='w-full flex-col gap-2.5'>
+
 					<InputAuth
 						control={control}
 						name="email"
@@ -45,11 +45,13 @@ function Login() {
 						control={control}
 						name="password"
 						id='password'
+						config='password'
 						placeholder='Senha'
 						label='Senha'
 						secureTextEntry={true}
 						rules={rules.password}
 					/>
+
 				</View>
 
 				<ButtonPadrao
@@ -60,10 +62,9 @@ function Login() {
 				/>
 				<AlertNotificacao
 					visible={successVisible}
-					status={Status}
-					messagem={Notificacao}
-					duration={1500}
-					onDismiss={onSuccessDismiss}
+					status={success}
+					messagem={notification}
+					onDismiss={closeSuccessNotification}
 				/>
 
 				<View className='w-full flex-row justify-between'>
@@ -77,6 +78,7 @@ function Login() {
 				</View>
 
 			</KeyboardAwareScrollView>
+		</SafeAreaView>
 	)
 }
 

@@ -16,8 +16,7 @@ type NavigationProp = NativeStackNavigationProp<RootStackParamList>;
 
 function EditarVeiculo() {
   const navigation = useNavigation<NavigationProp>();
-  const { control, handleSubmit, rules, handleSalvarVeiculo } =
-    useHookRegister();
+  const { control, handleSubmit, rules, handleSalvarVeiculo } =useHookRegister();
 
   return (
     <SafeAreaView className="flex-1 bg-white px-5">

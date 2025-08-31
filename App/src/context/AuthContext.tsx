@@ -52,11 +52,11 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     }
     setToken(token);
   };
-  
-  const logout = async () => {
-    await SecureStore.deleteItemAsync("authToken");
-    await SecureStore.deleteItemAsync("userId");
-    await SecureStore.deleteItemAsync("userName");
+
+  const logout = () => {
+    SecureStore.deleteItemAsync("authToken");
+    SecureStore.deleteItemAsync("userId");
+    SecureStore.deleteItemAsync("userName");
     setToken(null);
     setUserId(null);
     setUserName(null);

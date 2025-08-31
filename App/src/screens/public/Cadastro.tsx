@@ -1,6 +1,6 @@
 import React from "react";
 
-import { Text, View } from 'react-native'
+import { SafeAreaView, Text, View } from 'react-native'
 import InputAuth from '@/src/components/form/InputAuth'
 import { ButtonPadrao } from '@/src/components/form/Buttons'
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view'
@@ -8,15 +8,16 @@ import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view
 import { TouchableOpacity } from 'react-native'
 import { useNavigation } from '@react-navigation/native'
 import { RootStackParamList } from '@/src/navigation/Routes'
-import useHookRegister from '@/src/hooks/post/cadastroUsuario'
 import { NativeStackNavigationProp } from '@react-navigation/native-stack'
 import AlertNotificacao from '@/src/components/modal/AlertrNotificacao'
+import DropDown from "@/src/components/form/DropDown";
+import useCadastroUsuario from "@/src/hooks/post/cadastroUsuario";
 
 type NavigationProp = NativeStackNavigationProp<RootStackParamList>;
 
 function Cadastro() {
 	const navigation = useNavigation<NavigationProp>()
-	const { control, handleSubmit, rules, handleCadastro, Notificacao, Status, successVisible, onSuccessDismiss } = useHookRegister()
+	const { control, handleSubmit, rules, handleCadastro, closeSuccessNotification, success , successVisible, notification } = useCadastroUsuario()
 
   const styleSubTitle = "text-center text-sm text-black/80 font-medium";
   const styleTitle = "text-[48px] text-black text-center font-bold";
@@ -26,7 +27,8 @@ function Cadastro() {
   };
 
 	return (
-		<KeyboardAwareScrollView contentContainerStyle={{ flex: 1, justifyContent: 'center', alignItems: 'center', paddingHorizontal: 20, backgroundColor: 'white' }} >
+		<SafeAreaView style={{ flex: 1, paddingHorizontal: 20, backgroundColor: 'white' }}>
+			<KeyboardAwareScrollView contentContainerStyle={{ flex: 1, justifyContent: 'center', alignItems: 'center'}} >
 
 				<View className='mb-10'>
 					<Text className={styleTitle}>Cadastre-se</Text>
@@ -49,6 +51,7 @@ function Cadastro() {
 						   name="cpf"
 						   label='CPF'
 						   placeholder='CPF'
+						   config="cpf"
 						   control={control}
 						   rules={rules.cpf}
 					   />
@@ -65,6 +68,7 @@ function Cadastro() {
 						   name="password"
 						   label='Senha'
 						   placeholder='Senha'
+						   config="password"
 						   secureTextEntry={true}
 						   control={control}
 						   rules={rules.password}
@@ -74,18 +78,26 @@ function Cadastro() {
 						   name="confirmaSenha"
 						   label='Confirme a Senha'
 						   placeholder='Confirme a senha'
+						   config="password"
 						   control={control}
 						   secureTextEntry={true}
 						   rules={rules.confirmaSenha}
 					   />
-					   <InputAuth
-						   id='cnh'
-						   name="cnh"
-						   label='CNH'
-						   placeholder='CNH'
-						   control={control}
-						   rules={rules.cnh}
-					   />
+						<DropDown
+							name="cnh"
+							label="Tipo de CNH"
+							placeholder="Selecione o tipo de CNH"
+							control={control}
+							rules={{ required: "Selecione o tipo de CNH" }}
+							items={[
+								{ label: "A", value: "A" },
+								{ label: "B", value: "B" },
+								{ label: "AB", value: "AB" },
+								{ label: "C", value: "C" },
+								{ label: "D", value: "D" },
+								{ label: "E", value: "E" },
+							]}
+						/>
 
 				</View>
 
@@ -97,10 +109,10 @@ function Cadastro() {
 				/>
 				<AlertNotificacao
 					visible={successVisible}
-					status={Status}
-					messagem={Notificacao}
-					duration={1500}
-					onDismiss={onSuccessDismiss}
+					status={success}
+					messagem={notification}
+					duration={1100}
+					onDismiss={closeSuccessNotification}
 				/>
 
 				<View className='w-full flex-row justify-end'>
@@ -109,7 +121,8 @@ function Cadastro() {
 					</TouchableOpacity>
 				</View>
 
-		</KeyboardAwareScrollView>
+			</KeyboardAwareScrollView>
+		</SafeAreaView>
 	)
 }
 

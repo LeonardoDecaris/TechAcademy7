@@ -1,89 +1,108 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useCallback, useState } from 'react';
 
-import { Image, ScrollView } from 'react-native';
+import { Image, ScrollView, RefreshControl } from 'react-native';
 import { TouchableOpacity, SafeAreaView, Text, View } from 'react-native';
 
+import { BASE_URL } from '@env';
 import Constants from 'expo-constants';
 import { Ionicons } from '@expo/vector-icons';
 import { useAuth } from '@/src/context/AuthContext';
-import GetdadosUsuario from '@/src/hooks/get/GetDadosUsuario';
+
 import AcessoRapido from '@/src/components/base/AcessoRapido';
 import CardMeuContrato from '@/src/components/cards/CardMeuContrato';
+import AlertLogout from '@/src/components/modal/AlertLogout';
 
 import { useNavigation } from '@react-navigation/native';
 import { RootStackParamList } from '@/src/navigation/Routes';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
+import useGetDadosUsuario from '@/src/hooks/get/GetDadosUsuario';
+import CardFrete from '@/src/components/cards/CardFrete';
 
 type NavigationProp = NativeStackNavigationProp<RootStackParamList>
 
 const statusBarHeight = Constants.statusBarHeight;
 
 function Home() {
-
-    const BlocoLogoStyle = "h-[50px] w-[50px] rounded-full bg-gray-300 items-center justify-center"
+    
     const logoStyle = "text-[20px] font-bold text-white"
-
-    const navigation = useNavigation<NavigationProp>()
-    const handleNavigation = {
-         perfil: () => navigation.navigate('Perfil'),
-         detalheFrete: () => navigation.navigate('DetalhesFrete')
-    }
+    const BlocoLogoStyle = "h-[50px] w-[50px] rounded-full bg-gray-300 items-center justify-center"
     
     const { logout } = useAuth();
-    const { DadosUsuario, getUserById, iniciaisUsuario, nomeExibicao } = GetdadosUsuario();
+    const navigation = useNavigation<NavigationProp>()
+    
+    const [refreshing, setRefreshing] = useState(false);
+    const [showLogout, setShowLogout] = useState(false);
+    const { dadosUsuario, getDadosUsuario, iniciasNomeUsuario, nomeAbreviado } = useGetDadosUsuario();
+
+    const imagemUrl = dadosUsuario?.imagemUsuario?.imgUrl ? `${BASE_URL}${dadosUsuario.imagemUsuario.imgUrl}` : '';
+
+    const handleNavigation = {
+        perfil: () => navigation.navigate('Perfil'),
+        detalheEnvio: () => navigation.navigate('DetalhesEnvio')
+    }
+
+    const onRefresh = useCallback(async () => {
+        setRefreshing(true);
+        await getDadosUsuario();
+        setRefreshing(false);
+    }, [getDadosUsuario]);
 
     useEffect(() => {
-        getUserById();
-    }, [getUserById]);
+        getDadosUsuario();
+    }, [getDadosUsuario]);
 
-    const handleLogout = async () => {
-        try {
-            await logout();
-            navigation.reset({ index: 0, routes: [{ name: 'Login' as never }] });
-        } catch (error) {
-            console.error('Erro ao deslogar:', error);
-        }
-    };
+    const handleLogout = async () => { await logout(); navigation.reset({ index: 0, routes: [{ name: 'Login' as never }] }); };
 
-    
+
     return (
-        <SafeAreaView style={{ flex: 1, backgroundColor: '#FFFFFF' }}>
-            <ScrollView contentContainerStyle={{ paddingHorizontal: 20, marginTop: statusBarHeight + 10 }}>
-                <View className='flex-row items-center justify-between pb-10'>
+        <SafeAreaView style={{ flex: 1 , backgroundColor: '#FFFFFF' }}>
+           <ScrollView  contentContainerStyle={{ paddingHorizontal: 6, marginTop: statusBarHeight + 10, paddingBottom: 140 }}  refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} />}>
+
+                <View className='flex-row items-center justify-between pb-10 '>
                     <View className='flex-row items-center gap-2.5'>
 
                         <TouchableOpacity onPress={handleNavigation.perfil} className={BlocoLogoStyle}>
-                            {DadosUsuario?.imagemUsuario_id?.url ? (
-                                <Image source={{ uri: DadosUsuario.imagemUsuario_id.url }} className='w-[50px] h-[50px] rounded-full' />
+                            {imagemUrl ? (
+                                <Image source={{ uri: imagemUrl }} className='w-[50px] h-[50px] rounded-full' />
                             ) : (
-                                <Text className={logoStyle}>{iniciaisUsuario}</Text>
+                                <Text className={logoStyle}>{iniciasNomeUsuario}</Text>
                             )}
                         </TouchableOpacity>
 
-                        <Text className='text-[20px] font-bold'>Hello, {nomeExibicao ?? 'Usuário'}!</Text>
-
+                        <Text className='text-[20px] font-bold'>Hello, {nomeAbreviado ?? 'Usuário'}!</Text>
                     </View>
 
-                    <TouchableOpacity onPress={handleLogout} accessibilityLabel="Logout">
+                    <TouchableOpacity onPress={() => setShowLogout(true)} accessibilityLabel="Logout">
                         <Ionicons name="log-out-outline" size={30} color="black" />
                     </TouchableOpacity>
 
                 </View>
-                
+   
                 <CardMeuContrato
-                   nome="Reboque Caçamba"
-                   tipo="Cascalho"
-                   peso="14"
-                   saida="São Paulo"
-                   destino="Rio de Janeiro"
-                   logoEmpresa=""
-                   imagemCarga=""
-                   valor="1.500,00"
+                    motorista={dadosUsuario?.nome}
+                    nome="Sem carga"
+                    tipo="Nenhum"
+                    peso="0"
+                    saida="Nenhum"
+                    destino="Nenhum"
+                    logoEmpresa=""
+                    imagemCarga=""
+                    valor="Sem valor"
                 />
 
-                <AcessoRapido onPress={handleNavigation.detalheFrete} title='Detalhes do frete' />
+                <AcessoRapido onPress={handleNavigation.detalheEnvio} title='Detalhes do envio' />
+
+                <CardFrete 
+                    tipo="Nenhum" 
+                    peso="0"
+                    destino="Juranda PR"
+                    progresso={3}
+                />
+
+                <AcessoRapido onPress={handleNavigation.detalheEnvio} title='Meu Veículo' />
 
             </ScrollView>
+            <AlertLogout visible={showLogout} onCancel={() => setShowLogout(false)} onConfirm={async () => { setShowLogout(false); await handleLogout(); }} />
         </SafeAreaView>
     )
 }
