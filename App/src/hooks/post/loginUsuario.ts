@@ -1,11 +1,12 @@
 import { useState, useCallback } from "react";
 import { useForm } from "react-hook-form";
-import { useNavigation } from "@react-navigation/native";
-import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import { useAuth } from "@/src/context/AuthContext";
 import api from "../../service/ApiAxios";
 import { validarEmail } from "../../utils/Validacao";
+
+import { useNavigation } from "@react-navigation/native";
 import { RootStackParamList } from "@/src/navigation/Routes";
+import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 
 // Navigation prop type
 type NavigationProp = NativeStackNavigationProp<RootStackParamList>;

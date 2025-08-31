@@ -7,8 +7,8 @@ import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view
 
 import InputAuth from '@/src/components/form/InputAuth'
 import { useNavigation } from '@react-navigation/native'
-import { RootStackParamList } from '@/src/navigation/Routes'
 import useEsqueciSenha from '@/src/hooks/post/esqueciSenha'
+import { RootStackParamList } from '@/src/navigation/Routes'
 
 import { NativeStackNavigationProp } from '@react-navigation/native-stack'
 import AlertNotificacao from '@/src/components/modal/AlertrNotificacao'
@@ -16,7 +16,7 @@ type NavigationProp = NativeStackNavigationProp<RootStackParamList>
 
 function EsqueciSenha() {
 	const navigation = useNavigation<NavigationProp>()
-	const { control, handleSubmit, rules, handleResetPassword, success, notification, successVisible, closeSuccessNotification, showTokenField, } = useEsqueciSenha()
+	const { control, handleSubmit, rules, handleResetPassword, success, notification, successVisible, closeSuccessNotification,  } = useEsqueciSenha()
 
 	const styleSubTitle = 'text-center text-sm text-black/80 font-medium';
 	const styleTitle = 'text-[48px] text-black text-center font-bold';
@@ -30,21 +30,11 @@ function EsqueciSenha() {
 			<KeyboardAwareScrollView contentContainerStyle={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
 
 				<View className='mb-10'>
-					<Text className={styleTitle}>Esqueci Minha Senha</Text>
+					<Text className={styleTitle}>Redefinir Senha</Text>
 					<Text className={styleSubTitle}>Vamos redefinir sua senha</Text>
 				</View>
 
 				<View className='w-full flex-col gap-2.5'>
-					{showTokenField && (
-						<InputAuth
-							id='token'
-							name="token"
-							label='Token'
-							placeholder='Token recebido'
-							control={control}
-							rules={rules.token}
-						/>
-					)}
 
 					<InputAuth
 						id='password'
@@ -75,12 +65,6 @@ function EsqueciSenha() {
 					classname='w-full my-[20px]'
 					onPress={handleSubmit(handleResetPassword)}
 				/>
-
-				<View className='w-full flex-row justify-end'>
-					<TouchableOpacity onPress={handleNavigation.start}>
-						<Text className='font-medium'>Voltar para o inicio</Text>
-					</TouchableOpacity>
-				</View>
 
 				<AlertNotificacao
 					visible={successVisible}

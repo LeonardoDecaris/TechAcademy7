@@ -17,6 +17,7 @@ import { RootStackParamList } from '@/src/navigation/Routes';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import useGetDadosUsuario from '@/src/hooks/get/GetDadosUsuario';
 import CardFrete from '@/src/components/cards/CardFrete';
+import CardVeiculo from '@/src/components/cards/CardVeiculo';
 
 type NavigationProp = NativeStackNavigationProp<RootStackParamList>
 
@@ -56,7 +57,11 @@ function Home() {
 
     return (
         <SafeAreaView style={{ flex: 1 , backgroundColor: '#FFFFFF' }}>
-           <ScrollView  contentContainerStyle={{ paddingHorizontal: 6, marginTop: statusBarHeight + 10, paddingBottom: 140 }}  refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} />}>
+           <ScrollView
+                contentContainerStyle={{ paddingHorizontal: 6, marginTop: statusBarHeight + 10, paddingBottom: 130 }}
+                refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} />}
+                showsVerticalScrollIndicator={false}
+            >
 
                 <View className='flex-row items-center justify-between pb-10 '>
                     <View className='flex-row items-center gap-2.5'>
@@ -95,11 +100,15 @@ function Home() {
                 <CardFrete 
                     tipo="Nenhum" 
                     peso="0"
-                    destino="Juranda PR"
-                    progresso={3}
+                    destino="Nenhum"
+                    progresso={0}
                 />
 
                 <AcessoRapido onPress={handleNavigation.detalheEnvio} title='Meu Veículo' />
+
+                <CardVeiculo
+                
+                />
 
             </ScrollView>
             <AlertLogout visible={showLogout} onCancel={() => setShowLogout(false)} onConfirm={async () => { setShowLogout(false); await handleLogout(); }} />
