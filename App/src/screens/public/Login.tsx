@@ -18,7 +18,7 @@ function Login() {
 
 	const handleNavigation = {
 		Cadastro: () => navigation.navigate('Cadastro'),
-		EsqueciSenha: () => navigation.navigate('EsqueciSenha'),
+		SolicitarNovaSenha: () => navigation.navigate('SolicitarNovaSenha'),
 	}
 
 	return (
@@ -40,6 +40,7 @@ function Login() {
 						placeholder='Email'
 						label='Email'
 						rules={rules.email}
+						type="email-address"
 					/>
 					<InputAuth
 						control={control}
@@ -50,6 +51,7 @@ function Login() {
 						label='Senha'
 						secureTextEntry={true}
 						rules={rules.password}
+						type="default"
 					/>
 
 				</View>
@@ -72,7 +74,7 @@ function Login() {
 						<Text className='font-medium'>Cadastre-se</Text>
 					</TouchableOpacity>
 
-					<TouchableOpacity onPress={handleNavigation.EsqueciSenha}>
+					<TouchableOpacity onPress={handleNavigation.SolicitarNovaSenha}>
 						<Text className='font-medium'>Esqueceu a senha?</Text>
 					</TouchableOpacity>
 				</View>

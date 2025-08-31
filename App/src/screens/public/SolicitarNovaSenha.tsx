@@ -8,15 +8,16 @@ import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view
 import InputAuth from '@/src/components/form/InputAuth'
 import { useNavigation } from '@react-navigation/native'
 import { RootStackParamList } from '@/src/navigation/Routes'
-import useEsqueciSenha from '@/src/hooks/post/esqueciSenha'
 
 import { NativeStackNavigationProp } from '@react-navigation/native-stack'
+import useSolicitarNovaSenha from '@/src/hooks/post/solicitarNovasenha'
 import AlertNotificacao from '@/src/components/modal/AlertrNotificacao'
+
 type NavigationProp = NativeStackNavigationProp<RootStackParamList>
 
-function EsqueciSenha() {
+function SolicitarNovaSenha() {
 	const navigation = useNavigation<NavigationProp>()
-	const { control, handleSubmit, rules, handleResetPassword, success, notification, successVisible, closeSuccessNotification, showTokenField, } = useEsqueciSenha()
+	const { control, handleSubmit, rules, handleSolicitarNovaSenha, closeSuccessNotification, success , successVisible, notification} = useSolicitarNovaSenha()
 
 	const styleSubTitle = 'text-center text-sm text-black/80 font-medium';
 	const styleTitle = 'text-[48px] text-black text-center font-bold';
@@ -30,50 +31,39 @@ function EsqueciSenha() {
 			<KeyboardAwareScrollView contentContainerStyle={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
 
 				<View className='mb-10'>
-					<Text className={styleTitle}>Esqueci Minha Senha</Text>
+					<Text className={styleTitle}>Solicitar Nova Senha</Text>
 					<Text className={styleSubTitle}>Vamos redefinir sua senha</Text>
 				</View>
 
 				<View className='w-full flex-col gap-2.5'>
-					{showTokenField && (
-						<InputAuth
-							id='token'
-							name="token"
-							label='Token'
-							placeholder='Token recebido'
-							control={control}
-							rules={rules.token}
-						/>
-					)}
 
-					<InputAuth
-						id='password'
-						name="password"
-						label='Nova Senha'
-						placeholder='Nova Senha'
-						secureTextEntry={true}
-						control={control}
-						rules={rules.password}
-						config='password'
-					/>
+                <InputAuth
+                    id='email'
+                    name="email"
+                    label='Email'
+                    placeholder='Email'
+                    control={control}
+                    rules={rules.email}
+					type="email-address"
+                />
 
-					<InputAuth
-						id='confirmaSenha'
-						name="confirmaSenha"
-						label='Confirme a Senha'
-						placeholder='Confirme a senha'
-						control={control}
-						secureTextEntry={true}
-						rules={rules.confirmaSenha}
-						config='password'
-					/>
+                <InputAuth
+                    id='cpf'
+                    name="cpf"
+                    label='CPF'
+                    placeholder='CPF'
+                    config="cpf"
+                    control={control}
+                    rules={rules.cpf}
+					type="number-pad"
+                />
 				</View>
 
 				<ButtonPadrao
-					title='Redefinir'
+					title='Solicitar'
 					typeButton='normal'
 					classname='w-full my-[20px]'
-					onPress={handleSubmit(handleResetPassword)}
+					onPress={handleSubmit(handleSolicitarNovaSenha)}
 				/>
 
 				<View className='w-full flex-row justify-end'>
@@ -95,5 +85,5 @@ function EsqueciSenha() {
 	)
 }
 
-export default EsqueciSenha;
+export default SolicitarNovaSenha;
 

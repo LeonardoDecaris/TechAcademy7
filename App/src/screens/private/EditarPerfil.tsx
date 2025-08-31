@@ -6,7 +6,6 @@ import { ButtonPadrao, ButtonUpload } from "@/src/components/form/Buttons";
 import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view";
 
 import DropDown from "@/src/components/form/DropDown";
-import useHookEditarUsuario from "@/src/hooks/put/EditarUsuario";
 import AlertNotificacao from "@/src/components/modal/AlertrNotificacao";
 
 import { BASE_URL } from '@env';
@@ -80,6 +79,7 @@ function EditarPerfil() {
 						placeholder="Nome completo"
 						control={control}
 						rules={rules.nome}
+						type="default"
 					/>
 					<InputAuth
 						id="email"
@@ -89,6 +89,7 @@ function EditarPerfil() {
 						desabilitar={true}
 						control={control}
 						rules={rules.email}
+						type="email-address"
 					/>
 					<InputAuth
 						id="cpf"
@@ -97,6 +98,8 @@ function EditarPerfil() {
 						placeholder="CPF"
 						control={control}
 						rules={rules.cpf}
+						config="cpf"
+						type="number-pad"
 					/>
 					<DropDown
 						name="cnh"

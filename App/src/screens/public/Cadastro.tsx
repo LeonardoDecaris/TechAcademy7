@@ -44,16 +44,18 @@ function Cadastro() {
 						   placeholder='Nome completo'
 						   control={control}
 						   rules={rules.nome}
+						   type="default"
 					   />
 
 					   <InputAuth
-						   id='cpf'
-						   name="cpf"
-						   label='CPF'
-						   placeholder='CPF'
-						   config="cpf"
-						   control={control}
-						   rules={rules.cpf}
+							id='cpf'
+							name="cpf"
+							label='CPF'
+							placeholder='CPF'
+							config="cpf"
+							control={control}
+							rules={rules.cpf}
+							type="number-pad"
 					   />
 					   <InputAuth
 						   id='email'
@@ -62,6 +64,7 @@ function Cadastro() {
 						   placeholder='Email'
 						   control={control}
 						   rules={rules.email}
+						   type="email-address"
 					   />
 					   <InputAuth
 						   id='password'
@@ -72,6 +75,7 @@ function Cadastro() {
 						   secureTextEntry={true}
 						   control={control}
 						   rules={rules.password}
+						   type="default"
 					   />
 					   <InputAuth
 						   id='confirmaSenha'
@@ -82,6 +86,7 @@ function Cadastro() {
 						   control={control}
 						   secureTextEntry={true}
 						   rules={rules.confirmaSenha}
+						   type="default"
 					   />
 						<DropDown
 							name="cnh"
