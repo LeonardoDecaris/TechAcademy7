@@ -1,19 +1,20 @@
 {
   "expo": {
-    "name": "controleFrota",
-    "slug": "controleFrota",
+    "name": "Total Frete",
+    "slug": "TotalFrete",
     "version": "1.0.0",
     "orientation": "portrait",
-    "icon": "./assets/images/icon.png",
-    "scheme": "controlefrota",
+    "icon": "./src/assets/image/logo.jpeg",
+    "scheme": "TotalFrete",
     "userInterfaceStyle": "automatic",
     "newArchEnabled": true,
     "ios": {
-      "supportsTablet": true
+      "supportsTablet": true,
+      "icon": "./src/assets/image/icon.png"
     },
     "android": {
       "adaptiveIcon": {
-        "foregroundImage": "./assets/images/adaptive-icon.png",
+        "foregroundImage": "./src/assets/image/logo.jpeg",
         "backgroundColor": "#ffffff"
       },
       "edgeToEdgeEnabled": true
@@ -28,8 +29,7 @@
       [
         "expo-splash-screen",
         {
-          "image": "./assets/images/splash-icon.png",
-          "imageWidth": 200,
+          "image": "./src/assets/image/splash.png",
           "resizeMode": "contain",
           "backgroundColor": "#ffffff"
         }

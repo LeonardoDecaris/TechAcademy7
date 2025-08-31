@@ -16,6 +16,7 @@ import { useNavigation } from '@react-navigation/native';
 import { RootStackParamList } from '@/src/navigation/Routes';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import useGetDadosUsuario from '@/src/hooks/get/GetDadosUsuario';
+import CardFrete from '@/src/components/cards/CardFrete';
 
 type NavigationProp = NativeStackNavigationProp<RootStackParamList>
 
@@ -37,7 +38,7 @@ function Home() {
 
     const handleNavigation = {
         perfil: () => navigation.navigate('Perfil'),
-        detalheFrete: () => navigation.navigate('DetalhesFrete')
+        detalheEnvio: () => navigation.navigate('DetalhesEnvio')
     }
 
     const onRefresh = useCallback(async () => {
@@ -54,54 +55,54 @@ function Home() {
 
 
     return (
-        <SafeAreaView style={{ flex: 1, backgroundColor: '#FFFFFF' }}>
-            <ScrollView contentContainerStyle={{ paddingHorizontal: 20, marginTop: statusBarHeight + 10 }} refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} />}>             
-                    
-                    <View className='flex-row items-center justify-between pb-10'>
-                        <View className='flex-row items-center gap-2.5'>
+        <SafeAreaView style={{ flex: 1 , backgroundColor: '#FFFFFF' }}>
+           <ScrollView  contentContainerStyle={{ paddingHorizontal: 6, marginTop: statusBarHeight + 10, paddingBottom: 140 }}  refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} />}>
 
-                            <TouchableOpacity onPress={handleNavigation.perfil} className={BlocoLogoStyle}>
-                                {imagemUrl ? (
-                                    <Image source={{ uri: imagemUrl }} className='w-[50px] h-[50px] rounded-full' />
-                                ) : (
-                                    <Text className={logoStyle}>{iniciasNomeUsuario}</Text>
-                                )}
-                            </TouchableOpacity>
+                <View className='flex-row items-center justify-between pb-10 '>
+                    <View className='flex-row items-center gap-2.5'>
 
-                            <Text className='text-[20px] font-bold'>Hello, {nomeAbreviado ?? 'Usuário'}!</Text>
-                        </View>
-
-                        <TouchableOpacity onPress={() => setShowLogout(true)} accessibilityLabel="Logout">
-                            <Ionicons name="log-out-outline" size={30} color="black" />
+                        <TouchableOpacity onPress={handleNavigation.perfil} className={BlocoLogoStyle}>
+                            {imagemUrl ? (
+                                <Image source={{ uri: imagemUrl }} className='w-[50px] h-[50px] rounded-full' />
+                            ) : (
+                                <Text className={logoStyle}>{iniciasNomeUsuario}</Text>
+                            )}
                         </TouchableOpacity>
 
+                        <Text className='text-[20px] font-bold'>Hello, {nomeAbreviado ?? 'Usuário'}!</Text>
                     </View>
+
+                    <TouchableOpacity onPress={() => setShowLogout(true)} accessibilityLabel="Logout">
+                        <Ionicons name="log-out-outline" size={30} color="black" />
+                    </TouchableOpacity>
+
+                </View>
    
                 <CardMeuContrato
                     motorista={dadosUsuario?.nome}
-                    nome="Reboque Caçamba"
-                    tipo="Cascalho"
-                    peso="14"
-                    saida="São Paulo"
-                    destino="Rio de Janeiro"
+                    nome="Sem carga"
+                    tipo="Nenhum"
+                    peso="0"
+                    saida="Nenhum"
+                    destino="Nenhum"
                     logoEmpresa=""
                     imagemCarga=""
-                    valor="1.500,00"
+                    valor="Sem valor"
                 />
 
-                <AcessoRapido onPress={handleNavigation.detalheFrete} title='Detalhes do frete' />
-                
+                <AcessoRapido onPress={handleNavigation.detalheEnvio} title='Detalhes do envio' />
+
+                <CardFrete 
+                    tipo="Nenhum" 
+                    peso="0"
+                    destino="Juranda PR"
+                    progresso={3}
+                />
+
+                <AcessoRapido onPress={handleNavigation.detalheEnvio} title='Meu Veículo' />
 
             </ScrollView>
-
-            <AlertLogout
-                visible={showLogout}
-                onCancel={() => setShowLogout(false)}
-                onConfirm={async () => {
-                    setShowLogout(false);
-                    await handleLogout();
-                }}
-            />
+            <AlertLogout visible={showLogout} onCancel={() => setShowLogout(false)} onConfirm={async () => { setShowLogout(false); await handleLogout(); }} />
         </SafeAreaView>
     )
 }

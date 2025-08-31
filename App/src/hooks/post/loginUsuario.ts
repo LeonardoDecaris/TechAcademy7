@@ -51,7 +51,6 @@ function useLoginUsuario() {
           email: data.email,
           password: data.password,
         });
-
         const { token } = response.data;
         login(token);
 
@@ -61,7 +60,7 @@ function useLoginUsuario() {
         setNotification("Login realizado com sucesso!");
         setSuccessVisible(true);
 
-        setTimeout(navigateToHome, 1200);
+        setTimeout(navigateToHome, 800);
       } catch (error) {
         const attempts = failedAttempts + 1;
         setFailedAttempts(attempts);
