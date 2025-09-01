@@ -27,7 +27,7 @@ const CardCarga = (props: CardCargaProps) => {
                     <Image source={require('../../assets/image/coamo.png')} style={{ width: "50%", resizeMode: 'contain' }} />
                     <Text className="text-[14px] font-semibold text-black">Valor: R${props.valor}</Text>
                 </View>
-                    <Image source={require('../../assets/image/carga.png')} style={{ width: "50%", resizeMode: 'contain' }} />
+                    <Image source={require('../../assets/image/carga.png')} style={{ width: "50%", resizeMode: 'contain', }}  />
             </View>
         </View>
     );

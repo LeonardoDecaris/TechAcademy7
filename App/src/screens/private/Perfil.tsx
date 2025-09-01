@@ -20,15 +20,20 @@ type NavigationProp = NativeStackNavigationProp<RootStackParamList>;
 const statusBarHeight = Constants.statusBarHeight;
 
 export default function Perfil() {
-	
-	const navigation = useNavigation<NavigationProp>()
-	const { logout } = useAuth();
-	const [modalVisible, setModalVisible] = useState(false);
-	const [loggingOut, setLoggingOut] = useState(false);
-	const handleNavigation = { editarPerfil: () => navigation.navigate("EditarPerfil") };
 
-	const logoStyle = "w-28 h-28 absolute -bottom-[90px] left-1/2 transform -translate-x-1/2 -translate-y-1/2 rounded-full ";
 	const logoInical = "rounded-full bg-gray-200 items-center justify-center"
+	const logoStyle = "w-28 h-28 absolute -bottom-[90px] left-1/2 transform -translate-x-1/2 -translate-y-1/2 rounded-full ";
+	
+	const { logout } = useAuth();
+	const navigation = useNavigation<NavigationProp>()
+
+	const [loggingOut, setLoggingOut] = useState(false);
+	const [modalVisible, setModalVisible] = useState(false);
+
+	const handleNavigation = {
+		novaSenha: () => navigation.navigate("NovaSenha"),
+		editarPerfil: () => navigation.navigate("EditarPerfil"),
+	};
 
 	const [refreshing, setRefreshing] = useState(false);
     const { dadosUsuario, iniciasNomeUsuario, nomeAbreviado, getDadosUsuario, } = useGetDadosUsuario();
@@ -84,7 +89,14 @@ export default function Perfil() {
 
 				<Text className='text-[12px] text-black/60 font-semibold pt-5 pl-5'>Funcionamento do sistema</Text>
 				
-					<View className='items-end'>
+					<View className='flex-row justify-between items-center pt-5'>
+						<ButtonPadrao
+							title="Redefinir Senha"
+							typeButton="normal"
+							classname="px-5"
+							 onPress={handleNavigation.novaSenha}
+						/>
+
 						<ButtonPadrao
 							title="Logout"
 							typeButton="logOutExcluir"

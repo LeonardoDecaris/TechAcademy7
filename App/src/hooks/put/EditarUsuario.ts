@@ -44,6 +44,7 @@ function useEditarUsuario(userId: string) {
           email: data.email,
           cnh: data.cnh ?? null,
           datanascimento: new Date().toISOString(),
+          imagemUsuario_id: "3"
         });
 
         setSuccess(true);

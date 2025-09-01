@@ -33,6 +33,7 @@ const InputAuth = ({ label, labelProps, name, control, rules, span, status, stat
 
     const spanStyle = "text-red-500 text-[10px] pl-2.5";
     const labelStyle = "font-semibold text-[14px] pl-2.5";
+    const campoBloqueado = "font-semibold text-[14px] pl-2.5 text-red-500/80";
     const inputStyle = "w-full p-2.5 font-semibold border rounded-lg bg-white";
 
     const inputPasswordStyle = "w-[85%] p-2.5 font-semibold border rounded-lg bg-white";
@@ -46,12 +47,13 @@ const InputAuth = ({ label, labelProps, name, control, rules, span, status, stat
     return (
         <Controller control={control} name={name} rules={rules} render={({ field: { onChange, value }, fieldState: { error } }) => {
              const status = error ? 'error' : (statusProp || 'normal');
-             const trataOnChange = (text: string) => { if (config === "cpf") { const masked = maskCpf(text); onChange(masked); } else { onChange(text); } };
+             const trataOnChange = (text: string) => { if (config === "cpf") { const digits = text.replace(/\D/g, ""); onChange(digits); } else { onChange(text); } };
 
                 return (
                     <View className="w-full flex flex-col">
-
-                        <Text children={label} className={`${labelStyle} ${status === 'error' ? 'text-red-500/80' : 'text-black/80'}`}  {...labelProps} />
+                        <Text className={`${labelStyle} ${status === 'error' ? 'text-red-500/80' : 'text-black/80'}`}  {...labelProps} >
+                            {label} {desabilitar && <Text className={`${campoBloqueado}`}> - Campo bloqueado</Text>}
+                        </Text>
                         
                         {config === "password" ? (
                             <PasswordInput
@@ -75,7 +77,7 @@ const InputAuth = ({ label, labelProps, name, control, rules, span, status, stat
                                 onChangeText={trataOnChange}
                                 secureTextEntry={secureTextEntry}
                                 editable={!desabilitar}
-                                value={value}
+                                value={config === "cpf" ? maskCpf(String(value ?? "")) : value}
                                 {...rest}
                                 {...inputProps}
                             />
