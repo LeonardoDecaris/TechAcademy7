@@ -6,6 +6,7 @@ const api = axios.create({
   baseURL: BASE_URL,
 });
 
+
 api.interceptors.request.use(async (config: InternalAxiosRequestConfig) => {
   try {
     const token = await AsyncStorage.getItem("authToken");
