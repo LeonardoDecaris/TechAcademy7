@@ -33,7 +33,7 @@ function useGetDadosUsuario() {
     }
 
     try {
-      const { data } = await api.get<User>(`/usuario/${userId}`);
+      const { data } = await api.get<User>(`usuario/${userId}`);
       setDadosUsuario(data);
     } catch (error) {
       console.error("Failed to fetch user data:", error);

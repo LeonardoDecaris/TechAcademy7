@@ -23,7 +23,7 @@ interface FormValuesCadastro {
  * Custom hook to manage user registration form and submission.
  * @returns An object containing form control, submission handlers, and notification state.
  */
-function useCadastroUsuario() {
+function useSignUp() {
   const navigation = useNavigation<NavigationProp>();
   const { control, handleSubmit, watch, formState: { errors } } = useForm<FormValuesCadastro>({ mode: "onSubmit" });
   const password = watch("password");
@@ -39,7 +39,7 @@ function useCadastroUsuario() {
   const handleCadastro = useCallback(
     async (data: FormValuesCadastro) => {
       try {
-        await api.post("/usuario", {
+        await api.post("usuario", {
           nome: data.nome,
           cpf: data.cpf,
           email: data.email,
@@ -51,7 +51,7 @@ function useCadastroUsuario() {
         setNotification("Cadastro realizado com sucesso!");
         setSuccessVisible(true);
 
-        setTimeout(navigateToLogin, 1200);
+        setTimeout(navigateToLogin, 800);
       } catch (error) {
         setSuccess(false);
         setNotification("Erro ao realizar cadastro");
@@ -104,4 +104,4 @@ function useCadastroUsuario() {
   };
 }
 
-export default useCadastroUsuario;
+export default useSignUp;

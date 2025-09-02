@@ -55,7 +55,7 @@ function useEsqueciSenha() {
           return;
         }
 
-        await api.post("/reset-password", {
+        await api.post("reset-password", {
           email,
           cpf,
           token: tokenToUse,

@@ -1,23 +1,27 @@
 import React from 'react'
+
 import InputAuth from '@/src/components/form/InputAuth'
 import { SafeAreaView, Text, TouchableOpacity, View } from 'react-native'
-import { ButtonPadrao } from '@/src/components/form/Buttons'
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view'
+
 import { useNavigation } from '@react-navigation/native'
 import { RootStackParamList } from '@/src/navigation/Routes'
 import { NativeStackNavigationProp } from '@react-navigation/native-stack'
+
+import useLogin from '@/src/hooks/post/login.hook'
+import { ButtonPadrao } from '@/src/components/form/Buttons'
 import AlertNotificacao from '@/src/components/modal/AlertrNotificacao'
-import useLoginUsuario from '@/src/hooks/post/loginUsuario'
 
 
 type NavigationProp = NativeStackNavigationProp<RootStackParamList>
 
 function Login() {
+	
 	const navigation = useNavigation<NavigationProp>()
-	const { control, handleSubmit, handleLogin, rules, successVisible, closeSuccessNotification, notification, success } = useLoginUsuario()
+	const { control, handleSubmit, handleLogin, rules, successVisible, closeSuccessNotification, notification, success } = useLogin()
 
 	const handleNavigation = {
-		Cadastro: () => navigation.navigate('Cadastro'),
+		SignUp: () => navigation.navigate('SignUp'),
 		SolicitarNovaSenha: () => navigation.navigate('SolicitarNovaSenha'),
 	}
 
@@ -70,7 +74,7 @@ function Login() {
 				/>
 
 				<View className='w-full flex-row justify-between'>
-					<TouchableOpacity onPress={handleNavigation.Cadastro}>
+					<TouchableOpacity onPress={handleNavigation.SignUp}>
 						<Text className='font-medium'>Cadastre-se</Text>
 					</TouchableOpacity>
 

@@ -7,7 +7,7 @@ import InputAuth from "@/src/components/form/InputAuth";
 
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import InputAuthData from "@/src/components/form/InputAuthData";
-import useHookRegister from "@/src/hooks/post/cadastroUsuario";
+import useHookRegister from "@/src/hooks/post/signUp.hook";
 import { RootStackParamList } from "@/src/navigation/Routes";
 import { useNavigation } from "@react-navigation/native";
 import { TouchableOpacity } from "react-native";
