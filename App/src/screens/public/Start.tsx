@@ -12,7 +12,7 @@ export default function Start() {
 
 	const handleNavigation = {
 		Login: () => navigation.navigate('Login'),
-		cadastro: () => navigation.navigate('Cadastro'),
+		SignUp: () => navigation.navigate('SignUp'),
 	}
 
 	return (
@@ -33,7 +33,7 @@ export default function Start() {
 					title="Cadastrar"
 					typeButton="normal"
 					classname="w-full"
-					onPress={handleNavigation.cadastro}
+					onPress={handleNavigation.SignUp}
 				/>
 			</View>
 		</SafeAreaView>

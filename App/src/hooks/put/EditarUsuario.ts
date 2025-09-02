@@ -38,7 +38,7 @@ function useEditarUsuario(userId: string) {
     async (data: FormValuesEditarPerfil) => {
       setLoading(true);
       try {
-        await api.put(`/usuario/${userId}`, {
+        await api.put(`usuario/${userId}`, {
           nome: data.nome,
           cpf: data.cpf,
           email: data.email,
