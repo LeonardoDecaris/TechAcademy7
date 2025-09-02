@@ -1,8 +1,10 @@
 import { useCallback, useState } from 'react';
-import api from '@/src/service/ApiAxios';
+
+import http from '@/src/service/httpAxios';
 import { useAuth } from '@/src/context/AuthContext';
 
 export type ImagemVeiculo = { id_imagem?: number; imgUrl?: string | null };
+
 export type Veiculo = {
   id_veiculo: number;
   marca?: string;
@@ -14,13 +16,13 @@ export type Veiculo = {
   imagemVeiculo?: ImagemVeiculo | null;
 };
 
-export default function useGetDadosVeiculo() {
+export default function useGetVehicleData() {
   const { userId } = useAuth();
   const [veiculo, setVeiculo] = useState<Veiculo | null>(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
-  const getVeiculoDoUsuario = useCallback(async () => {
+  const getVehicleData = useCallback(async () => {
     if (!userId) {
       setError('User ID indisponível');
       setVeiculo(null);
@@ -31,7 +33,7 @@ export default function useGetDadosVeiculo() {
     setError(null);
 
     try {
-      const { data } = await api.get<Veiculo>(`usuario/${userId}/veiculo`);
+      const { data } = await http.get<Veiculo>(`usuario/${userId}/veiculo`);
       setVeiculo(data);
       return data;
     } catch (e: any) {
@@ -55,5 +57,5 @@ export default function useGetDadosVeiculo() {
     setError(null);
   }, []);
 
-  return { veiculo, loading, error, getVeiculoDoUsuario, clear };
+  return { veiculo, loading, error, getVehicleData, clear };
 }

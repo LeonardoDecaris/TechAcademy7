@@ -1,14 +1,15 @@
-import { useState, useCallback, useMemo, useEffect } from "react";
-import api from "@/src/service/ApiAxios";
+import { useState, useCallback } from "react";
 import { useForm } from "react-hook-form";
-import { validarCPF, validarEmail } from "@/src/utils/Validacao";
+
+import http from "@/src/service/httpAxios";
 import { useNavigation } from "@react-navigation/native";
-import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import { RootStackParamList } from "@/src/navigation/Routes";
+import { validarCPF, validarEmail } from "@/src/utils/Validacao";
+import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 
 type NavigationProp = NativeStackNavigationProp<RootStackParamList>;
 
-interface FormSolicitarNovaSenha {
+interface RequestNewPassword {
   email: string;
   cpf: string;
 }
@@ -17,20 +18,20 @@ interface FormSolicitarNovaSenha {
  * Custom hook to manage the password reset request form and submission.
  * @returns An object containing form control, submission handlers, and notification state.
  */
-function useSolicitarNovaSenha() {
+function useRequestNewpassword() {
   const navigation = useNavigation<NavigationProp>();
 
-  const { control, handleSubmit, formState: { errors } } = useForm<FormSolicitarNovaSenha>({ mode: "onSubmit" });
+  const { control, handleSubmit, formState: { errors } } = useForm<RequestNewPassword>({ mode: "onSubmit" });
   
   const [success, setSuccess] = useState(false);
   const [notification, setNotification] = useState("");
   const [successVisible, setSuccessVisible] = useState(false);
 
 
-  const handleSolicitarNovaSenha = useCallback( async (data: FormSolicitarNovaSenha) => {
+  const handleRequestNewPassword = useCallback( async (data: RequestNewPassword) => {
 
       try {
-        const res = await api.post("request-password-reset", {
+        const res = await http.post("request-password-reset", {
           email: data.email,
           cpf: data.cpf,
         });
@@ -42,7 +43,7 @@ function useSolicitarNovaSenha() {
         setSuccessVisible(true);
 
         setTimeout(() => {
-          navigation.navigate("EsqueciSenha", { email: data.email, cpf: data.cpf, token: devToken });
+          navigation.navigate("ForgotPassword", { email: data.email, cpf: data.cpf, token: devToken });
         }, 800);
 
       } catch (error: any) {
@@ -60,18 +61,19 @@ function useSolicitarNovaSenha() {
     setSuccessVisible(false);
   }, []);
 
-  return {
-    rules: {
-       email: {
-        required: "Email é obrigatório",
-        validate: validarEmail,
-      },
-      cpf: {
-        required: "CPF é obrigatório",
-        validate: validarCPF,
-      },
+  const rules = {
+    email: {
+      required: "Email é obrigatório",
+      validate: validarEmail,
     },
+    cpf: {
+      required: "CPF é obrigatório",
+      validate: validarCPF,
+    },
+  };
 
+  return {
+    rules,
     control,
     handleSubmit,
     errors,
@@ -79,8 +81,8 @@ function useSolicitarNovaSenha() {
     notification,
     successVisible,
     closeSuccessNotification,
-    handleSolicitarNovaSenha,
+    handleRequestNewPassword,
   };
 }
 
-export default useSolicitarNovaSenha;
+export default useRequestNewpassword;

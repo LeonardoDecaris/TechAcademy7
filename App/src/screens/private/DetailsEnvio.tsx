@@ -1,0 +1,135 @@
+import { useCallback, useEffect, useState } from "react";
+
+import { RefreshControl } from "react-native";
+import { Image, SafeAreaView, ScrollView, Text, TouchableOpacity, View } from "react-native";
+
+import { BASE_URL } from '@env';
+import Constants from "expo-constants";
+
+import { useNavigation } from '@react-navigation/native';
+import { RootStackParamList } from '@/src/navigation/Routes';
+import { NativeStackNavigationProp } from '@react-navigation/native-stack';
+
+import CardCharge from "@/src/components/cards/CardCharge";
+import useGetUserData from "@/src/hooks/get/useGetUserData";
+import CardFreight from "@/src/components/cards/CardFreight";
+
+
+type NavigationProp = NativeStackNavigationProp<RootStackParamList>
+
+const statusBarHeight = Constants.statusBarHeight;
+
+function DetailsEnvio() {
+    const navigation = useNavigation<NavigationProp>()
+    const handleNavigation = { perfil: () => navigation.getParent()?.navigate('Perfil'), }
+
+    const { userData, getUserData, nomeAbreviado, iniciasNomeUsuario } = useGetUserData();
+    const imagemUrl = userData?.imagemUsuario?.imgUrl ? `${BASE_URL}${userData.imagemUsuario.imgUrl}` : ''
+
+    const [refreshing, setRefreshing] = useState(false);
+    const onRefresh = useCallback(async () => {
+        setRefreshing(true);
+        await getUserData();
+        setRefreshing(false);
+    }, [getUserData]);
+
+    useEffect(() => {
+        getUserData()
+    }, [getUserData]);
+
+    const InformartionStyle = "w-full flex-row items-center border border-black rounded-lg p-1.5"
+
+    return (
+        <SafeAreaView style={{ flex: 1, backgroundColor: '#FFFFFF' }}>
+            <ScrollView contentContainerStyle={{ paddingHorizontal: 20, marginTop: statusBarHeight, paddingBottom: 50 }} refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} />}>
+
+                <View className='flex-row items-center gap-2.5 pb-5'>
+
+                    <TouchableOpacity onPress={handleNavigation.perfil} className="">
+                        {imagemUrl ? (
+                            <Image source={{ uri: imagemUrl }} className='w-20 h-20 rounded-full' />
+                        ) : (
+                            <Text className="">{iniciasNomeUsuario}</Text>
+                        )}
+                    </TouchableOpacity>
+
+                    <View>
+                        <Text className='text-base font-bold'>{nomeAbreviado}</Text>
+                        <Text className='text-[12px] font-semibold text-black/60'>{userData?.email}</Text>
+                        <Text className='text-[12px] font-semibold text-black/60'>Categoria: {userData?.cnh}</Text>
+                    </View>
+
+                </View>
+
+
+                <CardCharge
+                    nome="Reboque Caçamba"
+                    tipo="Cascalho"
+                    peso="14"
+                    saida="São Paulo"
+                    destino="Rio de Janeiro"
+                    logoEmpresa=""
+                    imagemCarga=""
+                    valor="1.500,00"
+                />
+
+                <View className="py-2.5" />
+
+                <CardFreight
+                    tipo="Nenhum"
+                    peso="0"
+                    destino="Juranda PR"
+                    progresso={3}
+                />
+
+                <View className="py-5 flex-col gap-2.5">
+                    <Text className="text-black font-semibold pl-2.5">Informações de Carga</Text>
+
+                    <View className={InformartionStyle}>
+                        <Text className="font-semibold text-[14px]">Destino final:</Text>
+                        <Text className="font-medium text-[14px]">São Paulo</Text>
+                    </View>
+
+                    <View className={InformartionStyle}>
+                        <Text className="font-semibold text-[14px]">Cidade de Origem:</Text>
+                        <Text className="font-medium text-[14px]">São Paulo</Text>
+                    </View>
+
+                    <View className={InformartionStyle}>
+                        <Text className="font-semibold text-[14px]">Inicio:</Text>
+                        <Text className="font-medium text-[14px]">São Paulo</Text>
+                    </View>
+
+                    <View className={InformartionStyle}>
+                        <Text className="font-semibold text-[14px]">Chegada:</Text>
+                        <Text className="font-medium text-[14px]">São Paulo</Text>
+                    </View>
+
+                    <View className={InformartionStyle}>
+                        <Text className="font-semibold text-[14px]">Tipo Carga:</Text>
+                        <Text className="font-medium text-[14px]">São Paulo</Text>
+                    </View>
+
+                    <View className={InformartionStyle}>
+                        <Text className="font-semibold text-[14px]">Peso:</Text>
+                        <Text className="font-medium text-[14px]">São Paulo</Text>
+                    </View>
+
+                    <View className={InformartionStyle}>
+                        <Text className="font-semibold text-[14px]">Valor carga:</Text>
+                        <Text className="font-medium text-[14px]">São Paulo</Text>
+                    </View>
+
+                    <View className={InformartionStyle}>
+                        <Text className="font-semibold text-[14px]">Valor Frete:</Text>
+                        <Text className="font-medium text-[14px]">São Paulo</Text>
+                    </View>
+
+                </View>
+
+            </ScrollView>
+        </SafeAreaView>
+    )
+}
+
+export default DetailsEnvio;

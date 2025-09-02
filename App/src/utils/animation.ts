@@ -10,7 +10,6 @@ import Animated, {
 
 const BASE_DURATION = 400;
 
-// Presets (1000ms)
 export const enter = {
     fade: FadeIn.duration(BASE_DURATION),
     fadeUp: FadeInUp.duration(BASE_DURATION),

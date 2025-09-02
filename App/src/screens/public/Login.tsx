@@ -1,6 +1,5 @@
 import React from 'react'
 
-import InputAuth from '@/src/components/form/InputAuth'
 import { SafeAreaView, Text, TouchableOpacity, View } from 'react-native'
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view'
 
@@ -8,9 +7,10 @@ import { useNavigation } from '@react-navigation/native'
 import { RootStackParamList } from '@/src/navigation/Routes'
 import { NativeStackNavigationProp } from '@react-navigation/native-stack'
 
-import useLogin from '@/src/hooks/post/login.hook'
+import useLogin from '@/src/hooks/post/useLogin'
+import InputAuth from '@/src/components/form/InputAuth'
 import { ButtonPadrao } from '@/src/components/form/Buttons'
-import AlertNotificacao from '@/src/components/modal/AlertrNotificacao'
+import AlertNotioncation from '@/src/components/modal/AlertNotioncation'
 
 
 type NavigationProp = NativeStackNavigationProp<RootStackParamList>
@@ -22,7 +22,7 @@ function Login() {
 
 	const handleNavigation = {
 		SignUp: () => navigation.navigate('SignUp'),
-		SolicitarNovaSenha: () => navigation.navigate('SolicitarNovaSenha'),
+		RequestNewpassword: () => navigation.navigate('RequestNewpassword'),
 	}
 
 	return (
@@ -66,7 +66,7 @@ function Login() {
 					typeButton='normal'
 					classname='w-full my-[20px]'
 				/>
-				<AlertNotificacao
+				<AlertNotioncation
 					visible={successVisible}
 					status={success}
 					messagem={notification}
@@ -78,7 +78,7 @@ function Login() {
 						<Text className='font-medium'>Cadastre-se</Text>
 					</TouchableOpacity>
 
-					<TouchableOpacity onPress={handleNavigation.SolicitarNovaSenha}>
+					<TouchableOpacity onPress={handleNavigation.RequestNewpassword}>
 						<Text className='font-medium'>Esqueceu a senha?</Text>
 					</TouchableOpacity>
 				</View>

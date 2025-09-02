@@ -1,9 +1,10 @@
 import { useState, useCallback } from "react";
-import { useForm } from "react-hook-form";
-import { useAuth } from "@/src/context/AuthContext";
-import api from "../../service/ApiAxios";
-import { validarEmail } from "../../utils/Validacao";
 
+import { useForm } from "react-hook-form";
+import http from "@/src/service/httpAxios";
+import { useAuth } from "@/src/context/AuthContext";
+
+import { validarEmail } from "@/src/utils/Validacao";
 import { useNavigation } from "@react-navigation/native";
 import { RootStackParamList } from "@/src/navigation/Routes";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
@@ -48,7 +49,7 @@ function useLogin() {
 			}
 
 			try {
-				const response = await api.post("login", {
+				const response = await http.post("login", {
 					email: data.email,
 					password: data.password,
 				});

@@ -1,23 +1,23 @@
 import React, { useEffect, useCallback, useState } from 'react';
 
-import { Image, ScrollView, RefreshControl } from 'react-native';
-import { TouchableOpacity, SafeAreaView, Text, View } from 'react-native';
+import { Image, ScrollView, RefreshControl, TouchableOpacity, SafeAreaView, Text, View } from 'react-native';
 
 import { BASE_URL } from '@env';
 import Constants from 'expo-constants';
-import { Ionicons } from '@expo/vector-icons';
 import { useAuth } from '@/src/context/AuthContext';
 
-import AcessoRapido from '@/src/components/base/AcessoRapido';
-import CardMeuContrato from '@/src/components/cards/CardMeuContrato';
+import { Ionicons } from '@expo/vector-icons';
+import useGetUserData from '@/src/hooks/get/useGetUserData';
 import AlertLogout from '@/src/components/modal/AlertLogout';
 
 import { useNavigation } from '@react-navigation/native';
 import { RootStackParamList } from '@/src/navigation/Routes';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
-import useGetDadosUsuario from '@/src/hooks/get/GetDadosUsuario';
-import CardFrete from '@/src/components/cards/CardFrete';
-import CardVeiculo from '@/src/components/cards/CardVeiculo';
+
+import CardFreight from '@/src/components/cards/CardFreight';
+import VehicleCard from '@/src/components/cards/VehicleCard';
+import AcessoRapido from '@/src/components/base/AcessoRapido';
+import CardMyContract from '@/src/components/cards/CardMyContract';
 
 type NavigationProp = NativeStackNavigationProp<RootStackParamList>
 
@@ -33,24 +33,25 @@ function Home() {
     
     const [refreshing, setRefreshing] = useState(false);
     const [showLogout, setShowLogout] = useState(false);
-    const { dadosUsuario, getDadosUsuario, iniciasNomeUsuario, nomeAbreviado } = useGetDadosUsuario();
+    const { userData, getUserData, iniciasNomeUsuario, nomeAbreviado } = useGetUserData();
 
-    const imagemUrl = dadosUsuario?.imagemUsuario?.imgUrl ? `${BASE_URL}${dadosUsuario.imagemUsuario.imgUrl}` : '';
+    const imagemUrl = userData?.imagemUsuario?.imgUrl ? `${BASE_URL}${userData.imagemUsuario.imgUrl}` : '';
 
     const handleNavigation = {
-        perfil: () => navigation.navigate('Perfil'),
-        detalheEnvio: () => navigation.navigate('DetalhesEnvio')
+        profile: () => navigation.navigate('Profile'),
+        detailsEnvio: () => navigation.navigate('DetailsEnvio'),
+        myVehicle: () => navigation.navigate('MyVehicle')
     }
 
     const onRefresh = useCallback(async () => {
         setRefreshing(true);
-        await getDadosUsuario();
+        await getUserData();
         setRefreshing(false);
-    }, [getDadosUsuario]);
+    }, [getUserData]);
 
     useEffect(() => {
-        getDadosUsuario();
-    }, [getDadosUsuario]);
+        getUserData();
+    }, [getUserData]);
 
     const handleLogout = async () => { await logout(); navigation.reset({ index: 0, routes: [{ name: 'Login' as never }] }); };
 
@@ -66,15 +67,15 @@ function Home() {
                 <View className='flex-row items-center justify-between pb-10 '>
                     <View className='flex-row items-center gap-2.5'>
 
-                        <TouchableOpacity onPress={handleNavigation.perfil} className={BlocoLogoStyle}>
+                        <TouchableOpacity onPress={handleNavigation.profile} className={BlocoLogoStyle}>
                             {imagemUrl ? (
-                                <Image source={{ uri: imagemUrl }} className='w-[50px] h-[50px] rounded-full' />
+                                <Image source={{ uri: imagemUrl }} className='w-[50px] h-[50px] rounded-full bg-gray-200' />
                             ) : (
                                 <Text className={logoStyle}>{iniciasNomeUsuario}</Text>
                             )}
                         </TouchableOpacity>
 
-                        <Text className='text-[20px] font-bold'>Hello, {nomeAbreviado ?? 'Usuário'}!</Text>
+                        <Text className='text-[20px] font-bold'>Olá, {nomeAbreviado ?? 'Usuário'}!</Text>
                     </View>
 
                     <TouchableOpacity onPress={() => setShowLogout(true)} accessibilityLabel="Logout">
@@ -83,8 +84,8 @@ function Home() {
 
                 </View>
    
-                <CardMeuContrato
-                    motorista={dadosUsuario?.nome}
+                <CardMyContract
+                    motorista={userData?.nome}
                     nome="Sem carga"
                     tipo="Nenhum"
                     peso="0"
@@ -95,18 +96,18 @@ function Home() {
                     valor="Sem valor"
                 />
 
-                <AcessoRapido onPress={handleNavigation.detalheEnvio} title='Detalhes do envio' />
+                <AcessoRapido onPress={handleNavigation.detailsEnvio} title='Detalhes do envio' />
 
-                <CardFrete 
+                <CardFreight 
                     tipo="Nenhum" 
                     peso="0"
                     destino="Nenhum"
                     progresso={0}
                 />
 
-                <AcessoRapido onPress={handleNavigation.detalheEnvio} title='Meu Veículo' />
+                <AcessoRapido onPress={handleNavigation.myVehicle} title='Meu Veículo' />
 
-                <CardVeiculo
+                <VehicleCard
                 
                 />
 

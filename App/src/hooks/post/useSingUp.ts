@@ -1,8 +1,8 @@
 import { useState, useCallback } from "react";
 
-import api from "../../service/ApiAxios";
 import { useForm } from "react-hook-form";
-import { validarNome, validarCPF, validarEmail, validarPassword } from "../../utils/Validacao";
+import http from "@/src/service/httpAxios";
+import { validarNome, validarCPF, validarEmail, validarPassword } from "@/src/utils/Validacao";
 
 import { useNavigation } from "@react-navigation/native";
 import { RootStackParamList } from "@/src/navigation/Routes";
@@ -10,7 +10,7 @@ import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 
 type NavigationProp = NativeStackNavigationProp<RootStackParamList>;
 
-interface FormValuesCadastro {
+interface SingUp {
   nome: string;
   cpf: string;
   email: string;
@@ -25,7 +25,8 @@ interface FormValuesCadastro {
  */
 function useSignUp() {
   const navigation = useNavigation<NavigationProp>();
-  const { control, handleSubmit, watch, formState: { errors } } = useForm<FormValuesCadastro>({ mode: "onSubmit" });
+  
+  const { control, handleSubmit, watch, formState: { errors } } = useForm<SingUp>({ mode: "onSubmit" });
   const password = watch("password");
 
   const [success, setSuccess] = useState(false);
@@ -36,10 +37,10 @@ function useSignUp() {
     navigation.navigate("Login");
   }, [navigation]);
 
-  const handleCadastro = useCallback(
-    async (data: FormValuesCadastro) => {
+  const handleSignUp = useCallback(
+    async (data: SingUp) => {
       try {
-        await api.post("usuario", {
+        await http.post("usuario", {
           nome: data.nome,
           cpf: data.cpf,
           email: data.email,
@@ -100,7 +101,7 @@ function useSignUp() {
     notification,
     successVisible,
     closeSuccessNotification,
-    handleCadastro,
+    handleSignUp,
   };
 }
 

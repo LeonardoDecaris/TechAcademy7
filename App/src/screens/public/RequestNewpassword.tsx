@@ -10,14 +10,14 @@ import { useNavigation } from '@react-navigation/native'
 import { RootStackParamList } from '@/src/navigation/Routes'
 
 import { NativeStackNavigationProp } from '@react-navigation/native-stack'
-import useSolicitarNovaSenha from '@/src/hooks/post/solicitarNovasenha'
-import AlertNotificacao from '@/src/components/modal/AlertrNotificacao'
+import AlertNotioncation from '@/src/components/modal/AlertNotioncation'
+import useRequestNewpassword from '@/src/hooks/post/useRequestNewpassword'
 
 type NavigationProp = NativeStackNavigationProp<RootStackParamList>
 
-function SolicitarNovaSenha() {
+function RequestNewPassword() {
 	const navigation = useNavigation<NavigationProp>()
-	const { control, handleSubmit, rules, handleSolicitarNovaSenha, closeSuccessNotification, success , successVisible, notification} = useSolicitarNovaSenha()
+	const { control, handleSubmit, rules, handleRequestNewPassword, closeSuccessNotification, success , successVisible, notification} = useRequestNewpassword()
 
 	const styleSubTitle = 'text-center text-sm text-black/80 font-medium';
 	const styleTitle = 'text-[48px] text-black text-center font-bold';
@@ -63,7 +63,7 @@ function SolicitarNovaSenha() {
 					title='Solicitar'
 					typeButton='normal'
 					classname='w-full my-[20px]'
-					onPress={handleSubmit(handleSolicitarNovaSenha)}
+					onPress={handleSubmit(handleRequestNewPassword)}
 				/>
 
 				<View className='w-full flex-row justify-end'>
@@ -72,11 +72,10 @@ function SolicitarNovaSenha() {
 					</TouchableOpacity>
 				</View>
 
-				<AlertNotificacao
+				<AlertNotioncation
 					visible={successVisible}
 					status={success}
 					messagem={notification}
-					duration={1100}
 					onDismiss={closeSuccessNotification}
 				/>
 
@@ -85,5 +84,5 @@ function SolicitarNovaSenha() {
 	)
 }
 
-export default SolicitarNovaSenha;
+export default RequestNewPassword;
 

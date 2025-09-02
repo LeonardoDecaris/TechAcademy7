@@ -8,15 +8,16 @@ import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view
 import InputAuth from '@/src/components/form/InputAuth'
 import { useNavigation } from '@react-navigation/native'
 import { RootStackParamList } from '@/src/navigation/Routes'
-import useEsqueciSenha from '@/src/hooks/post/esqueciSenha'
 
 import { NativeStackNavigationProp } from '@react-navigation/native-stack'
-import AlertNotificacao from '@/src/components/modal/AlertrNotificacao'
+import AlertNotioncation from '@/src/components/modal/AlertNotioncation'
+import useForgotPassword from '@/src/hooks/post/useForgotPassword'
+
 type NavigationProp = NativeStackNavigationProp<RootStackParamList>
 
-function EsqueciSenha() {
+function ForgotPassword() {
 	const navigation = useNavigation<NavigationProp>()
-	const { control, handleSubmit, rules, handleResetPassword, success, notification, successVisible, closeSuccessNotification, showTokenField, } = useEsqueciSenha()
+	const { control, handleSubmit, rules, handleForgotPassword, success, notification, successVisible, closeSuccessNotification, showTokenField, } = useForgotPassword()
 
 	const styleSubTitle = 'text-center text-sm text-black/80 font-medium';
 	const styleTitle = 'text-[48px] text-black text-center font-bold';
@@ -73,7 +74,7 @@ function EsqueciSenha() {
 					title='Redefinir'
 					typeButton='normal'
 					classname='w-full my-[20px]'
-					onPress={handleSubmit(handleResetPassword)}
+					onPress={handleSubmit(handleForgotPassword)}
 				/>
 
 				<View className='w-full flex-row justify-end'>
@@ -82,11 +83,10 @@ function EsqueciSenha() {
 					</TouchableOpacity>
 				</View>
 
-				<AlertNotificacao
+				<AlertNotioncation
 					visible={successVisible}
 					status={success}
 					messagem={notification}
-					duration={1100}
 					onDismiss={closeSuccessNotification}
 				/>
 
@@ -95,5 +95,5 @@ function EsqueciSenha() {
 	)
 }
 
-export default EsqueciSenha;
+export default ForgotPassword;
 
