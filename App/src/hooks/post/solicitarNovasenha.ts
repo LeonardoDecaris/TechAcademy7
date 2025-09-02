@@ -30,7 +30,7 @@ function useSolicitarNovaSenha() {
   const handleSolicitarNovaSenha = useCallback( async (data: FormSolicitarNovaSenha) => {
 
       try {
-        const res = await api.post("/request-password-reset", {
+        const res = await api.post("request-password-reset", {
           email: data.email,
           cpf: data.cpf,
         });

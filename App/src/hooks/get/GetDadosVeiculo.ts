@@ -31,7 +31,7 @@ export default function useGetDadosVeiculo() {
     setError(null);
 
     try {
-      const { data } = await api.get<Veiculo>(`/usuario/${userId}/veiculo`);
+      const { data } = await api.get<Veiculo>(`usuario/${userId}/veiculo`);
       setVeiculo(data);
       return data;
     } catch (e: any) {

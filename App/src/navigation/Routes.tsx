@@ -10,13 +10,12 @@ import MainTabs from "./MainTabs";
 import SolicitarNovaSenha from "../screens/public/SolicitarNovaSenha";
 import EsqueciSenha from "../screens/public/EsqueciSenha";
 import NovaSenha from "../screens/public/NovaSenha";
-import Cadastro from "../screens/public/Cadastro";
+import SignUp from "../screens/public/SignUp";
 import Login from "../screens/public/Login";
 import Start from "../screens/public/Start";
 
 //  IMPORTS DE COMPONENTS PRIVADOS
 import CadastroVeiculo from "../screens/private/CadastroVeiculo";
-import EditarVeiculo from "../screens/private/EditarVeiculo";
 import EditarPerfil from "../screens/private/EditarPerfil";
 
 import DetalhesVeiculo from "../screens/private/DestalhesEnvio";
@@ -32,7 +31,7 @@ export type RootStackParamList = {
   EsqueciSenha: { email: string; cpf: string; token?: string };
   SolicitarNovaSenha: undefined;
   NovaSenha: undefined;
-  Cadastro: undefined;
+  SignUp: undefined;
   Start: undefined;
   Login: undefined;
   
@@ -93,7 +92,7 @@ function Routes() {
         </Stack.Screen>
 
         <Stack.Screen name="EditarVeiculo">
-          {() => (<PrivateRoutes><EditarVeiculo/></PrivateRoutes>)}
+          {() => (<PrivateRoutes><></></PrivateRoutes>)}
         </Stack.Screen>
 
         <Stack.Screen name="DetalhesMeuVeiculo">
@@ -104,7 +103,7 @@ function Routes() {
         <Stack.Screen name="SolicitarNovaSenha" component={SolicitarNovaSenha} options={{ headerBackVisible: false, headerShown: false,  }} />
         <Stack.Screen name="EsqueciSenha" component={EsqueciSenha} options={{ headerBackVisible: false, headerShown: false,  }} />
         <Stack.Screen name="NovaSenha" component={NovaSenha} options={{ headerTitle: "Nova Senha", headerTitleAlign: "center", headerBackVisible: true }} />
-        <Stack.Screen name="Cadastro" component={Cadastro} options={{ headerBackVisible: false, headerShown: false }} />
+        <Stack.Screen name="SignUp" component={SignUp} options={{ headerBackVisible: false, headerShown: false }} />
         <Stack.Screen name="Start" component={Start} options={{ headerBackVisible: false, headerShown: false }} />
         <Stack.Screen name="Login" component={Login} options={{ headerBackVisible: false, headerShown: false }} />
 

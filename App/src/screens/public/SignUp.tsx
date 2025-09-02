@@ -1,17 +1,18 @@
 import React from "react";
 
+import { TouchableOpacity } from 'react-native'
 import { SafeAreaView, Text, View } from 'react-native'
-import InputAuth from '@/src/components/form/InputAuth'
 import { ButtonPadrao } from '@/src/components/form/Buttons'
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view'
 
-import { TouchableOpacity } from 'react-native'
 import { useNavigation } from '@react-navigation/native'
 import { RootStackParamList } from '@/src/navigation/Routes'
 import { NativeStackNavigationProp } from '@react-navigation/native-stack'
-import AlertNotificacao from '@/src/components/modal/AlertrNotificacao'
+
 import DropDown from "@/src/components/form/DropDown";
-import useCadastroUsuario from "@/src/hooks/post/cadastroUsuario";
+import InputAuth from '@/src/components/form/InputAuth'
+import useCadastroUsuario from "@/src/hooks/post/signUp.hook";
+import AlertNotificacao from '@/src/components/modal/AlertrNotificacao'
 
 type NavigationProp = NativeStackNavigationProp<RootStackParamList>;
 
@@ -116,7 +117,6 @@ function Cadastro() {
 					visible={successVisible}
 					status={success}
 					messagem={notification}
-					duration={1100}
 					onDismiss={closeSuccessNotification}
 				/>
 
