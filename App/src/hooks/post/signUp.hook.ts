@@ -1,4 +1,5 @@
 import { useState, useCallback } from "react";
+import axios from "axios";
 
 import api from "../../service/ApiAxios";
 import { useForm } from "react-hook-form";
@@ -39,23 +40,73 @@ function useSignUp() {
   const handleCadastro = useCallback(
     async (data: FormValuesCadastro) => {
       try {
-        await api.post("usuario", {
+        const payload = {
           nome: data.nome,
-          cpf: data.cpf,
+          cpf: String(data.cpf).replace(/\D/g, ""),
           email: data.email,
           password: data.password,
           cnh: data.cnh,
           datanascimento: new Date().toISOString(),
-        });
+        };
+
+        await api.post("/usuario", payload);
+
         setSuccess(true);
         setNotification("Cadastro realizado com sucesso!");
         setSuccessVisible(true);
-
         setTimeout(navigateToLogin, 800);
-      } catch (error) {
+      } catch (error: any) {
         setSuccess(false);
-        setNotification("Erro ao realizar cadastro");
-        console.log("Registration error:", error);
+
+        let msg = "Erro ao realizar cadastro";
+        if (axios.isAxiosError(error)) {
+          const status = error.response?.status;
+          const data = error.response?.data;
+          const backendMsg = typeof data === "string" ? data : data?.message;
+
+          if (!error.response) {
+            msg = "Falha de rede. Verifique BASE_URL e sua conexão.";
+          } else if (status === 404) {
+            msg = "Rota /usuario não encontrada (404). Verifique BASE_URL e se a API está rodando.";
+          } else if (status === 400) {
+            msg = backendMsg || "Dados inválidos (400).";
+          } else if (status === 409) {
+            msg = backendMsg || "Conflito (CPF ou e-mail já cadastrado).";
+          } else {
+            msg = `Erro ${status}: ${backendMsg || "Falha na requisição."}`;
+          }
+
+          // Logs úteis de diagnóstico
+          const requestPayload = error.config?.data
+            ? (() => {
+                try {
+                  const parsed = JSON.parse(error.config.data);
+                  return { ...parsed, password: "********" };
+                } catch {
+                  return { password: "********" };
+                }
+              })()
+            : { password: "********" };
+
+          console.log("[signUp][request]", {
+            method: "POST",
+            baseURL: api.defaults.baseURL,
+            url: "/usuario",
+            payload: requestPayload,
+          });
+          console.log("[signUp][response-error]", {
+            status,
+            data,
+            url: error.config?.url,
+            method: error.config?.method,
+            headers: error.response?.headers,
+          });
+        } else {
+          console.log("[signUp][unknown-error]", error);
+        }
+
+        setNotification('Erro ao realizar cadastro');
+        setSuccessVisible(true);
       }
     },
     [navigateToLogin]

@@ -2,11 +2,11 @@ import { useState, useCallback } from "react";
 import { useForm } from "react-hook-form";
 import { useAuth } from "@/src/context/AuthContext";
 import api from "../../service/ApiAxios";
-import { validarEmail } from "../../utils/Validacao";
-
 import { useNavigation } from "@react-navigation/native";
 import { RootStackParamList } from "@/src/navigation/Routes";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
+import { validarEmail } from "../../utils/Validacao";
+import axios from "axios";
 
 type NavigationProp = NativeStackNavigationProp<RootStackParamList>;
 
@@ -69,15 +69,51 @@ function useLogin() {
 				setFailedAttempts(attempts);
 				setSuccess(false);
 
+				let msg = "Falha ao fazer login.";
+				if (axios.isAxiosError(error)) {
+					const status = error.response?.status;
+					const data = error.response?.data;
+					const backendMsg = typeof data === "string" ? data : data?.message;
+
+					if (!error.response) {
+						msg = "Falha de rede. Verifique sua conexão e o BASE_URL.";
+					} else if (status === 401) {
+						msg = backendMsg || "Email ou senha inválidos (401).";
+					} else if (status === 404) {
+						msg = "Rota /login não encontrada (404). Verifique BASE_URL e se a API está rodando.";
+					} else if (status === 400) {
+						msg = backendMsg || "Dados inválidos (400).";
+					} else if (status === 500 || status === 503) {
+						msg = "Servidor indisponível. Tente novamente em instantes.";
+					} else {
+						msg = `Erro ${status ?? "desconhecido"}: ${backendMsg || "Falha na requisição."}`;
+					}
+
+					console.log("[login][request]", {
+						method: "POST",
+						baseURL: api.defaults.baseURL,
+						url: "login",
+						payload: { email: data.email, password: "********" },
+					});
+					console.log("[login][response-error]", {
+						status,
+						data,
+						apiUrl: error.config?.url,
+						method: error.config?.method,
+						headers: error.response?.headers,
+					});
+				} else {
+					console.log("[login][unknown-error]", error);
+				}
+
 				if (attempts >= 5) {
 					const until = Date.now() + 1 * 60 * 1000;
 					setLockUntil(until);
 					setNotification("Muitas tentativas de login. Tente novamente em 1 minuto.");
 				} else {
-					setNotification("Erro: Email ou senha inválidos.");
+					setNotification('Email ou senha inválidos.');
 				}
 				setSuccessVisible(true);
-				console.log("Login error:", error);
 			}
 		},
 		[failedAttempts, lockUntil, login, navigateToHome]
