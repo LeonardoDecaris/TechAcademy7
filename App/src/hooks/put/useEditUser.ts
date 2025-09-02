@@ -1,11 +1,13 @@
-import { useState, useCallback } from "react";
 import { useForm } from "react-hook-form";
+import { useState, useCallback } from "react";
 import { useNavigation } from "@react-navigation/native";
-import { NativeStackNavigationProp } from "@react-navigation/native-stack";
+
 import type { AxiosError } from "axios";
-import api from "../../service/ApiAxios";
-import { validarNome, validarCPF, validarEmail } from "../../utils/Validacao";
+import http from "@/src/service/httpAxios";
+
 import { RootStackParamList } from "@/src/navigation/Routes";
+import { NativeStackNavigationProp } from "@react-navigation/native-stack";
+import { validarNome, validarCPF, validarEmail } from "@/src/utils/Validacao";
 
 type NavigationProp = NativeStackNavigationProp<RootStackParamList>;
 
@@ -38,7 +40,7 @@ function useEditarUsuario(userId: string) {
     async (data: FormValuesEditarPerfil) => {
       setLoading(true);
       try {
-        await api.put(`usuario/${userId}`, {
+        await http.put(`usuario/${userId}`, {
           nome: data.nome,
           cpf: data.cpf,
           email: data.email,
@@ -51,7 +53,7 @@ function useEditarUsuario(userId: string) {
         setNotification("Dados atualizados com sucesso!");
         setSuccessVisible(true);
 
-        setTimeout(navigateToPerfil, 1200);
+        setTimeout(navigateToPerfil, 800);
       } catch (err: unknown) {
         const error = err as AxiosError<{ errors?: Record<string, string>; message?: string }>;
         setSuccess(false);
@@ -98,17 +100,17 @@ function useEditarUsuario(userId: string) {
   };
 
   return {
-    control,
-    handleSubmit,
-    errors,
     rules,
-    setValue,
+    errors,
+    control,
+    loading,
     success,
+    setValue,
+    handleEditar,
     notification,
+    handleSubmit,
     successVisible,
     closeSuccessNotification,
-    handleEditar,
-    loading,
   };
 }
 

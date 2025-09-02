@@ -1,49 +1,50 @@
-import React, { use, useEffect } from "react";
-
-import InputAuth from "@/src/components/form/InputAuth";
+import React, { useEffect } from "react";
 import { SafeAreaView, View, Text, Image } from "react-native";
-import { ButtonPadrao, ButtonUpload } from "@/src/components/form/Buttons";
 import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view";
-
-import DropDown from "@/src/components/form/DropDown";
-import AlertNotificacao from "@/src/components/modal/AlertrNotificacao";
 
 import { BASE_URL } from '@env';
 import { useAuth } from "@/src/context/AuthContext";
 
+
+import DropDown from "@/src/components/form/DropDown";
+import InputAuth from "@/src/components/form/InputAuth";
+import AlertNotioncation from "@/src/components/modal/AlertNotioncation";
+import { ButtonPadrao, ButtonUpload } from "@/src/components/form/Buttons";
+
 import { useNavigation } from "@react-navigation/native";
 import { RootStackParamList } from "@/src/navigation/Routes";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
-import useGetDadosUsuario from "@/src/hooks/get/GetDadosUsuario";
-import useEditarUsuario from "@/src/hooks/put/EditarUsuario";
+
+import useEditarUsuario from "@/src/hooks/put/useEditUser";
+import useGetUserData from "@/src/hooks/get/useGetUserData";
 
 type NavigationProp = NativeStackNavigationProp<RootStackParamList>;
 
-function EditarPerfil() {
+function EditProfile() {
 	const navigation = useNavigation<NavigationProp>();
 	
 	const { userId } = useAuth();
-	const { iniciasNomeUsuario, dadosUsuario, getDadosUsuario } = useGetDadosUsuario();
+	const { iniciasNomeUsuario, userData, getUserData } = useGetUserData();
 	const { control, handleSubmit, rules, setValue, handleEditar, successVisible, closeSuccessNotification, notification, success } = useEditarUsuario(userId ?? "");
-	const imagemUrl = dadosUsuario?.imagemUsuario?.imgUrl ? `${BASE_URL}${dadosUsuario.imagemUsuario.imgUrl}` : ''
+	const imagemUrl = userData?.imagemUsuario?.imgUrl ? `${BASE_URL}${userData.imagemUsuario.imgUrl}` : ''
 
 	useEffect(() => {
-		getDadosUsuario();
-	}, [getDadosUsuario]);
+		getUserData();
+	}, [getUserData]);
 
 	useEffect(() => {
-		if (dadosUsuario) {
-			setValue("nome", dadosUsuario.nome || "");
-			setValue("email", dadosUsuario.email || "");
-			setValue("cpf", dadosUsuario.cpf || "");
-			setValue("cnh", dadosUsuario.cnh || "");
+		if (userData) {
+			setValue("nome", userData.nome || "");
+			setValue("email", userData.email || "");
+			setValue("cpf", userData.cpf || "");
+			setValue("cnh", userData.cnh || "");
 		}
-	}, [dadosUsuario, setValue]);
+	}, [userData, setValue]);
 
 	return (
 		<SafeAreaView className="flex-1 bg-white px-5">
 			<KeyboardAwareScrollView contentContainerStyle={{ paddingTop: 20 }} enableOnAndroid={true}>
-				<AlertNotificacao
+				<AlertNotioncation
 					visible={successVisible}
 					status={success}
 					messagem={notification}
@@ -137,4 +138,4 @@ function EditarPerfil() {
 	);
 }
 
-export default EditarPerfil;
+export default EditProfile;

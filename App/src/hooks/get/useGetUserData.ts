@@ -1,6 +1,6 @@
 import { useState, useCallback, useMemo, useEffect } from "react";
 
-import api from "@/src/service/ApiAxios";
+import http from "@/src/service/httpAxios";
 import { useAuth } from "@/src/context/AuthContext";
 import { getInitials, getDisplayName } from "@/src/utils/funcoes";
 
@@ -23,18 +23,18 @@ interface User {
  * Custom hook to fetch and manage user data.
  * @returns An object containing user data, initials, display name, and a function to fetch user data.
  */
-function useGetDadosUsuario() {
+function useGetUserData() {
   const { userId } = useAuth();
-  const [dadosUsuario, setDadosUsuario] = useState<User>();
+  const [userData, setUserData] = useState<User>();
 
-  const getDadosUsuario = useCallback(async () => {
+  const getUserData = useCallback(async () => {
     if (!userId) {
       throw new Error("User ID is not available");
     }
 
     try {
-      const { data } = await api.get<User>(`usuario/${userId}`);
-      setDadosUsuario(data);
+      const { data } = await http.get<User>(`usuario/${userId}`);
+      setUserData(data);
     } catch (error) {
       console.error("Failed to fetch user data:", error);
       throw new Error("Unable to fetch user data");
@@ -42,27 +42,27 @@ function useGetDadosUsuario() {
   }, [userId]);
 
   useEffect(() => {
-    getDadosUsuario();
-  }, [getDadosUsuario]);
+    getUserData();
+  }, [getUserData]);
 
 
   const iniciasNomeUsuario = useMemo(
-    () => getInitials(dadosUsuario?.nome ?? ""),
-    [dadosUsuario?.nome]
+    () => getInitials(userData?.nome ?? ""),
+    [userData?.nome]
   );
 
 
   const nomeAbreviado = useMemo(
-    () => getDisplayName(dadosUsuario?.nome ?? ""),
-    [dadosUsuario?.nome]
+    () => getDisplayName(userData?.nome ?? ""),
+    [userData?.nome]
   );
 
   return {
-    dadosUsuario,
+    userData,
     iniciasNomeUsuario,
     nomeAbreviado,
-    getDadosUsuario,
+    getUserData,
   };
 }
 
-export default useGetDadosUsuario;
+export default useGetUserData;

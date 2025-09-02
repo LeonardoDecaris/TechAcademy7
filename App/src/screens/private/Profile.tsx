@@ -1,25 +1,24 @@
 import React, { useCallback, useEffect, useState } from 'react'
+import { ScrollView, SafeAreaView, RefreshControl, Image, Text, View } from 'react-native'
 
 import { BASE_URL } from '@env';
 import Constants from 'expo-constants';
-
-import AcessoRapidoPerfil from '@/src/components/base/AcessoRapidoPerfil';
-import { ScrollView, SafeAreaView, RefreshControl, Image, Text, View } from 'react-native'
-
 import { useAuth } from '@/src/context/AuthContext';
+import LogoutModal from '@/src/components/modal/AlertLogout';
+
 import { useNavigation } from '@react-navigation/native';
 import { RootStackParamList } from '@/src/navigation/Routes';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 
+import useGetUserData from '@/src/hooks/get/useGetUserData';
 import { ButtonPadrao } from '@/src/components/form/Buttons';
-import LogoutModal from '@/src/components/modal/AlertLogout';
-import useGetDadosUsuario from '@/src/hooks/get/GetDadosUsuario';
+import AcessoRapidoPerfil from '@/src/components/base/AcessoRapidoPerfil';
 
 type NavigationProp = NativeStackNavigationProp<RootStackParamList>;
 
 const statusBarHeight = Constants.statusBarHeight;
 
-export default function Perfil() {
+function Profile() {
 
 	const logoInical = "rounded-full bg-gray-200 items-center justify-center"
 	const logoStyle = "w-28 h-28 absolute -bottom-[90px] left-1/2 transform -translate-x-1/2 -translate-y-1/2 rounded-full ";
@@ -31,24 +30,24 @@ export default function Perfil() {
 	const [modalVisible, setModalVisible] = useState(false);
 
 	const handleNavigation = {
-		novaSenha: () => navigation.navigate("NovaSenha"),
-		editarPerfil: () => navigation.navigate("EditarPerfil"),
+		newPassword: () => navigation.navigate("NewPassword"),
+		editProfile: () => navigation.navigate("EditProfile"),
 	};
 
 	const [refreshing, setRefreshing] = useState(false);
-    const { dadosUsuario, iniciasNomeUsuario, nomeAbreviado, getDadosUsuario, } = useGetDadosUsuario();
+    const { userData, iniciasNomeUsuario, nomeAbreviado, getUserData } = useGetUserData();
 
-	const imagemUrl = dadosUsuario?.imagemUsuario?.imgUrl ? `${BASE_URL}${dadosUsuario.imagemUsuario.imgUrl}` : ''
+	const imagemUrl = userData?.imagemUsuario?.imgUrl ? `${BASE_URL}${userData.imagemUsuario.imgUrl}` : ''
 
     const onRefresh = useCallback(async () => {
         setRefreshing(true);
-        await getDadosUsuario();
+        await getUserData();
         setRefreshing(false);
-    }, [getDadosUsuario]);
+    }, [getUserData]);
 
     useEffect(() => {
-        getDadosUsuario();
-    }, [getDadosUsuario]);
+        getUserData();
+    }, [getUserData]);
 
 	const handleConfirmLogout = async () => {
 		try {
@@ -77,13 +76,13 @@ export default function Perfil() {
 
 				<View className="pt-14 w-full">
 					<Text className="font-bold text-2xl text-black text-center">{nomeAbreviado}</Text>
-					<Text className="text-black/60 text-center">{dadosUsuario?.email}</Text>
+					<Text className="text-black/60 text-center">{userData?.email}</Text>
 				</View>
 				
 				<Text className='text-[12px] text-black/60 font-semibold pt-5 pl-5'>Informações pessoais</Text>
 
 				<View className='py-2.5 gap-4'>
-					<AcessoRapidoPerfil titulo="Meus dados" onPress={handleNavigation.editarPerfil} />
+					<AcessoRapidoPerfil titulo="Meus dados" onPress={handleNavigation.editProfile} />
 					<AcessoRapidoPerfil titulo="Configurações" onPress={() => {}} />
 				</View>
 
@@ -94,7 +93,7 @@ export default function Perfil() {
 							title="Redefinir Senha"
 							typeButton="normal"
 							classname="px-5"
-							 onPress={handleNavigation.novaSenha}
+							 onPress={handleNavigation.newPassword}
 						/>
 
 						<ButtonPadrao
@@ -115,3 +114,5 @@ export default function Perfil() {
 		</SafeAreaView>
 	)
 }
+
+export default Profile;

@@ -1,5 +1,5 @@
-import { useAuth } from "../context/AuthContext";
 import React, { useEffect } from "react";
+import { useAuth } from "@/src/context/AuthContext";
 import { useNavigation } from "@react-navigation/native";
 
 interface Props {

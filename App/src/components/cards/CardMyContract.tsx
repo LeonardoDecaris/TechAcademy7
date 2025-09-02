@@ -1,7 +1,13 @@
-import { ImageBackground, Text, View } from "react-native";
-import CardCarga from "./CardGarca";
+import { ImageBackground, Text, TouchableOpacity, View } from "react-native";
+import CardCharge from "./CardCharge";
 
-interface CardCargaProps {
+import { useNavigation } from '@react-navigation/native';
+import { RootStackParamList } from '@/src/navigation/Routes';
+import { NativeStackNavigationProp } from '@react-navigation/native-stack';
+
+type NavigationProp = NativeStackNavigationProp<RootStackParamList>
+
+interface Props {
     motorista?: string;
     nome?: string;
     tipo?: string;
@@ -13,11 +19,15 @@ interface CardCargaProps {
     valor?: string;
 }
 
-const CardMeuContrato = (props: CardCargaProps) => {
-        const semHorario = "Sem horario";
+const CardMyContract = (props: Props) => {
+    const semHorario = "Sem horario";
 
 
-    return( 
+    const navigation = useNavigation<NavigationProp>()
+    const handleNavigation = { myVehicle: () => navigation.navigate('MyVehicle'),}
+
+
+    return (
         <ImageBackground source={require('../../assets/image/logo.jpeg')} className="w-full p-2.5 rounded-2xl border border-white" style={{ boxShadow: "0 4px 4px rgba(0, 0, 0, 0.10)" }} imageStyle={{ borderRadius: 14, opacity: 0.2 }}>
             <View className="pl-2.5 py-2.5">
                 <Text className="text-lg font-bold">Contrato atual</Text>
@@ -25,12 +35,13 @@ const CardMeuContrato = (props: CardCargaProps) => {
                 <Text className="text-[12px] font-medium">
                     Motorista: <Text className="text-black font-normal">{props.motorista}</Text>
                 </Text>
-                
+
                 <Text className="text-[12px] font-medium">
                     Horário de partida: <Text className="text-black font-normal">{semHorario}</Text>
                 </Text>
             </View>
-                <CardCarga
+            <TouchableOpacity onPress={handleNavigation.myVehicle}>
+                <CardCharge
                     nome={props.nome}
                     tipo={props.tipo}
                     peso={props.peso}
@@ -40,9 +51,10 @@ const CardMeuContrato = (props: CardCargaProps) => {
                     imagemCarga={props.imagemCarga}
                     valor={props.valor}
                 />
-            </ImageBackground>
+            </TouchableOpacity>
+        </ImageBackground>
     );
 }
 
-export default CardMeuContrato;
+export default CardMyContract;
 

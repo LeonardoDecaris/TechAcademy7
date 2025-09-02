@@ -4,48 +4,46 @@ import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import { NavigationContainer } from "@react-navigation/native";
 
 import PrivateRoutes from "./PrivateRoutes";
-import MainTabs from "./MainTabs";
+import MainTabs from "./RoutesTab";
 
 //  IMPORTS DE COMPONENTS PUBLICOS
-import SolicitarNovaSenha from "../screens/public/SolicitarNovaSenha";
-import EsqueciSenha from "../screens/public/EsqueciSenha";
-import NovaSenha from "../screens/public/NovaSenha";
+import RequestNewpassword from "../screens/public/RequestNewpassword";
+import ForgotPassword from "../screens/public/ForgotPassword";
+import NewPassword from "../screens/public/NewPassword";
 import SignUp from "../screens/public/SignUp";
 import Login from "../screens/public/Login";
 import Start from "../screens/public/Start";
 
 //  IMPORTS DE COMPONENTS PRIVADOS
-import CadastroVeiculo from "../screens/private/CadastroVeiculo";
-import EditarPerfil from "../screens/private/EditarPerfil";
+import DetailsFreight from "../screens/private/DetailsFreight";
+import DetailsEnvio from "../screens/private/DetailsEnvio";
+import EditProfile from "../screens/private/EditProfile";
+import MyVehicle from "../screens/private/MyVehicle";
 
-import DetalhesVeiculo from "../screens/private/DestalhesEnvio";
-import DetalhesEnvio from "../screens/private/DestalhesEnvio";
-import DetalhesFrete from "../screens/private/DetalhesFrete";
-import DetalhesMeuVeiculo from "../screens/private/MeuVeiculo";
 
 //  IMPORTS DA NAVEGAÇÃO POR TABS
 import { StatusBar } from "react-native";
 
 
 export type RootStackParamList = {
-  EsqueciSenha: { email: string; cpf: string; token?: string };
-  SolicitarNovaSenha: undefined;
-  NovaSenha: undefined;
+
+  ForgotPassword: { email: string; cpf: string; token?: string };
+  RequestNewpassword: undefined;
+  NewPassword: undefined;
   SignUp: undefined;
   Start: undefined;
   Login: undefined;
+
+  DetailsFreight: undefined;
+  DetailsVehicle: undefined;
+  DetailsEnvio: undefined;
+  EditProfile: undefined;
+  MyVehicle: undefined;
+  Profile: undefined;
+  Freight: undefined;
   
-  CadastroVeiculo: undefined;
-  DetalhesVeiculo: undefined;
-  EditarVeiculo: undefined;
-  DetalhesEnvio: undefined;
-  DetalhesFrete: undefined;
-  EditarPerfil: undefined;
-  DetalhesMeuVeiculo: undefined;
-  Fretes: undefined;
-  Perfil: undefined;
-  Home: undefined;
-  MainTabs: { screen?: string } | undefined; 
+  MainTabs: { screen?: string } | undefined;
+   
 };
 
 const Stack = createNativeStackNavigator<RootStackParamList>();
@@ -56,7 +54,7 @@ function Routes() {
       <StatusBar barStyle="dark-content" backgroundColor="#ffffff" />
       <Stack.Navigator initialRouteName="Start" screenOptions={{ headerBackVisible: false }}>
         
-        {/* Tabs principais: Home, Fretes, Perfil */}
+        {/* ROTAS PRINCIPAIS */}
         <Stack.Screen name="MainTabs" options={{ headerShown: false, }}>
           {() => (
             <PrivateRoutes>
@@ -65,44 +63,35 @@ function Routes() {
           )}
         </Stack.Screen>
 
-        {/* ROTAS PRIVADAS | LIBERADAS APARTIR DO LOGIN DO USUARIO */}
-        <Stack.Screen name="CadastroVeiculo">
-          {() => (<PrivateRoutes><CadastroVeiculo/></PrivateRoutes>)}
-        </Stack.Screen>
-
-        <Stack.Screen name="DetalhesVeiculo">
-          {() => (<PrivateRoutes><DetalhesVeiculo/></PrivateRoutes>)}
-        </Stack.Screen>
-
+          {/* ROTAS DE FRETES */}
         <Stack.Screen
-          name="DetalhesFrete"
-          options={{ headerTitle: "Detalhes do Frete", headerTitleAlign: "center", headerBackVisible: true }}>
-          {() => (<PrivateRoutes><DetalhesFrete/></PrivateRoutes>)}
-        </Stack.Screen>
-
-        <Stack.Screen
-          name="DetalhesEnvio"
+          name="DetailsEnvio"
           options={{ headerTitle: "Detalhes do Envio", headerTitleAlign: "center", headerBackVisible: true }}>
-          {() => (<PrivateRoutes><DetalhesEnvio/></PrivateRoutes>)}
+          {() => (<PrivateRoutes><DetailsEnvio/></PrivateRoutes>)}
         </Stack.Screen>
 
-        <Stack.Screen name="EditarPerfil"
+        <Stack.Screen
+          name="DetailsFreight"
+          options={{ headerTitle: "Detalhes do Frete", headerTitleAlign: "center", headerBackVisible: true }}>
+          {() => (<PrivateRoutes><DetailsFreight/></PrivateRoutes>)}
+        </Stack.Screen>
+
+        {/* ROTAS DE EDIÇÃO DE CADASTRO */}
+        <Stack.Screen name="EditProfile"
           options={{ headerTitle: "Editar Perfil", headerTitleAlign: "center", headerBackVisible: true }}>
-          {() => (<PrivateRoutes><EditarPerfil/></PrivateRoutes>)}
+          {() => (<PrivateRoutes><EditProfile/></PrivateRoutes>)}
         </Stack.Screen>
 
-        <Stack.Screen name="EditarVeiculo">
-          {() => (<PrivateRoutes><></></PrivateRoutes>)}
-        </Stack.Screen>
-
-        <Stack.Screen name="DetalhesMeuVeiculo">
-          {() => (<PrivateRoutes><DetalhesMeuVeiculo/></PrivateRoutes>)}
+        {/* ROTAS DE MEUS VEÍCULOS */}
+        <Stack.Screen name="MyVehicle"
+          options={{ headerTitle: "Meu Veículo", headerTitleAlign: "center", headerBackVisible: true }}>
+          {() => (<PrivateRoutes><MyVehicle/></PrivateRoutes>)}
         </Stack.Screen>
 
         {/* ROTAS PÚBLICAS | DISPONÍVEIS SEM LOGIN */}
-        <Stack.Screen name="SolicitarNovaSenha" component={SolicitarNovaSenha} options={{ headerBackVisible: false, headerShown: false,  }} />
-        <Stack.Screen name="EsqueciSenha" component={EsqueciSenha} options={{ headerBackVisible: false, headerShown: false,  }} />
-        <Stack.Screen name="NovaSenha" component={NovaSenha} options={{ headerTitle: "Nova Senha", headerTitleAlign: "center", headerBackVisible: true }} />
+        <Stack.Screen name="RequestNewpassword" component={RequestNewpassword} options={{ headerBackVisible: false, headerShown: false,  }} />
+        <Stack.Screen name="ForgotPassword" component={ForgotPassword} options={{ headerBackVisible: false, headerShown: false,  }} />
+        <Stack.Screen name="NewPassword" component={NewPassword} options={{ headerTitle: "Nova Senha", headerTitleAlign: "center", headerBackVisible: true }} />
         <Stack.Screen name="SignUp" component={SignUp} options={{ headerBackVisible: false, headerShown: false }} />
         <Stack.Screen name="Start" component={Start} options={{ headerBackVisible: false, headerShown: false }} />
         <Stack.Screen name="Login" component={Login} options={{ headerBackVisible: false, headerShown: false }} />

@@ -1,3 +1,4 @@
+// Validação de E-mail
 export function validarEmail(email: string): string | true {
   if (!email) return "E-mail obrigatório";
   const trimmedEmail = email.trim().toLowerCase();
@@ -32,24 +33,24 @@ export function validarEmail(email: string): string | true {
   return true;
 }
 
+// Validação de Senha
 export function validarPassword(senha: string): string | true {
   if (!senha) return "Senha obrigatória";
   
-  // Regras mais restritivas para tamanho
-  if (senha.length < 12) return "Mínimo 12 caracteres";
+  // Regra de tamanho mínimo
+  if (senha.length < 8) return "Mínimo 8 caracteres";
   if (senha.length > 64) return "Senha muito longa";
   
-  // Múltiplas verificações de caracteres
-  if (!/[a-z].*[a-z]/.test(senha)) return "Precisa de pelo menos 2 letras minúsculas";
-  if (!/[A-Z].*[A-Z]/.test(senha)) return "Precisa de pelo menos 2 letras maiúsculas";
-  if (!/[0-9].*[0-9]/.test(senha)) return "Precisa de pelo menos 2 números";
-  if (!/[!@#$%^&*()].*[!@#$%^&*()]/.test(senha)) return "Precisa de pelo menos 2 caracteres especiais";
+  // Verificações de caracteres
+  if (!/[a-z]/.test(senha)) return "Precisa de pelo menos 1 letra minúscula";
+  if (!/[A-Z]/.test(senha)) return "Precisa de pelo menos 1 letra maiúscula";
+  if (!/[!@#$%^&*()/\[\]]/.test(senha)) return "Precisa de pelo menos 1 caractere especial (incluindo /)";
   
   // Verificar caracteres repetidos consecutivos
   if (/(.)\1\1/.test(senha)) return "Não pode ter 3 caracteres iguais consecutivos";
   
-  // Verificar espaços e caracteres não permitidos
-  if (/[\s\\\/]/.test(senha)) return "Não pode conter espaços ou barras";
+  // Verificar espaços e barras invertidas
+  if (/[\s\\]/.test(senha)) return "Não pode conter espaços ou barra invertida";
   
   // Verificar padrões comuns
   const commonPatterns = ['123', 'abc', 'qwe', 'password', 'senha'];
@@ -60,6 +61,7 @@ export function validarPassword(senha: string): string | true {
   return true;
 }
 
+// Validação de CPF
 export function validarCPF(cpf: string): string | true {
   if (!cpf) return "CPF obrigatório";
   
@@ -99,6 +101,7 @@ export function validarCPF(cpf: string): string | true {
   return true;
 }
 
+// Validação de Nome
 export function validarNome(nome: string): string | true {
   if (!nome) return "Nome obrigatório";
   

@@ -1,16 +1,17 @@
-import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { useForm } from "react-hook-form";
+import { useCallback, useState } from "react";
+
+import http from "@/src/service/httpAxios";
+import { RouteProp } from "@react-navigation/native";
+import { validarPassword } from "@/src/utils/Validacao";
+import { RootStackParamList } from "@/src/navigation/Routes";
 import { useRoute, useNavigation } from "@react-navigation/native";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
-import { RouteProp } from "@react-navigation/native";
-import { RootStackParamList } from "@/src/navigation/Routes";
-import api from "@/src/service/ApiAxios";
-import { validarPassword } from "@/src/utils/Validacao";
 
-type EsqueciSenhaRoute = RouteProp<RootStackParamList, "EsqueciSenha">;
+type ForgotPasswordRoute = RouteProp<RootStackParamList, "ForgotPassword">;
 type NavigationProp = NativeStackNavigationProp<RootStackParamList>;
 
-interface FormResetSenha {
+interface ForgotPassword {
   token?: string;
   password: string;
   confirmaSenha: string;
@@ -20,13 +21,13 @@ interface FormResetSenha {
  * Custom hook to manage the password reset form and submission.
  * @returns An object containing form control, submission handlers, notification state, and token field visibility.
  */
-function useEsqueciSenha() {
-  const route = useRoute<EsqueciSenhaRoute>();
+function useForgotPassword() {
+  const route = useRoute<ForgotPasswordRoute>();
   const navigation = useNavigation<NavigationProp>();
 
   const { email, cpf, token: tokenParam } = route.params ?? {};
 
-  const { control, handleSubmit, formState: { errors }, watch } = useForm<FormResetSenha>({
+  const { control, handleSubmit, formState: { errors }, watch } = useForm<ForgotPassword>({
     mode: "onSubmit",
     defaultValues: { token: tokenParam ?? "" },
   });
@@ -38,8 +39,8 @@ function useEsqueciSenha() {
   const passwordValue = watch("password");
 
 
-  const handleResetPassword = useCallback(
-    async (data: FormResetSenha) => {
+  const handleForgotPassword = useCallback(
+    async (data: ForgotPassword) => {
       try {
         const tokenToUse = tokenParam || data.token;
         if (!email || !cpf) {
@@ -55,7 +56,7 @@ function useEsqueciSenha() {
           return;
         }
 
-        await api.post("reset-password", {
+        await http.post("reset-password", {
           email,
           cpf,
           token: tokenToUse,
@@ -69,14 +70,7 @@ function useEsqueciSenha() {
         setTimeout(() => {
           navigation.navigate("Login");
         }, 800);
-      } catch (error: any) {
-        console.error("[EsqueciSenha] Erro na requisição", {
-          message: error?.message,
-          url: error?.config?.url,
-          method: error?.config?.method,
-          status: error?.response?.status,
-          responseData: error?.response?.data,
-        });
+      } catch (error) {
         setSuccess(false);
         setNotification("Erro ao redefinir senha. Verifique suas informações.");
         setSuccessVisible(true);
@@ -89,20 +83,20 @@ function useEsqueciSenha() {
     setSuccessVisible(false);
   }, []);
 
+  const rules = {
+    token: !tokenParam ? { required: "Token é obrigatório" } : undefined,
+    password: {
+      validate: validarPassword,
+      required: "Senha é obrigatória",
+    },
+    confirmaSenha: {
+      required: "Confirmação de senha é obrigatória",
+      validate: (value: string) => value === passwordValue || "As senhas não conferem",
+    }
+  };
 
   return {
-    rules: {
-      token: !tokenParam ? { required: "Token é obrigatório" } : undefined,
-      password: {
-        validate: validarPassword,
-        required: "Senha é obrigatória",
-      },
-      confirmaSenha: {
-        required: "Confirmação de senha é obrigatória",
-        validate: (value: string) => value === passwordValue || "As senhas não conferem",
-      },
-    },
-    
+    rules,
     control,
     handleSubmit,
     errors,
@@ -110,9 +104,9 @@ function useEsqueciSenha() {
     notification,
     successVisible,
     closeSuccessNotification,
-    handleResetPassword,
+    handleForgotPassword,
     showTokenField: !tokenParam,
   };
 }
 
-export default useEsqueciSenha;
+export default useForgotPassword;

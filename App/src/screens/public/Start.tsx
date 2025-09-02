@@ -1,13 +1,15 @@
-import { View, Text, SafeAreaView, ImageBackground, Image } from 'react-native'
 import React from 'react'
-import { useNavigation } from '@react-navigation/native'
-import { NativeStackNavigationProp } from '@react-navigation/native-stack'
+
+import { View, Text, SafeAreaView} from 'react-native'
 import { ButtonPadrao } from '@/src/components/form/Buttons'
+
+import { useNavigation } from '@react-navigation/native'
 import { RootStackParamList } from '@/src/navigation/Routes'
+import { NativeStackNavigationProp } from '@react-navigation/native-stack'
 
 type NavigationProp = NativeStackNavigationProp<RootStackParamList>
 
-export default function Start() {
+function Start() {
 	const navigation = useNavigation<NavigationProp>()
 
 	const handleNavigation = {
@@ -40,3 +42,5 @@ export default function Start() {
 
 	)
 }
+
+export default Start;
