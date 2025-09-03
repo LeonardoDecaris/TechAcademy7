@@ -6,12 +6,18 @@ import ImagemUsuario from '../models/imagem_usuario.model';
 
 export const createImagemUsuario = async (req: Request, res: Response) => {
     try {
+        console.log("Received file:", req.file);
         const imgUrl = req.file ? `/uploads/${req.file.filename}` : null;
         if (!imgUrl) return res.status(400).json({ message: 'Imagem não enviada.' });
 
         const imagemUsuario = await ImagemUsuario.create({ imgUrl });
-        return res.status(201).json(imagemUsuario);
+        console.log("ImagemUsuario created:", imagemUsuario); 
+        return res.status(201).json({
+            id_imagem: imagemUsuario.id_imagem,
+            imgUrl: imagemUsuario.imgUrl,
+        });
     } catch (error) {
+        console.error("Error in createImagemUsuario:", error);
         if (error instanceof Error) {
             return res.status(500).json({ message: error.message });
         }

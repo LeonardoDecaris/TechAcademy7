@@ -16,6 +16,7 @@ interface FormValuesEditarPerfil {
   cpf: string;
   email: string;
   cnh?: string;
+  imagemUsuario_id?: string | null;
 }
 
 /**
@@ -46,7 +47,7 @@ function useEditarUsuario(userId: string) {
           email: data.email,
           cnh: data.cnh ?? null,
           datanascimento: new Date().toISOString(),
-          imagemUsuario_id: "3"
+          imagemUsuario_id: data.imagemUsuario_id || null,
         });
 
         setSuccess(true);

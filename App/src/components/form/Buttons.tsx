@@ -5,6 +5,7 @@ interface ButtonProps {
 	onPress?: () => void;
 	typeButton?: 'normal' | 'logOutExcluir' | 'aceite';
 	classname?: string;
+	disabled?: boolean;
 }
 
 const ButtonPadrao = ({ title, onPress, typeButton = "normal", classname, }: ButtonProps) => {
@@ -24,13 +25,13 @@ const ButtonPadrao = ({ title, onPress, typeButton = "normal", classname, }: But
     )
 }
 
-const ButtonUpload =  ({ title, onPress, classname}: ButtonProps) => {
+const ButtonUpload =  ({ title, onPress, classname, disabled }: ButtonProps) => {
 
 	const buttonStyles = "py-2 px-4 rounded-lg border border-black bg-[#322F2F]";
 	const titleStyles = "text-white text-base text-center font-bold";
 
     return (
-		<TouchableOpacity onPress={onPress} className={`${buttonStyles} ${classname}`}>
+		<TouchableOpacity onPress={onPress} className={`${buttonStyles} ${classname}`} disabled={disabled}>
 			<Text className={titleStyles}>
 				{title}
 			</Text>
