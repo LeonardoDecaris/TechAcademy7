@@ -101,6 +101,7 @@ function Home() {
                 <CardFreight 
                     tipo="Nenhum" 
                     peso="0"
+                    
                     destino="Nenhum"
                     progresso={0}
                 />

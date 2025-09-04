@@ -1,48 +1,72 @@
-import React, { useEffect, useState } from "react";
-import { SafeAreaView, View, Text, Image } from "react-native";
-import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view";
+import React, { useEffect, useState } from 'react';
+import { SafeAreaView, View, Text, Image } from 'react-native';
+import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
 
 import { BASE_URL } from '@env';
-import { useAuth } from "@/src/context/AuthContext";
+import { useAuth } from '@/src/context/AuthContext';
+import { dataCnh } from '@/src/data/dataCnh';
 
 import * as ImagePicker from 'expo-image-picker';
-import DropDown from "@/src/components/form/DropDown";
-import InputAuth from "@/src/components/form/InputAuth";
-import AlertNotioncation from "@/src/components/modal/AlertNotioncation";
-import { ButtonPadrao, ButtonUpload } from "@/src/components/form/Buttons";
+import DropDown from '@/src/components/form/DropDown';
+import InputAuth from '@/src/components/form/InputAuth';
+import AlertNotioncation from '@/src/components/modal/AlertNotioncation';
+import { ButtonPadrao, ButtonUpload } from '@/src/components/form/Buttons';
 
-import { useNavigation } from "@react-navigation/native";
-import { RootStackParamList } from "@/src/navigation/Routes";
-import { NativeStackNavigationProp } from "@react-navigation/native-stack";
+import { useNavigation } from '@react-navigation/native';
+import { RootStackParamList } from '@/src/navigation/Routes';
+import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 
-import useImageUser from "@/src/hooks/post/useImageUser";
-import useEditarUsuario from "@/src/hooks/put/useEditUser";
-import useGetUserData from "@/src/hooks/get/useGetUserData";
-import useEditImageUser from "@/src/hooks/put/useEditImageUser";
+import useImageUser from '@/src/hooks/post/useImageUser';
+import useEditarUsuario from '@/src/hooks/put/useEditUser';
+import useGetUserData from '@/src/hooks/get/useGetUserData';
+import useEditImageUser from '@/src/hooks/put/useEditImageUser';
+import ErrorNotification from '@/src/components/modal/ErrorNotioncation';
 
 type NavigationProp = NativeStackNavigationProp<RootStackParamList>;
 
 function EditProfile() {
 
-	const navigation = useNavigation<NavigationProp>();
 	const { userId } = useAuth();
+	const navigation = useNavigation<NavigationProp>();
 
 	const { iniciasNomeUsuario, userData, getUserData } = useGetUserData();
-	const { control, handleSubmit, rules, setValue, handleEditar, successVisible, closeSuccessNotification, notification, success } = useEditarUsuario(userId ?? "");
+	const { control, handleSubmit, rules, setValue, handleEditar, successVisible, closeSuccessNotification, notification, success, } = useEditarUsuario(userId ?? '');
 
-const { uploadImage, error: errorImage, success: successImage } = useImageUser();
-	const {pickAndUpdate} = useEditImageUser();
-	const imagemUrl = userData?.imagemUsuario?.imgUrl ? `${BASE_URL}${userData.imagemUsuario.imgUrl}` : ''
+	const { uploadImage, loading, statusSuccess } = useImageUser();
+	const { updateImage, loadingUpdate, statusSuccessUpdate } = useEditImageUser();
+
+	const imagemUrl = userData?.imagemUsuario?.imgUrl ? `${BASE_URL}${userData.imagemUsuario.imgUrl}` : '';
+
+	const [saving, setSaving] = useState(false);
 	const [selectedImage, setSelectedImage] = useState<string | null>(null);
 
-	const handlePickImage = async () => {
-		const permissionResult = await ImagePicker.requestMediaLibraryPermissionsAsync();
-		if (!permissionResult.granted) {
-			alert("Permissão para acessar a galeria é necessária!");
-			return;
+	const requestPermission = async (type: 'camera' | 'gallery') => {
+		if (type === 'camera') {
+			const result = await ImagePicker.requestCameraPermissionsAsync();
+			return result.granted;
+		} else {
+			const result = await ImagePicker.requestMediaLibraryPermissionsAsync();
+			return result.granted;
+		}
+	};
+
+	const pickOrTakeImage = async (type: 'camera' | 'gallery') => {
+		const hasPermission = await requestPermission(type);
+		if (!hasPermission) {
+			alert(
+				type === 'camera'
+					? 'Permissão para acessar a câmera é necessária!'
+					: 'Permissão para acessar a galeria é necessária!'
+			);
+			return null;
 		}
 
-		const result = await ImagePicker.launchImageLibraryAsync({
+		const pickerFn =
+			type === 'camera'
+				? ImagePicker.launchCameraAsync
+				: ImagePicker.launchImageLibraryAsync;
+
+		const result = await pickerFn({
 			mediaTypes: ImagePicker.MediaTypeOptions.Images,
 			allowsEditing: true,
 			aspect: [1, 1],
@@ -50,71 +74,62 @@ const { uploadImage, error: errorImage, success: successImage } = useImageUser()
 		});
 
 		if (!result.canceled && result.assets?.length) {
-			setSelectedImage(result.assets[0].uri);
+			return result.assets[0].uri;
 		}
+		return null;
+	};
+
+	const handlePickImage = async () => {
+		const uri = await pickOrTakeImage('gallery');
+		if (uri) setSelectedImage(uri);
 	};
 
 	const handleTakePhoto = async () => {
-		const permissionResult = await ImagePicker.requestCameraPermissionsAsync();
-		if (!permissionResult.granted) {
-			alert("Permissão para acessar a câmera é necessária!");
-			return;
-		}
-
-		const result = await ImagePicker.launchCameraAsync({
-			allowsEditing: true,
-			aspect: [1, 1],
-			quality: 1,
-		});
-
-		if (!result.canceled && result.assets?.length) {
-			setSelectedImage(result.assets[0].uri);
-		}
-	};
-
-	const handleUploadImage = async () => {
-		if (!selectedImage) return;
-		try {
-			const idImagem = await uploadImage(selectedImage); 
-			if (idImagem) {
-				setValue("imagemUsuario_id", String(idImagem)); 
-			}
-			getUserData();
-		} catch (err) {
-			console.error("Falha no upload da imagem:", err);
-		}
+		const uri = await pickOrTakeImage('camera');
+		if (uri) setSelectedImage(uri);
 	};
 
 	const handleSave = async () => {
-		if (!imagemUrl && !selectedImage) {
-			handleSubmit(handleEditar)();
-			return;
-		}
-		if (!imagemUrl && selectedImage) {
-			await handleUploadImage();
-			handleSubmit(handleEditar)();
-			return;
-		}
+		setSaving(true);
+		try {
+			let imagemUsuarioId = null;
+			let imagemError = false;
 
-		if (imagemUrl && selectedImage && selectedImage !== imagemUrl) {
-			const idImagem = await pickAndUpdate(selectedImage);
-			if (idImagem) {
-				setValue("imagemUsuario_id", String(idImagem));
+			if (selectedImage && selectedImage !== imagemUrl) {
+				const idAtual = userData?.imagemUsuario?.id_imagem;
+
+				if (idAtual && imagemUrl) {
+					await updateImage(String(idAtual), selectedImage);
+					if (statusSuccessUpdate === false) imagemError = true;
+					imagemUsuarioId = idAtual;
+				} else {
+					const idImagem = await uploadImage(selectedImage);
+					if (!idImagem || statusSuccess === false) imagemError = true;
+					imagemUsuarioId = idImagem;
+				}
+			} else if (imagemUrl) {
+				const idAtual = userData?.imagemUsuario?.id_imagem;
+				imagemUsuarioId = idAtual ?? null;
 			}
-			handleSubmit(handleEditar)();
-			return;
-		}
 
-		if (imagemUrl && (!selectedImage || selectedImage === imagemUrl)) {
-			const idAtual = userData?.imagemUsuario?.id_imagem;
-			if (idAtual) {
-				setValue("imagemUsuario_id", String(idAtual));
+			if (imagemError) {
+				setSaving(false);
+				return;
 			}
-			handleSubmit(handleEditar)();
-			return;
-		}
 
-		handleSubmit(handleEditar)();
+			if (imagemUsuarioId) {
+				setValue('imagemUsuario_id', String(imagemUsuarioId));
+			}
+
+			await handleSubmit(async (data) => {
+				await handleEditar(data);
+			})();
+
+		} catch (error) {
+			console.error(error);
+		} finally {
+			setSaving(false);
+		}
 	};
 
 	useEffect(() => {
@@ -123,16 +138,17 @@ const { uploadImage, error: errorImage, success: successImage } = useImageUser()
 
 	useEffect(() => {
 		if (userData) {
-			setValue("nome", userData.nome || "");
-			setValue("email", userData.email || "");
-			setValue("cpf", userData.cpf || "");
-			setValue("cnh", userData.cnh || "");
+			setValue('nome', userData.nome || '');
+			setValue('email', userData.email || '');
+			setValue('cpf', userData.cpf || '');
+			setValue('cnh', userData.cnh || '');
 		}
 	}, [userData, setValue]);
 
 	return (
 		<SafeAreaView className="flex-1 bg-white px-5">
-			<KeyboardAwareScrollView contentContainerStyle={{ paddingTop: 20 }} enableOnAndroid={true}>
+			<KeyboardAwareScrollView contentContainerStyle={{ paddingTop: 20 }} enableOnAndroid enableAutomaticScroll={true}>
+
 				<AlertNotioncation
 					visible={successVisible}
 					status={success}
@@ -140,7 +156,7 @@ const { uploadImage, error: errorImage, success: successImage } = useImageUser()
 					onDismiss={closeSuccessNotification}
 				/>
 
-				<View className="flex-col gap-5 justify-center items-center pb-5">
+				<View className="flex-col gap-3 justify-center items-center pb-5">
 					{selectedImage ? (
 						<Image
 							source={{ uri: selectedImage }}
@@ -153,28 +169,29 @@ const { uploadImage, error: errorImage, success: successImage } = useImageUser()
 						/>
 					) : (
 						<View className="h-24 w-24 rounded-full bg-gray-200 items-center justify-center">
-							<Text className="font-bold text-black text-3xl">
-								{iniciasNomeUsuario}
-							</Text>
+							<Text className="font-bold text-black text-3xl">{iniciasNomeUsuario}</Text>
 						</View>
 					)}
 
+					<ErrorNotification
+						loading={loading}
+						statusSuccess={statusSuccess}
+						loadingText="Carregando imagem..."
+						successText="Imagem enviada com sucesso!"
+						errorText="Erro ao enviar imagem."
+					/>
+					<ErrorNotification
+						loading={loadingUpdate}
+						statusSuccess={statusSuccessUpdate}
+						loadingText="Atualizando..."
+						successText="Imagem atualizada com sucesso!"
+						errorText="Erro ao atualizar imagem."
+					/>
+
 					<View className="flex-row gap-2">
-						<ButtonUpload
-							onPress={handlePickImage}
-							title="Alterar Foto"
-						/>
-						<ButtonUpload
-							onPress={handleTakePhoto}
-							title="Tirar Foto"
-						/>
+						<ButtonUpload onPress={handlePickImage} title="Alterar Foto" />
+						<ButtonUpload onPress={handleTakePhoto} title="Tirar Foto" />
 					</View>
-					{errorImage && (
-						<Text style={{ color: "red", marginTop: 8 }}>{errorImage}</Text>
-					)}
-					{successImage && (
-						<Text style={{ color: "green", marginTop: 8 }}>Imagem salva com sucesso!</Text>
-					)}
 				</View>
 
 				<View className="w-full flex-col gap-2.5">
@@ -192,7 +209,8 @@ const { uploadImage, error: errorImage, success: successImage } = useImageUser()
 						name="email"
 						label="Email"
 						placeholder="Email"
-						desabilitar={true}
+						desabilitar
+						status="error"
 						control={control}
 						rules={rules.email}
 						type="email-address"
@@ -213,14 +231,7 @@ const { uploadImage, error: errorImage, success: successImage } = useImageUser()
 						placeholder="Selecione o tipo de CNH"
 						control={control}
 						rules={rules.cnh}
-						items={[
-							{ label: "A", value: "A" },
-							{ label: "B", value: "B" },
-							{ label: "AB", value: "AB" },
-							{ label: "C", value: "C" },
-							{ label: "D", value: "D" },
-							{ label: "E", value: "E" },
-						]}
+						items={dataCnh}
 					/>
 				</View>
 
@@ -231,12 +242,22 @@ const { uploadImage, error: errorImage, success: successImage } = useImageUser()
 						classname="flex-1"
 						onPress={() => navigation.goBack()}
 					/>
-					<ButtonPadrao
-						title="Salvar"
-						typeButton="normal"
-						classname="flex-1"
-						onPress={handleSave}
-					/>
+					{(saving) ? (
+						<ButtonPadrao
+							title="Salvando..."
+							typeButton="normal"
+							classname="flex-1"
+							onPress={handleSave}
+							disabled
+						/>
+					) :
+						<ButtonPadrao
+							title="Salvar"
+							typeButton="normal"
+							classname="flex-1"
+							onPress={handleSave}
+						/>
+					}
 				</View>
 			</KeyboardAwareScrollView>
 		</SafeAreaView>

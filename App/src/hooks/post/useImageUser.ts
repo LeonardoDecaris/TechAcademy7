@@ -1,55 +1,51 @@
-import { useState } from "react";
+
 import * as ImagePicker from "expo-image-picker";
 import http from "@/src/service/httpAxios";
+import { useState } from "react";
 
-type UseImageUserReturn = {
+interface UseImageUserReturn {
   loading: boolean;
-  error: string | null;
-  success: boolean;
+  statusSuccess: boolean | null;
   uploadImage: (uri: string) => Promise<number | null>;
   pickImage: () => Promise<void>;
+}
+
+interface ImageFormData {
+  uri: string;
+  name: string;
+  type: string;
+}
+
+const createImageFormData = (uri: string): ImageFormData => {
+  const nome = uri.split("/").pop() || "image.jpg";
+  const match = /\.(\w+)$/.exec(nome);
+  const type = match ? `image/${match[1]}` : `image`;
+  return { uri, name: nome, type };
 };
 
-const useImageUser = (): UseImageUserReturn => {
-  
+function useImageUser(): UseImageUserReturn {
   const [loading, setLoading] = useState(false);
-  const [error, setError] = useState<string | null>(null);
-  const [success, setSuccess] = useState(false);
+  const [statusSuccess, setStatusSuccess] = useState<boolean | null>(null);
 
   const uploadImage = async (uri: string): Promise<number | null> => {
     setLoading(true);
-    setError(null);
-    setSuccess(false);
-
+    setStatusSuccess(null);
     try {
-      const filename = uri.split("/").pop() || "image.jpg";
-      const match = /\.(\w+)$/.exec(filename);
-      const type = match ? `image/${match[1]}` : `image`;
-
+      const imageData = createImageFormData(uri);
       const formData = new FormData();
-      formData.append("imgUrl", {
-        uri,
-        name: filename,
-        type,
-      } as any);
-
-      console.log("Uploading image to:", `${http.defaults.baseURL}/imgUsuario`);
-      console.log("FormData:", formData);
+      formData.append("imgUrl", imageData as any);
 
       const response = await http.post("imgUsuario", formData, {
         headers: { "Content-Type": "multipart/form-data" },
       });
 
-      console.log("Upload response:", response.data);
-      setSuccess(true);
-      return response.data.id_imagem; // Return id_imagem
-    } catch (err: any) {
-      console.error("Erro ao enviar imagem:", err);
-      if (err.message === "Network Error") {
-        setError("Falha na conexão com o servidor. Verifique se o servidor está ativo e a URL está correta.");
-      } else {
-        setError(err?.response?.data?.message || "Erro ao enviar imagem");
-      }
+      setStatusSuccess(true);
+      setLoading(false);
+      return response.data.id_imagem;
+
+    } catch (error) {
+      console.log("Erro ao enviar imagem:", error);
+      setStatusSuccess(false);
       return null;
     } finally {
       setLoading(false);
@@ -59,7 +55,6 @@ const useImageUser = (): UseImageUserReturn => {
   const pickImage = async (): Promise<void> => {
     const permissionResult = await ImagePicker.requestMediaLibraryPermissionsAsync();
     if (!permissionResult.granted) {
-      setError("Permissão para acessar a galeria é necessária!");
       return;
     }
 
@@ -75,7 +70,12 @@ const useImageUser = (): UseImageUserReturn => {
     }
   };
 
-  return { loading, error, success, uploadImage, pickImage };
+  return { 
+    uploadImage,
+    pickImage,
+    loading, 
+    statusSuccess 
+  };
 };
 
 export default useImageUser;

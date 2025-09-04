@@ -1,72 +1,52 @@
-import { useState } from "react";
-import * as ImagePicker from "expo-image-picker";
 import http from "@/src/service/httpAxios";
+import { useState } from "react";
 
-type UpdateImageResponse = {
-  id_imagem: number;
-  imgUrl: string;
-};
+interface UseEditImageUserReturn {
+  loadingUpdate: boolean;
+  statusSuccessUpdate: boolean | null;
+  updateImage: (id: string, uri: string) => Promise<void>;
+}
 
-type UseEditImageUserReturn = {
-  loading: boolean;
-  error: string | null;
-  success: boolean;
-  updateImage: (id: number | string, uri: string) => Promise<UpdateImageResponse | null>;
-  pickAndUpdate: (id: number | string) => Promise<UpdateImageResponse | null>;
+interface ImageFormData {
+  uri: string;
+  name: string;
+  type: string;
+}
+
+const createImageFormData = (uri: string): ImageFormData => {
+  const nome = uri.split("/").pop() || "image.jpg";
+  const match = /\.(\w+)$/.exec(nome);
+  const type = match ? `image/${match[1]}` : `image`;
+  return { uri, name: nome, type };
 };
 
 function useEditImageUser(): UseEditImageUserReturn {
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState<string | null>(null);
-  const [success, setSuccess] = useState(false);
+  const [loadingUpdate, setLoadingUpdate] = useState(false);
+  const [statusSuccessUpdate, setStatusSuccessUpdate] = useState<boolean | null>(null);
 
-  const updateImage = async (id: number | string, uri: string): Promise<UpdateImageResponse | null> => {
-    setLoading(true);
-    setError(null);
-    setSuccess(false);
-
+  const updateImage = async (id: string, uri: string): Promise<void> => {
+    setLoadingUpdate(true);
+    setStatusSuccessUpdate(null);
+    
     try {
-      const filename = uri.split("/").pop() || "image.jpg";
-      const match = /\.(\w+)$/.exec(filename);
-      const type = match ? `image/${match[1]}` : `image`;
-
+      const imageData = createImageFormData(uri);
       const formData = new FormData();
-      formData.append("imgUrl", { uri, name: filename, type } as any);
+      formData.append("imgUrl", imageData as any);
 
-      const { data } = await http.put<UpdateImageResponse>(`imgUsuario/${id}`, formData);
+      await http.put(`imgUsuario/${id}`, formData, {
+        headers: { "Content-Type": "multipart/form-data" },
+      });
 
-      setSuccess(true);
-      return data;
-    } catch (err: any) {
-      console.error("Erro ao atualizar imagem:", err);
-      setError(err?.response?.data?.message || "Erro ao atualizar imagem");
-      return null;
+      setStatusSuccessUpdate(true);
+    } catch (error) {
+      console.log("Erro ao atualizar imagem:", error);
+      setStatusSuccessUpdate(false);
     } finally {
-      setLoading(false);
+      setLoadingUpdate(false);
     }
   };
 
-  const pickAndUpdate = async (id: number | string): Promise<UpdateImageResponse | null> => {
-    const permissionResult = await ImagePicker.requestMediaLibraryPermissionsAsync();
-    if (!permissionResult.granted) {
-      setError("Permissão para acessar a galeria é necessária!");
-      return null;
-    }
-
-    const result = await ImagePicker.launchImageLibraryAsync({
-      mediaTypes: ImagePicker.MediaTypeOptions.Images, 
-      allowsEditing: true,
-      aspect: [1, 1],
-      quality: 1,
-    });
-
-    if (!result.canceled && result.assets?.length) {
-      return updateImage(id, result.assets[0].uri);
-    }
-    return null;
-  };
-
-  return { loading, error, success, updateImage, pickAndUpdate };
+  return { updateImage, loadingUpdate, statusSuccessUpdate };
 }
 
 export default useEditImageUser;

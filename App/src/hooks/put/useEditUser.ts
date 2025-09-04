@@ -31,7 +31,6 @@ function useEditarUsuario(userId: string) {
   const [success, setSuccess] = useState(false);
   const [notification, setNotification] = useState("");
   const [successVisible, setSuccessVisible] = useState(false);
-  const [loading, setLoading] = useState(false);
 
   const navigateToPerfil = useCallback(() => {
     navigation.navigate("MainTabs", { screen: "Perfil" });
@@ -39,7 +38,6 @@ function useEditarUsuario(userId: string) {
 
   const handleEditar = useCallback(
     async (data: FormValuesEditarPerfil) => {
-      setLoading(true);
       try {
         await http.put(`usuario/${userId}`, {
           nome: data.nome,
@@ -71,9 +69,7 @@ function useEditarUsuario(userId: string) {
 
         setNotification(error.response?.data?.message || "Erro ao atualizar dados");
         console.error("User update error:", error);
-      } finally {
-        setLoading(false);
-      }
+      } 
     },
     [navigateToPerfil, setError, userId]
   );
@@ -104,7 +100,6 @@ function useEditarUsuario(userId: string) {
     rules,
     errors,
     control,
-    loading,
     success,
     setValue,
     handleEditar,

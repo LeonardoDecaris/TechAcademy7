@@ -6,18 +6,12 @@ import ImagemUsuario from '../models/imagem_usuario.model';
 
 export const createImagemUsuario = async (req: Request, res: Response) => {
     try {
-        console.log("Received file:", req.file);
-        const imgUrl = req.file ? `/uploads/${req.file.filename}` : null;
+        const imgUrl = req.file ? `uploads/${req.file.filename}` : null;
         if (!imgUrl) return res.status(400).json({ message: 'Imagem não enviada.' });
 
         const imagemUsuario = await ImagemUsuario.create({ imgUrl });
-        console.log("ImagemUsuario created:", imagemUsuario); 
-        return res.status(201).json({
-            id_imagem: imagemUsuario.id_imagem,
-            imgUrl: imagemUsuario.imgUrl,
-        });
+        return res.status(201).json(imagemUsuario);
     } catch (error) {
-        console.error("Error in createImagemUsuario:", error);
         if (error instanceof Error) {
             return res.status(500).json({ message: error.message });
         }
@@ -70,7 +64,7 @@ export const updateImagemUsuario = async (req: Request, res: Response) => {
                     fs.unlinkSync(oldImagePath);
                 }
             }
-            imgUrl = `/uploads/${req.file.filename}`;
+            imgUrl = `uploads/${req.file.filename}`;
         }
 
         await imagem.update({ imgUrl });

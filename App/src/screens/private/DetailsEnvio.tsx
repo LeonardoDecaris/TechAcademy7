@@ -87,36 +87,36 @@ function DetailsEnvio() {
                     <Text className="text-black font-semibold pl-2.5">Informações de Carga</Text>
 
                     <InformationBox
-                        title="Text"
-                        descricao="Texte"
+                        title="Cidade de Origem"
+                        descricao=" Campo Mourão PR"
                     />
                     <InformationBox
-                        title="Text"
-                        descricao="Texte"
+                        title="Destino Final"
+                        descricao=" Juranda PR"
                     />
                     <InformationBox
-                        title="Text"
-                        descricao="Texte"
+                        title="Incio"
+                        descricao=" 19:30 | 04/08/2025"
                     />
                     <InformationBox
-                        title="Text"
-                        descricao="Texte"
+                        title="Chegada"
+                        descricao=" Sem Previsão"
                     />
                     <InformationBox
-                        title="Text"
-                        descricao="Texte"
+                        title="Tipo"
+                        descricao=" Minerais Pesados"
                     />
                     <InformationBox
-                        title="Text"
-                        descricao="Texte"
+                        title="Peso:"
+                        descricao="14t"
                     />
                     <InformationBox
-                        title="Text"
-                        descricao="Texte"
+                        title="Valor da Carga"
+                        descricao=" R$ 500.000,00"
                     />
                     <InformationBox
-                        title="Text"
-                        descricao="Texte"
+                        title="Frete"
+                        descricao=" R$ 4.400"
                     />
 
                 </View>

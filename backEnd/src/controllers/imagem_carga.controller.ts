@@ -5,7 +5,7 @@ import ImagemCarga from '../models/imagem_carga.model';
 
 export const createImagemCarga = async (req: Request, res: Response) => {
     try {
-        const imgUrl = req.file ? `/uploads/${req.file.filename}` : null;
+        const imgUrl = req.file ? `uploads/${req.file.filename}` : null;
         if (!imgUrl) return res.status(400).json({ message: 'Imagem não enviada.' });
 
         const imagemCarga = await ImagemCarga.create({ imgUrl });
@@ -63,7 +63,7 @@ export const updateImagemCarga = async (req: Request, res: Response) => {
                     fs.unlinkSync(oldImagePath);
                 }
             }
-            imgUrl = `/uploads/${req.file.filename}`;
+            imgUrl = `uploads/${req.file.filename}`;
         }
 
         await imagem.update({ imgUrl });

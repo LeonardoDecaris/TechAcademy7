@@ -48,6 +48,7 @@ function useSignUp() {
           cnh: data.cnh,
           datanascimento: new Date().toISOString(),
         });
+        
         setSuccess(true);
         setNotification("Cadastro realizado com sucesso!");
         setSuccessVisible(true);
