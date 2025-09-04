@@ -6,7 +6,7 @@ import ImagemUsuario from '../models/imagem_usuario.model';
 
 export const createImagemUsuario = async (req: Request, res: Response) => {
     try {
-        const imgUrl = req.file ? `/uploads/${req.file.filename}` : null;
+        const imgUrl = req.file ? `uploads/${req.file.filename}` : null;
         if (!imgUrl) return res.status(400).json({ message: 'Imagem não enviada.' });
 
         const imagemUsuario = await ImagemUsuario.create({ imgUrl });
@@ -64,7 +64,7 @@ export const updateImagemUsuario = async (req: Request, res: Response) => {
                     fs.unlinkSync(oldImagePath);
                 }
             }
-            imgUrl = `/uploads/${req.file.filename}`;
+            imgUrl = `uploads/${req.file.filename}`;
         }
 
         await imagem.update({ imgUrl });

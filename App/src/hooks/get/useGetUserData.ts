@@ -41,16 +41,10 @@ function useGetUserData() {
     }
   }, [userId]);
 
-  useEffect(() => {
-    getUserData();
-  }, [getUserData]);
-
-
   const iniciasNomeUsuario = useMemo(
     () => getInitials(userData?.nome ?? ""),
     [userData?.nome]
   );
-
 
   const nomeAbreviado = useMemo(
     () => getDisplayName(userData?.nome ?? ""),

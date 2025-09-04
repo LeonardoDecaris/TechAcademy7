@@ -13,6 +13,7 @@ import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import CardCharge from "@/src/components/cards/CardCharge";
 import useGetUserData from "@/src/hooks/get/useGetUserData";
 import CardFreight from "@/src/components/cards/CardFreight";
+import InformationBox from "@/src/components/form/InformarionBox";
 
 
 type NavigationProp = NativeStackNavigationProp<RootStackParamList>
@@ -85,45 +86,38 @@ function DetailsEnvio() {
                 <View className="py-5 flex-col gap-2.5">
                     <Text className="text-black font-semibold pl-2.5">Informações de Carga</Text>
 
-                    <View className={InformartionStyle}>
-                        <Text className="font-semibold text-[14px]">Destino final:</Text>
-                        <Text className="font-medium text-[14px]">São Paulo</Text>
-                    </View>
-
-                    <View className={InformartionStyle}>
-                        <Text className="font-semibold text-[14px]">Cidade de Origem:</Text>
-                        <Text className="font-medium text-[14px]">São Paulo</Text>
-                    </View>
-
-                    <View className={InformartionStyle}>
-                        <Text className="font-semibold text-[14px]">Inicio:</Text>
-                        <Text className="font-medium text-[14px]">São Paulo</Text>
-                    </View>
-
-                    <View className={InformartionStyle}>
-                        <Text className="font-semibold text-[14px]">Chegada:</Text>
-                        <Text className="font-medium text-[14px]">São Paulo</Text>
-                    </View>
-
-                    <View className={InformartionStyle}>
-                        <Text className="font-semibold text-[14px]">Tipo Carga:</Text>
-                        <Text className="font-medium text-[14px]">São Paulo</Text>
-                    </View>
-
-                    <View className={InformartionStyle}>
-                        <Text className="font-semibold text-[14px]">Peso:</Text>
-                        <Text className="font-medium text-[14px]">São Paulo</Text>
-                    </View>
-
-                    <View className={InformartionStyle}>
-                        <Text className="font-semibold text-[14px]">Valor carga:</Text>
-                        <Text className="font-medium text-[14px]">São Paulo</Text>
-                    </View>
-
-                    <View className={InformartionStyle}>
-                        <Text className="font-semibold text-[14px]">Valor Frete:</Text>
-                        <Text className="font-medium text-[14px]">São Paulo</Text>
-                    </View>
+                    <InformationBox
+                        title="Cidade de Origem"
+                        descricao=" Campo Mourão PR"
+                    />
+                    <InformationBox
+                        title="Destino Final"
+                        descricao=" Juranda PR"
+                    />
+                    <InformationBox
+                        title="Incio"
+                        descricao=" 19:30 | 04/08/2025"
+                    />
+                    <InformationBox
+                        title="Chegada"
+                        descricao=" Sem Previsão"
+                    />
+                    <InformationBox
+                        title="Tipo"
+                        descricao=" Minerais Pesados"
+                    />
+                    <InformationBox
+                        title="Peso:"
+                        descricao="14t"
+                    />
+                    <InformationBox
+                        title="Valor da Carga"
+                        descricao=" R$ 500.000,00"
+                    />
+                    <InformationBox
+                        title="Frete"
+                        descricao=" R$ 4.400"
+                    />
 
                 </View>
 
