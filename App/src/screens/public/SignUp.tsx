@@ -8,7 +8,7 @@ import { useNavigation } from '@react-navigation/native'
 import { RootStackParamList } from '@/src/navigation/Routes'
 import { NativeStackNavigationProp } from '@react-navigation/native-stack'
 
-import useSignUp from "@/src/hooks/post/useSingUp";
+import useSignUp from "@/src/hooks/post/useSignUp";
 import DropDown from "@/src/components/form/DropDown";
 import InputAuth from '@/src/components/form/InputAuth'
 import { ButtonPadrao } from '@/src/components/form/Buttons';

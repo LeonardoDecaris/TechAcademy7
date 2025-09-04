@@ -28,7 +28,7 @@ function Login() {
 	return (
 		<SafeAreaView style={{ flex: 1, paddingHorizontal: 20, backgroundColor: '#FFFFFF' }}>
 			<KeyboardAwareScrollView
-				contentContainerStyle={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}
+				contentContainerStyle={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}	
 			>
 				<View className='mb-10 '>
 					<Text className='text-[48px] text-black text-center font-bold'>Login</Text>

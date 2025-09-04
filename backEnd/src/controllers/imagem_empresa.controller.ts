@@ -5,7 +5,7 @@ import ImagemEmpresa from '../models/imagem_empresa.model';
 
 export const createImagemEmpresa = async (req: Request, res: Response) => {
     try {
-        const imgUrl = req.file ? `/uploads/${req.file.filename}` : null;
+        const imgUrl = req.file ? `uploads/${req.file.filename}` : null;
         if (!imgUrl) return res.status(400).json({ message: 'Imagem não enviada.' });
 
         const imagemEmpresa = await ImagemEmpresa.create({ imgUrl });
@@ -63,7 +63,7 @@ export const updateImagemEmpresa = async (req: Request, res: Response) => {
                     fs.unlinkSync(oldImagePath);
                 }
             }
-            imgUrl = `/uploads/${req.file.filename}`;
+            imgUrl = `uploads/${req.file.filename}`;
         }
 
         await imagem.update({ imgUrl });

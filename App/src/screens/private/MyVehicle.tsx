@@ -2,6 +2,7 @@ import React, { useCallback, useState } from 'react'
 import { SafeAreaView, ScrollView, RefreshControl, View, Text } from 'react-native'
 
 import TopoMyVehicle from '@/src/components/base/TopoMyVehicle';
+import InformationBox from '@/src/components/form/InformarionBox';
 
 function MyVehicle() {
 	const [refreshing, setRefreshing] = useState(false);
@@ -19,38 +20,54 @@ function MyVehicle() {
 				refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} />} showsVerticalScrollIndicator={false} >
 				
 				<TopoMyVehicle
-					modelo="Fusca"
-					marca="Volkswagen"
+					modelo="FH16 540"
+					marca="Volvo"
 					quilometragem={12.499}
-					ano={1970}
+					ano={2000}
 					placa="ABC-1234"
 				/>
 
+				<View className='w-full bg-white rounded-xl p-2.5 shadow-[0px_4px_4px_rgba(0,0,0,0.25)]'>
+					<Text className='text-base font-bold'>Motorista</Text>
+					<Text className='text-sm font-semibold text-black/60'>Motorista: Lucas Carvalho Pedrozo</Text>
+					<Text className='text-sm font-semibold text-black/60'>Email: lucaspedroozo@hotmail.com</Text>
+					<Text className='text-sm font-semibold text-black/60'>Categoria: B</Text>
+				</View>
+
 				<View className='w-full flex-col gap-2.5 pt-5'>
-					<View className={InformartionStyle}>
-						<Text className="font-semibold text-[14px]">Destino final:</Text>
-						<Text className="font-medium text-[14px]">São Paulo</Text>
-					</View>
-					<View className={InformartionStyle}>
-						<Text className="font-semibold text-[14px]">Destino final:</Text>
-						<Text className="font-medium text-[14px]">São Paulo</Text>
-					</View>
-					<View className={InformartionStyle}>
-						<Text className="font-semibold text-[14px]">Destino final:</Text>
-						<Text className="font-medium text-[14px]">São Paulo</Text>
-					</View>
-					<View className={InformartionStyle}>
-						<Text className="font-semibold text-[14px]">Destino final:</Text>
-						<Text className="font-medium text-[14px]">São Paulo</Text>
-					</View>
-					<View className={InformartionStyle}>
-						<Text className="font-semibold text-[14px]">Destino final:</Text>
-						<Text className="font-medium text-[14px]">São Paulo</Text>
-					</View>
-					<View className={InformartionStyle}>
-						<Text className="font-semibold text-[14px]">Destino final:</Text>
-						<Text className="font-medium text-[14px]">São Paulo</Text>
-					</View>
+					<InformationBox
+						title='Teste'
+						descricao='Teste'
+					/>
+					<InformationBox
+						title='Teste'
+						descricao='Teste'
+					/>
+					<InformationBox
+						title='Teste'
+						descricao='Teste'
+					/>
+					<InformationBox
+						title='Teste'
+						descricao='Teste'
+					/>
+					<InformationBox
+						title='Teste'
+						descricao='Teste'
+					/>
+					<InformationBox
+						title='Teste'
+						descricao='Teste'
+					/>
+					<InformationBox
+						title='Teste'
+						descricao='Teste'
+					/>
+					<InformationBox
+						title='Teste'
+						descricao='Teste'
+					/>
+					
 				</View>
 			</ScrollView>
 		</SafeAreaView>

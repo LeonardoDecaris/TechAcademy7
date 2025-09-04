@@ -62,9 +62,9 @@ function Profile() {
 
 	return (
 		<SafeAreaView style={{ flex: 1, backgroundColor: '#FFFFFF' }}>
-			<ScrollView contentContainerStyle={{ paddingHorizontal: 6, marginTop: statusBarHeight + 10, paddingBottom: 140 }} refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} />}>
+			<ScrollView contentContainerStyle={{ paddingHorizontal: 6, marginTop: statusBarHeight, paddingBottom: 140 }} refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} />}>
 				<View className="w-full relative">
-					<Image source={require('../../assets/image/bg.png')} style={{ width: "100%", height: 130 }} className='rounded-2xl'/>
+					<Image source={require('../../assets/image/image.png')} style={{ width: "100%", height: 130 }} className='rounded-2xl'/>
 					 {imagemUrl ? (
 						<Image source={{ uri: imagemUrl }} className={`${logoStyle}`}  />
 					) : (
@@ -81,9 +81,9 @@ function Profile() {
 				
 				<Text className='text-[12px] text-black/60 font-semibold pt-5 pl-5'>Informações pessoais</Text>
 
-				<View className='py-2.5 gap-4'>
-					<AcessoRapidoPerfil titulo="Meus dados" onPress={handleNavigation.editProfile} />
-					<AcessoRapidoPerfil titulo="Configurações" onPress={() => {}} />
+				<View className='py-2.5 gap-5'>
+					<AcessoRapidoPerfil titulo="Meus dados" tipo="user-edit" onPress={handleNavigation.editProfile} />
+					<AcessoRapidoPerfil titulo="Configurações" tipo="truck" onPress={() => {}} />
 				</View>
 
 				<Text className='text-[12px] text-black/60 font-semibold pt-5 pl-5'>Funcionamento do sistema</Text>
