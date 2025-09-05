@@ -10,7 +10,7 @@ import { useNavigation } from '@react-navigation/native';
 import { RootStackParamList } from '@/src/navigation/Routes';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 
-import CardCharge from "@/src/components/cards/CardCharge";
+import CardCargo from "@/src/components/cards/CardCargo";
 import useGetUserData from "@/src/hooks/get/useGetUserData";
 import CardFreight from "@/src/components/cards/CardFreight";
 import InformationBox from "@/src/components/form/InformarionBox";
@@ -63,7 +63,7 @@ function DetailsEnvio() {
                 </View>
 
 
-                <CardCharge
+                <CardCargo
                     nome="Reboque Caçamba"
                     tipo="Cascalho"
                     peso="14"

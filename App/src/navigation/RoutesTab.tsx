@@ -19,7 +19,7 @@ export default function MainTabs() {
             switch (route.name) {
               case 'Home':
                 return <Ionicons name="home-outline" size={size} color={color} />;
-              case 'Shipping':
+              case 'Freight':
                 return <MaterialCommunityIcons name="truck-outline" size={size} color={color} />;
               case 'Profile':
                 return <Ionicons name="person-outline" size={size} color={color} />;

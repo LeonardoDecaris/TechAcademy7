@@ -11,7 +11,7 @@ interface CardCargaProps {
     valor?: string;
 }
 
-const CardCharge = (props: CardCargaProps) => {
+const CardCargo = (props: CardCargaProps) => {
     return (
         <View className="w-full p-2.5 pt-5 bg-white rounded-2xl " style={{ boxShadow: "0 4px 4px rgba(0, 0, 0, 0.15)" }}>
             <View className="flex-row justify-between items-center">
@@ -32,4 +32,4 @@ const CardCharge = (props: CardCargaProps) => {
         </View>
     );
 }
-export default CardCharge;
+export default CardCargo;
