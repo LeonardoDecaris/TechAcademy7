@@ -1,5 +1,5 @@
 import { ImageBackground, Text, TouchableOpacity, View } from "react-native";
-import CardCharge from "./CardCharge";
+import CardCargo from "./CardCargo";
 
 import { useNavigation } from '@react-navigation/native';
 import { RootStackParamList } from '@/src/navigation/Routes';
@@ -41,7 +41,7 @@ const CardMyContract = (props: Props) => {
                 </Text>
             </View>
             <TouchableOpacity onPress={handleNavigation.myVehicle}>
-                <CardCharge
+                <CardCargo
                     nome={props.nome}
                     tipo={props.tipo}
                     peso={props.peso}

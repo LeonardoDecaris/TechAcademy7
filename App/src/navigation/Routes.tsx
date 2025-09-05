@@ -26,7 +26,6 @@ import { StatusBar } from "react-native";
 
 
 export type RootStackParamList = {
-
   ForgotPassword: { email: string; cpf: string; token?: string };
   RequestNewpassword: undefined;
   NewPassword: undefined;
@@ -34,13 +33,26 @@ export type RootStackParamList = {
   Start: undefined;
   Login: undefined;
 
-  DetailsFreight: undefined;
+  Freight: undefined;
+  DetailsFreight: {
+    freight: {
+      id: string;
+      nome?: string;
+      tipo?: string;
+      peso?: string;
+      saida?: string;
+      destino?: string;
+      logoEmpresa?: string;
+      imagemCarga?: string;
+      valor?: string;
+    };
+  };
+
   DetailsVehicle: undefined;
   DetailsEnvio: undefined;
   EditProfile: undefined;
   MyVehicle: undefined;
   Profile: undefined;
-  Freight: undefined;
   
   MainTabs: { screen?: string } | undefined;
    
@@ -52,14 +64,14 @@ function Routes() {
   return (
     <NavigationContainer>
       <StatusBar barStyle="dark-content" backgroundColor="#ffffff" />
-      <Stack.Navigator initialRouteName="MainTabs" screenOptions={{ headerBackVisible: false }}>
+      <Stack.Navigator initialRouteName="Start" screenOptions={{ headerBackVisible: false }}>
         
         {/* ROTAS PRINCIPAIS */}
         <Stack.Screen name="MainTabs" options={{ headerShown: false, }}>
           {() => (
-            // <PrivateRoutes>
+           <PrivateRoutes>
               <MainTabs />
-            // {/* </PrivateRoutes> */}
+             </PrivateRoutes> 
           )}
         </Stack.Screen>
 
