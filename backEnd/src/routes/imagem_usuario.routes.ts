@@ -5,10 +5,10 @@ import { uploadSingleImage } from '../middleware/uploadMiddleware';
 
 const router = Router();
 
-router.post('/imgUsuario', authMiddleware, uploadSingleImage('imgUrl'), createImagemUsuario);
+router.post('/imgUsuario', uploadSingleImage('imgUrl'), createImagemUsuario);
 router.get('/imgUsuario', authMiddleware, getAllImagensUsuario);
 router.get('/imgUsuario/:id', authMiddleware, getImagemUsuarioById);
-router.put('/imgUsuario/:id', authMiddleware, uploadSingleImage('imgUrl'), updateImagemUsuario);
-router.delete('/imgUsuario/:id', authMiddleware, deleteImagemUsuario);
+router.put('/imgUsuario/:id', uploadSingleImage('imgUrl'), updateImagemUsuario);
+router.delete('/imgUsuario/:id', deleteImagemUsuario);
 
 export default router;

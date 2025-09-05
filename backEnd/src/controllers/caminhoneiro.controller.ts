@@ -1,5 +1,7 @@
 import { Request, Response } from 'express';
 import Caminhoneiro from '../models/caminhoneiro.model';
+import Usuario from '../models/usuario.model';
+import Veiculo from '../models/veiculo.model';
 
 export const createCaminhoneiro = async (req: Request, res: Response): Promise<Response> => {
     try {
@@ -25,9 +27,24 @@ export const getAllCaminhoneiros = async (req: Request, res: Response): Promise<
     }
 }
 
+
 export const getCaminhoneiroById = async (req: Request<{ id: string }>, res: Response): Promise<Response> => {
     try {
-        const caminhoneiro = await Caminhoneiro.findByPk(req.params.id);
+        const caminhoneiro = await Caminhoneiro.findOne({
+            where: { usuario_id: req.params.id },
+            include: [
+                {
+                    model: Usuario,
+                    as: 'usuario', 
+                    required: false
+                },
+                {
+                    model: Veiculo,
+                    as: 'veiculo',
+                    required: false
+                },
+            ],
+        });
         if (caminhoneiro) {
             return res.status(200).json(caminhoneiro);
         }

@@ -8,7 +8,7 @@ import Animated, {
     FadeOutUp,
 } from 'react-native-reanimated';
 
-const BASE_DURATION = 400;
+const BASE_DURATION = 300;
 
 export const enter = {
     fade: FadeIn.duration(BASE_DURATION),

@@ -59,7 +59,7 @@ function Home() {
     return (
         <SafeAreaView style={{ flex: 1 , backgroundColor: '#FFFFFF' }}>
            <ScrollView
-                contentContainerStyle={{ paddingHorizontal: 6, marginTop: statusBarHeight + 10, paddingBottom: 130 }}
+                contentContainerStyle={{ paddingHorizontal: 6, marginTop: statusBarHeight, paddingBottom: 130 }}
                 refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} />}
                 showsVerticalScrollIndicator={false}
             >
@@ -75,7 +75,7 @@ function Home() {
                             )}
                         </TouchableOpacity>
 
-                        <Text className='text-[20px] font-bold'>Olá, {nomeAbreviado ?? 'Usuário'}!</Text>
+                        <Text className='text-2xl font-bold'>Olá, {nomeAbreviado ?? 'Usuário'}!</Text>
                     </View>
 
                     <TouchableOpacity onPress={() => setShowLogout(true)} accessibilityLabel="Logout">
@@ -101,6 +101,7 @@ function Home() {
                 <CardFreight 
                     tipo="Nenhum" 
                     peso="0"
+                    
                     destino="Nenhum"
                     progresso={0}
                 />
