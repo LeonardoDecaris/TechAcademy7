@@ -12,11 +12,11 @@ const AcessoRapidoPerfil = ({ titulo, tipo, onPress }: AcessoRapidoPerfilProps) 
 	    <TouchableOpacity onPress={onPress} className="flex-row justify-between items-center" >
     
             <View className='flex-row items-center gap-2'>
-                <FontAwesome5 name={tipo} size={24} color="#575757" />
+                <FontAwesome5 name={tipo} size={26} color="#575757" />
                 <Text className='text-black/80 font-semibold text-base'>{titulo}</Text>
             </View>
 
-            <AntDesign name="arrowright" size={24} color="black" />
+            <AntDesign name="arrowright" size={26} color="black" />
         </TouchableOpacity>
 	)
 }

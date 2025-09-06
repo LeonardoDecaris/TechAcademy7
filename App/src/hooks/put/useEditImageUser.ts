@@ -21,6 +21,7 @@ const createImageFormData = (uri: string): ImageFormData => {
 };
 
 function useEditImageUser(): UseEditImageUserReturn {
+
   const [loadingUpdate, setLoadingUpdate] = useState(false);
   const [statusSuccessUpdate, setStatusSuccessUpdate] = useState<boolean | null>(null);
 

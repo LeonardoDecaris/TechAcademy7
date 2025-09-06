@@ -32,9 +32,7 @@ function useEditarUsuario(userId: string) {
   const [notification, setNotification] = useState("");
   const [successVisible, setSuccessVisible] = useState(false);
 
-  const navigateToPerfil = useCallback(() => {
-    navigation.navigate("MainTabs", { screen: "Perfil" });
-  }, [navigation]);
+  const handleNavigation = { profile: () => navigation.navigate('MainTabs', { screen: 'Profile' }) }
 
   const handleEditar = useCallback(
     async (data: FormValuesEditarPerfil) => {
@@ -52,7 +50,8 @@ function useEditarUsuario(userId: string) {
         setNotification("Dados atualizados com sucesso!");
         setSuccessVisible(true);
 
-        setTimeout(navigateToPerfil, 800);
+        setTimeout(handleNavigation.profile, 800);
+        
       } catch (err: unknown) {
         const error = err as AxiosError<{ errors?: Record<string, string>; message?: string }>;
         setSuccess(false);
@@ -71,7 +70,7 @@ function useEditarUsuario(userId: string) {
         console.error("User update error:", error);
       } 
     },
-    [navigateToPerfil, setError, userId]
+    [setError, userId]
   );
 
   const closeSuccessNotification = useCallback(() => {

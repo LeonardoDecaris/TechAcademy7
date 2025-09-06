@@ -1,10 +1,9 @@
 import { useCallback, useEffect, useState } from "react";
 
 import { RefreshControl } from "react-native";
-import { Image, SafeAreaView, ScrollView, Text, TouchableOpacity, View } from "react-native";
+import { Image, ScrollView, Text, TouchableOpacity, View } from "react-native";
 
 import { BASE_URL } from '@env';
-import Constants from "expo-constants";
 
 import { useNavigation } from '@react-navigation/native';
 import { RootStackParamList } from '@/src/navigation/Routes';
@@ -18,16 +17,16 @@ import InformationBox from "@/src/components/form/InformarionBox";
 
 type NavigationProp = NativeStackNavigationProp<RootStackParamList>
 
-const statusBarHeight = Constants.statusBarHeight;
 
 function DetailsEnvio() {
     const navigation = useNavigation<NavigationProp>()
-    const handleNavigation = { perfil: () => navigation.getParent()?.navigate('Perfil'), }
+    const handleNavigation = { profile: () => navigation.navigate('MainTabs', { screen: 'Profile' }) }
 
     const { userData, getUserData, nomeAbreviado, iniciasNomeUsuario } = useGetUserData();
     const imagemUrl = userData?.imagemUsuario?.imgUrl ? `${BASE_URL}${userData.imagemUsuario.imgUrl}` : ''
 
     const [refreshing, setRefreshing] = useState(false);
+
     const onRefresh = useCallback(async () => {
         setRefreshing(true);
         await getUserData();
@@ -38,15 +37,16 @@ function DetailsEnvio() {
         getUserData()
     }, [getUserData]);
 
-    const InformartionStyle = "w-full flex-row items-center border border-black rounded-lg p-1.5"
-
     return (
-        <SafeAreaView style={{ flex: 1, backgroundColor: '#FFFFFF' }}>
-            <ScrollView contentContainerStyle={{ paddingHorizontal: 20, marginTop: statusBarHeight, paddingBottom: 50 }} refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} />}>
+        <View style={{ flex: 1, backgroundColor: '#FFFFFF', paddingTop: 10 }}>
+            <ScrollView
+                contentContainerStyle={{ paddingHorizontal: 20, paddingBottom: 40 }}
+                refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} />}
+            >
 
                 <View className='flex-row items-center gap-2.5 pb-5'>
 
-                    <TouchableOpacity onPress={handleNavigation.perfil} className="">
+                    <TouchableOpacity onPress={handleNavigation.profile} className="">
                         {imagemUrl ? (
                             <Image source={{ uri: imagemUrl }} className='w-20 h-20 rounded-full' />
                         ) : (
@@ -56,12 +56,11 @@ function DetailsEnvio() {
 
                     <View>
                         <Text className='text-base font-bold'>{nomeAbreviado}</Text>
-                        <Text className='text-[12px] font-semibold text-black/60'>{userData?.email}</Text>
-                        <Text className='text-[12px] font-semibold text-black/60'>Categoria: {userData?.cnh}</Text>
+                        <Text className='text-sm font-semibold text-black/60'>{userData?.email}</Text>
+                        <Text className='text-sm font-semibold text-black/60'>Categoria: {userData?.cnh}</Text>
                     </View>
 
                 </View>
-
 
                 <CardCharge
                     nome="Reboque Caçamba"
@@ -122,7 +121,7 @@ function DetailsEnvio() {
                 </View>
 
             </ScrollView>
-        </SafeAreaView>
+        </View>
     )
 }
 
