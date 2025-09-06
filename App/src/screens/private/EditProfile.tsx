@@ -1,10 +1,10 @@
 import React, { useEffect, useState } from 'react';
-import { SafeAreaView, View, Text, Image } from 'react-native';
+import { SafeAreaView, View, Text, Image, Modal, TouchableOpacity, TouchableWithoutFeedback } from 'react-native';
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
 
 import { BASE_URL } from '@env';
-import { useAuth } from '@/src/context/AuthContext';
 import { dataCnh } from '@/src/data/dataCnh';
+import { useAuth } from '@/src/context/AuthContext';
 
 import * as ImagePicker from 'expo-image-picker';
 import DropDown from '@/src/components/form/DropDown';
@@ -36,6 +36,7 @@ function EditProfile() {
 	const { updateImage, loadingUpdate, statusSuccessUpdate } = useEditImageUser();
 
 	const imagemUrl = userData?.imagemUsuario?.imgUrl ? `${BASE_URL}${userData.imagemUsuario.imgUrl}` : '';
+	const [modalImageVisible, setModalImageVisible] = useState(false);
 
 	const [saving, setSaving] = useState(false);
 	const [selectedImage, setSelectedImage] = useState<string | null>(null);
@@ -146,8 +147,8 @@ function EditProfile() {
 	}, [userData, setValue]);
 
 	return (
-		<SafeAreaView className="flex-1 bg-white px-5">
-			<KeyboardAwareScrollView contentContainerStyle={{ paddingTop: 20 }} enableOnAndroid enableAutomaticScroll={true}>
+		<View className="flex-1 bg-white px-5">
+			<KeyboardAwareScrollView contentContainerStyle={{ paddingTop: 20 }}>
 
 				<AlertNotioncation
 					visible={successVisible}
@@ -158,20 +159,38 @@ function EditProfile() {
 
 				<View className="flex-col gap-3 justify-center items-center pb-5">
 					{selectedImage ? (
-						<Image
-							source={{ uri: selectedImage }}
-							style={{ width: 100, height: 100, borderRadius: 50 }}
-						/>
+						<TouchableOpacity onPress={() => setSelectedImage(null)}>
+							<Image
+								source={{ uri: selectedImage }}
+								style={{ width: 100, height: 100, borderRadius: 50 }}
+							/>
+						</TouchableOpacity>
 					) : imagemUrl ? (
-						<Image
-							source={{ uri: imagemUrl }}
-							style={{ width: 100, height: 100, borderRadius: 50 }}
-						/>
+						<TouchableOpacity onPress={() => setModalImageVisible(true)}>
+							<Image
+								source={{ uri: imagemUrl }}
+								style={{ width: 100, height: 100, borderRadius: 50 }}
+							/>
+						</TouchableOpacity>
 					) : (
 						<View className="h-24 w-24 rounded-full bg-gray-200 items-center justify-center">
 							<Text className="font-bold text-black text-3xl">{iniciasNomeUsuario}</Text>
 						</View>
 					)}
+
+					<Modal visible={modalImageVisible} transparent animationType="fade">
+						<TouchableWithoutFeedback onPress={() => setModalImageVisible(false)}>
+							<View style={{ flex: 1, backgroundColor: 'rgba(0,0,0,0.8)', justifyContent: 'center', alignItems: 'center' }}>
+								<TouchableOpacity className='absolute top-10 right-10 z-10' onPress={() => setModalImageVisible(false)}>
+									<Text className='text-white text-2xl'>✕</Text>
+								</TouchableOpacity>
+								<TouchableWithoutFeedback>
+									<Image source={{ uri: imagemUrl }} style={{ minWidth: 100, minHeight: 100, width: 300, height: 300, borderRadius: 20 }} resizeMode="contain" />
+								</TouchableWithoutFeedback>
+							</View>
+						</TouchableWithoutFeedback>
+					</Modal>
+					
 
 					<ErrorNotification
 						loading={loading}
@@ -260,7 +279,7 @@ function EditProfile() {
 					}
 				</View>
 			</KeyboardAwareScrollView>
-		</SafeAreaView>
+		</View>
 	);
 }
 

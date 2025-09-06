@@ -7,11 +7,12 @@ interface Props {
 	ano?: string;
 	placa?: string;
 	chassis?: string;
+	onPress?: () => void
 }
 
 const VehicleCard = (props: Props) => {
 	return (
-		<View className="w-full flex-row justify-between p-2.5 pt-5 bg-white rounded-lg shadow-[0_2px_6px_rgba(0,0,0,0.15)]">
+		<View className="w-full flex-row justify-between px-2.5 pb-3 pt-5 bg-white rounded-2xl shadow-[0_2px_6px_rgba(0,0,0,0.35)]">
 
 			{!props.modelo && !props.marca && !props.ano && !props.placa && !props.chassis ? (
 				<View className="flex-1 items-center justify-center">
@@ -19,8 +20,7 @@ const VehicleCard = (props: Props) => {
 					<ButtonPadrao
 						title="Cadastrar Veículo"
 						classname="px-2"
-						onPress={() => {
-						}}
+						onPress={props.onPress}
 					/>
 				</View>
 			) : (

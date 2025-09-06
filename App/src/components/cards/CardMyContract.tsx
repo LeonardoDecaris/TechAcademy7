@@ -32,11 +32,11 @@ const CardMyContract = (props: Props) => {
             <View className="pl-2.5 py-2.5">
                 <Text className="text-lg font-bold">Contrato atual</Text>
 
-                <Text className="text-[12px] font-medium">
+                <Text className="text-sm font-medium">
                     Motorista: <Text className="text-black font-normal">{props.motorista}</Text>
                 </Text>
 
-                <Text className="text-[12px] font-medium">
+                <Text className="text-sm font-medium">
                     Horário de partida: <Text className="text-black font-normal">{semHorario}</Text>
                 </Text>
             </View>

@@ -17,8 +17,8 @@ const ButtonPadrao = ({ title, onPress, typeButton = "normal", classname, }: But
 	}
 
     return(
-		<TouchableOpacity onPress={onPress} className={`py-3 rounded-lg ${buttonStyles[typeButton]} ${classname}`}>
-			<Text className={'text-white text-center font-bold'}>
+		<TouchableOpacity onPress={onPress} className={`py-2.5 rounded-lg ${buttonStyles[typeButton]} ${classname}`}>
+			<Text className={'text-white text-center font-bold text-lg'}>
 				{title}
 			</Text>
       	</TouchableOpacity>

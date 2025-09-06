@@ -31,13 +31,13 @@ interface PropsController extends PropsLabel, PropsInput {
 
 const InputAuth = ({ label, labelProps, name, control, rules, span, status, status: statusProp, id, type, placeholder, secureTextEntry, inputProps, config, desabilitar, ...rest }: PropsController) => {
 
-    const spanStyle = "text-red-500 text-[10px] pl-2.5";
-    const labelStyle = "font-semibold text-[14px] pl-2.5";
-    const campoBloqueado = "font-semibold text-[14px] pl-2.5 text-red-500/80";
-    const inputStyle = "w-full p-2.5 font-semibold border rounded-lg bg-white";
+    const spanStyle = "text-red-500 text-sm pl-2.5";
+    const labelStyle = "font-semibold text-base pl-2.5 pb-0.5";
+    const campoBloqueado = "font-semibold text-base pl-2.5 text-red-500/80";
+    const inputStyle = "w-full py-2.5 px-2 font-semibold text-base border rounded-lg bg-white";
 
-    const inputPasswordStyle = "w-[85%] p-2.5 font-semibold border rounded-lg bg-white";
-    const mostrarPasswordStyle = "flex items-center justify-center py-2 px-2 border border-black/40 rounded-lg bg-white shadow-[0_2px_4px_rgba(0,0,0,0.25)]";
+    const inputPasswordStyle = "w-[85%] py-2.5 px-2 text-base font-semibold border rounded-lg bg-white";
+    const mostrarPasswordStyle = "flex items-center justify-center py-1.5 px-1.5 border border-black/40 rounded-lg bg-white shadow-[0_2px_4px_rgba(0,0,0,0.25)]";
 
     const StatusInput = {
         normal: ' text-black/80 border-black/40 shadow-[0_2px_4px_rgba(0,0,0,0.25)] ',
