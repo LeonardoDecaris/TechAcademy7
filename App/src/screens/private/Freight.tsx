@@ -25,7 +25,7 @@ type NavigationProp = NativeStackNavigationProp<RootStackParamList, 'Freight'>;
 function Freight() {
 	const [refreshing, setRefreshing] = useState(false);
 	const [filtered, setFiltered] = useState<FreightItem[]>(MOCK_DATA);
-	const [searchQuery, setSearchQuery] = useState<string>(''); // State for search input
+	const [searchQuery, setSearchQuery] = useState<string>('');
 
 	const navigation = useNavigation<NavigationProp>();
 	const insets = useSafeAreaInsets();

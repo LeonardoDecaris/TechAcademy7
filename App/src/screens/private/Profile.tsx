@@ -31,6 +31,7 @@ function Profile() {
 	const handleNavigation = {
 		newPassword: () => navigation.navigate("NewPassword"),
 		editProfile: () => navigation.navigate("EditProfile"),
+		RegisterVehicle: () => navigation.navigate("RegisterVehicle"),
 	};
 
 	const [refreshing, setRefreshing] = useState(false);
@@ -102,7 +103,7 @@ function Profile() {
 
 				<View className='py-2.5 gap-5'>
 					<AcessoRapidoPerfil titulo="Editar dados pessoais" tipo="user-edit" onPress={handleNavigation.editProfile} />
-					<AcessoRapidoPerfil titulo="Cadastrar veiculo" tipo="truck" onPress={() => {console.error('cadastrar veiculo')}} />
+					<AcessoRapidoPerfil titulo="Cadastrar veiculo" tipo="truck" onPress={handleNavigation.RegisterVehicle} />
 				</View>
 
 				<Text className='text-base text-black/60 font-semibold pt-5 pl-5'>Funcionamento do sistema</Text>

@@ -28,7 +28,7 @@ const CardMyContract = (props: Props) => {
 
 
     return (
-        <ImageBackground source={require('../../assets/image/logo.jpeg')} className="w-full p-2.5 rounded-2xl border border-white" style={{ boxShadow: "0 4px 4px rgba(0, 0, 0, 0.10)" }} imageStyle={{ borderRadius: 14, opacity: 0.1 }}>
+        <View className="w-full p-2.5 rounded-2xl border border-white" style={{ boxShadow: "0 4px 4px rgba(0, 0, 0, 0.10)" }} >
             <View className="pl-2.5 py-2.5">
                 <Text className="text-lg font-bold">Contrato atual</Text>
 
@@ -52,9 +52,12 @@ const CardMyContract = (props: Props) => {
                     valor={props.valor}
                 />
             </TouchableOpacity>
-        </ImageBackground>
+        </View>
     );
 }
 
 export default CardMyContract;
 
+
+{/* <ImageBackground source={require('../../assets/image/logo.jpeg')} className="w-full p-2.5 rounded-2xl border border-white" style={{ boxShadow: "0 4px 4px rgba(0, 0, 0, 0.10)" }} imageStyle={{ borderRadius: 14, opacity: 0.1 }}> */}
+{/* </ImageBackground> */}
