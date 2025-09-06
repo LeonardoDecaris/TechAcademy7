@@ -21,7 +21,6 @@ import EditProfile from "../screens/private/EditProfile";
 import MyVehicle from "../screens/private/MyVehicle";
 
 export type RootStackParamList = {
-
   ForgotPassword: { email: string; cpf: string; token?: string };
   RequestNewpassword: undefined;
   NewPassword: undefined;
