@@ -28,8 +28,21 @@ export type RootStackParamList = {
   Start: undefined;
   Login: undefined;
 
+  DetailsFreight: {
+    freight: {
+      id: string;
+      nome?: string;
+      tipo?: string;
+      peso?: string;
+      saida?: string;
+      destino?: string;
+      logoEmpresa?: string;
+      imagemCarga?: string;
+      valor?: string;
+    };
+  };
+
   RegisterVehicle: undefined;
-  DetailsFreight: undefined;
   DetailsVehicle: undefined;
   DetailsEnvio: undefined;
   EditProfile: undefined;
