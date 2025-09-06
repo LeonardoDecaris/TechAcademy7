@@ -1,0 +1,157 @@
+import React, { useEffect, useCallback, useState } from 'react';
+import { Image, ScrollView, RefreshControl, TouchableOpacity, View, Text } from 'react-native';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
+
+import { BASE_URL } from '@env';
+
+import { useAuth } from '@/src/context/AuthContext';
+import useGetUserData from '@/src/hooks/get/useGetUserData';
+
+import { useNavigation } from '@react-navigation/native';
+import { RootStackParamList } from '@/src/navigation/Routes';
+import { NativeStackNavigationProp } from '@react-navigation/native-stack';
+
+import { Ionicons } from '@expo/vector-icons';
+import AlertLogout from '@/src/components/modal/AlertLogout';
+import CardFreight from '@/src/components/cards/CardFreight';
+import VehicleCard from '@/src/components/cards/VehicleCard';
+import AcessoRapido from '@/src/components/base/AcessoRapido';
+import CardMyContract from '@/src/components/cards/CardMyContract';
+import AlertNotNullVehiculo from '@/src/components/modal/AlertNotNullVehiculo';
+
+type NavigationProp = NativeStackNavigationProp<RootStackParamList>;
+
+function Home() {
+    const logoStyle = "text-[20px] font-bold text-white";
+    const BlocoLogoStyle = "h-[50px] w-[50px] rounded-full bg-gray-300 items-center justify-center";
+    
+    const { logout } = useAuth();
+    const navigation = useNavigation<NavigationProp>();
+    const { userData, getUserData, iniciasNomeUsuario, nomeAbreviado } = useGetUserData();
+    
+    const [refreshing, setRefreshing] = useState(false);
+    const [showLogout, setShowLogout] = useState(false);
+    const [showAlertNotVehicle, setShowAlertNotVehicle] = useState(false);
+
+    const imagemUrl = userData?.imagemUsuario?.imgUrl ? `${BASE_URL}${userData.imagemUsuario.imgUrl}` : '';
+
+    const handleNavigation = {
+        profile: () => navigation.navigate('Profile'),
+        detailsEnvio: () => navigation.navigate('DetailsEnvio'),
+        myVehicle: () => navigation.navigate('MyVehicle')
+    };
+
+    const onRefresh = useCallback(async () => {
+        setRefreshing(true);
+        await getUserData();
+        setRefreshing(false);
+    }, [getUserData]);
+
+    const handleLogout = async () => { 
+        await logout(); 
+        navigation.reset({ 
+            index: 0, 
+            routes: [{ name: 'Login' as never }] 
+        }); 
+    };
+
+    useEffect(() => {
+        getUserData();
+    }, [getUserData]);
+
+    const insets = useSafeAreaInsets();
+
+    const usuarioTemVeiculo = false;
+
+    const handleMyVehiclePress = () => {
+        if (usuarioTemVeiculo) {
+            navigation.navigate('RegisterVehicle');
+        } else {
+            setShowAlertNotVehicle(true);
+        }
+    };
+
+    return (
+        <View style={{ flex: 1, backgroundColor: '#FFFFFF', paddingTop: insets.top + 10}}>
+            <ScrollView
+                contentContainerStyle={{ paddingHorizontal: 20, paddingBottom: 50 }}
+                refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} />}
+                showsVerticalScrollIndicator={false}
+            >
+
+                <View className='flex-row items-center justify-between pb-10'>
+                    <View className='flex-row items-center gap-2.5'>
+                        <TouchableOpacity onPress={handleNavigation.profile} className={BlocoLogoStyle}>
+                            {imagemUrl ? (
+                                <Image source={{ uri: imagemUrl }} className='w-[50px] h-[50px] rounded-full bg-gray-200' />
+                            ) : (
+                                <Text className={logoStyle}>{iniciasNomeUsuario}</Text>
+                            )}
+                        </TouchableOpacity>
+
+                        <Text className='text-2xl font-bold'>Olá, {nomeAbreviado ?? 'Usuário'}!</Text>
+                    </View>
+
+                    <TouchableOpacity 
+                        onPress={() => setShowLogout(true)} 
+                        accessibilityLabel="Logout"
+                    >
+                        <Ionicons name="log-out-outline" size={30} color="black" />
+                    </TouchableOpacity>
+                </View>
+   
+                <CardMyContract
+                    motorista={userData?.nome}
+                    nome="Sem carga"
+                    tipo="Nenhum"
+                    peso="0"
+                    saida="Nenhum"
+                    destino="Nenhum"
+                    logoEmpresa=""
+                    imagemCarga=""
+                    valor="Sem valor"
+                />
+
+                <AcessoRapido 
+                    onPress={handleNavigation.detailsEnvio} 
+                    title='Detalhes do envio' 
+                />
+
+                <CardFreight 
+                    tipo="Nenhum" 
+                    peso="0"
+                    destino="Nenhum"
+                    progresso={0}
+                    TypeButton={true}
+                    onPress={handleNavigation.detailsEnvio}
+                />
+
+                <AcessoRapido 
+                    onPress={handleMyVehiclePress} 
+                    title='Meu Veículo' 
+                />
+
+                <VehicleCard
+                    onPress={handleMyVehiclePress}
+                />
+            </ScrollView>
+
+            <AlertNotNullVehiculo
+                visible={showAlertNotVehicle}
+                onCancel={() => setShowAlertNotVehicle(false)}
+                onConfirm={() => {setShowAlertNotVehicle(false);}}
+            />
+            
+            <AlertLogout 
+                visible={showLogout} 
+                onCancel={() => setShowLogout(false)} 
+                onConfirm={async () => { 
+                    setShowLogout(false); 
+                    await handleLogout(); 
+                }} 
+            />
+        </View>
+    );
+}
+
+export default Home;

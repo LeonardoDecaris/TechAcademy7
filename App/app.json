@@ -1,0 +1,43 @@
+{
+  "expo": {
+    "name": "Total Frete",
+    "slug": "TotalFrete",
+    "version": "1.0.0",
+    "orientation": "portrait",
+    "icon": "./src/assets/image/logo.jpeg",
+    "scheme": "TotalFrete",
+    "userInterfaceStyle": "automatic",
+    "newArchEnabled": true,
+    "ios": {
+      "supportsTablet": true,
+      "icon": "./src/assets/image/icon.png"
+    },
+    "android": {
+      "adaptiveIcon": {
+        "foregroundImage": "./src/assets/image/logo.jpeg",
+        "backgroundColor": "#ffffff"
+      },
+      "edgeToEdgeEnabled": true
+    },
+    "web": {
+      "bundler": "metro",
+      "output": "static",
+      "favicon": "./assets/images/favicon.png"
+    },
+    "plugins": [
+      "expo-router",
+      [
+        "expo-splash-screen",
+        {
+          "image": "./src/assets/image/splash.png",
+          "resizeMode": "contain",
+          "backgroundColor": "#ffffff"
+        }
+      ],
+      "expo-secure-store"
+    ],
+    "experiments": {
+      "typedRoutes": true
+    }
+  }
+}

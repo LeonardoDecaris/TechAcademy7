@@ -1,0 +1,43 @@
+version: '3.8'
+services:
+  database:
+    image: mysql:8.0
+    container_name: mysql-container
+    env_file:
+      - ./.env
+    volumes:
+      - db_data:/var/lib/mysql
+    networks:
+      - app-network
+    environment:
+      MYSQL_ROOT_PASSWORD: 123456
+      MYSQL_DATABASE: tech_Academy7
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+    ports:
+      - 3306:3306
+
+  backend:
+    build: ./backEnd
+    container_name: backend
+    env_file:
+      - ./backEnd/.env
+    volumes:
+      - ./uploads:/app/uploads
+    ports:
+      - 3000:3000
+    depends_on:
+      database:
+        condition: service_healthy
+    networks:
+      - app-network
+
+volumes:
+  db_data:
+
+networks:
+  app-network:
+    driver: bridge
