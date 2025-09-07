@@ -63,7 +63,7 @@ function Profile() {
 
 
 	return (
-		<View style={{ flex: 1, backgroundColor: '#FFFFFF', paddingHorizontal: 20, paddingTop: insets.top + 10 }}>
+		<View style={{ flex: 1, backgroundColor: '#FFFFFF', paddingHorizontal: 10, paddingTop: insets.top + 10 }}>
 			<ScrollView
 				contentContainerStyle={{ paddingHorizontal: 6, paddingBottom: 140 }}
 				refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} />}

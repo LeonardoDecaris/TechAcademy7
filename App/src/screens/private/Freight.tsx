@@ -88,7 +88,7 @@ function Freight() {
 				keyExtractor={item => item.id}
 				renderItem={renderItem}
 				ItemSeparatorComponent={() => <View className="h-5" />}
-				contentContainerStyle={{ paddingBottom: 30, paddingHorizontal: 20 }}
+				contentContainerStyle={{ paddingBottom: 30, paddingHorizontal: 10 }}
 				showsVerticalScrollIndicator={false}
 				refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} />}
 				ListEmptyComponent={

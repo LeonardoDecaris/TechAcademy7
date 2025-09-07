@@ -1,6 +1,6 @@
 import React from 'react'
 
-import { View, Text, SafeAreaView} from 'react-native'
+import { View, Text, SafeAreaView } from 'react-native'
 import { ButtonPadrao } from '@/src/components/form/Buttons'
 
 import { useNavigation } from '@react-navigation/native'
@@ -18,7 +18,7 @@ function Start() {
 	}
 
 	return (
-		<View style={{ flexGrow: 1,paddingHorizontal: 20, justifyContent: 'center', alignItems: 'center' }}>
+		<View style={{ flexGrow: 1, paddingHorizontal: 10, justifyContent: 'center', alignItems: 'center' }}>
 			<View className='mb-10'>
 				<Text className='font-bold text-center text-6xl'>Bem Vindo</Text>
 				<Text className='text-center text-base font-medium'>Vamos começar</Text>

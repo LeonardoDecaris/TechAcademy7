@@ -56,7 +56,8 @@ function useSignUp() {
         setTimeout(navigateToLogin, 800);
       } catch (error) {
         setSuccess(false);
-        setNotification("Erro ao realizar cadastro");
+        setNotification("Erro ao realizar cadastro. Verifique os dados e tente novamente.");
+        setSuccessVisible(true);
         console.log("Registration error:", error);
       }
     },

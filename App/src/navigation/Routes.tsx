@@ -29,6 +29,7 @@ export type RootStackParamList = {
   SignUp: undefined;
   Start: undefined;
   Login: undefined;
+
   DetailsFreight: {
     freight: {
       id: string;
@@ -42,6 +43,7 @@ export type RootStackParamList = {
       valor?: string;
     };
   };
+
   RegisterVehicle: undefined;
   DetailsVehicle: undefined;
   DetailsEnvio: undefined;
@@ -58,131 +60,39 @@ function Routes() {
   return (
     <NavigationContainer>
       <StatusBar barStyle="dark-content" backgroundColor="#ffffff" />
-      <Stack.Navigator
-        initialRouteName="Start"
-        screenOptions={{
-          headerBackVisible: false,
-          cardStyle: { backgroundColor: '#FFFFFF' }, // Global white background
-        }}
-      >
-        {/* Private Screens */}
-        <Stack.Screen
-          name="MainTabs"
-          options={{ headerShown: false }}
-        >
+      <Stack.Navigator initialRouteName="Start" screenOptions={{ headerBackVisible: false, contentStyle: { backgroundColor: "#FFFFFF" } }} >
+
+        <Stack.Screen name="MainTabs" options={{ headerShown: false }}>
           {() => <PrivateRoutes><MainTabs /></PrivateRoutes>}
         </Stack.Screen>
 
-        <Stack.Screen
-          name="DetailsEnvio"
-          options={{
-            headerTitle: "Detalhes do Envio",
-            headerTitleAlign: "center",
-            headerBackVisible: true,
-          }}
-        >
+        <Stack.Screen name="DetailsEnvio" options={{ headerTitle: "Detalhes do Envio", headerTitleAlign: "center", headerBackVisible: true, }}  >
           {() => <PrivateRoutes><DetailsEnvio /></PrivateRoutes>}
         </Stack.Screen>
 
-        <Stack.Screen
-          name="DetailsFreight"
-          options={{
-            headerTitle: "Detalhes do Frete",
-            headerTitleAlign: "center",
-            headerBackVisible: true,
-          }}
-        >
+        <Stack.Screen name="DetailsFreight" options={{ headerTitle: "Detalhes do Frete", headerTitleAlign: "center", headerBackVisible: true, }}  >
           {() => <PrivateRoutes><DetailsFreight /></PrivateRoutes>}
         </Stack.Screen>
 
-        <Stack.Screen
-          name="RegisterVehicle"
-          options={{
-            headerTitle: "Registrar Veículo",
-            headerTitleAlign: "center",
-            headerBackVisible: true,
-          }}
-        >
+        <Stack.Screen name="RegisterVehicle" options={{ headerTitle: "Registrar Veículo", headerTitleAlign: "center", headerBackVisible: true, }}  >
           {() => <PrivateRoutes><RegisterVehicle /></PrivateRoutes>}
         </Stack.Screen>
 
-        <Stack.Screen
-          name="EditProfile"
-          options={{
-            headerTitle: "Editar Perfil",
-            headerTitleAlign: "center",
-            headerBackVisible: true,
-          }}
-        >
+        <Stack.Screen name="EditProfile" options={{ headerTitle: "Editar Perfil", headerTitleAlign: "center", headerBackVisible: true, }}>
           {() => <PrivateRoutes><EditProfile /></PrivateRoutes>}
         </Stack.Screen>
 
-        <Stack.Screen
-          name="MyVehicle"
-          options={{
-            headerTitle: "Meu Veículo",
-            headerTitleAlign: "center",
-            headerBackVisible: true,
-          }}
-        >
+        <Stack.Screen name="MyVehicle" options={{ headerTitle: "Meu Veículo", headerTitleAlign: "center", headerBackVisible: true }}>
           {() => <PrivateRoutes><MyVehicle /></PrivateRoutes>}
         </Stack.Screen>
 
-        {/* Public Screens */}
-        <Stack.Screen
-          name="NewPassword"
-          component={NewPassword}
-          options={{
-            headerTitle: "Nova Senha",
-            headerTitleAlign: "center",
-            headerBackVisible: true,
-          }}
-        />
+        <Stack.Screen name="NewPassword" component={NewPassword} options={{ headerTitle: "Nova Senha", headerTitleAlign: "center", headerBackVisible: true }} />
+        <Stack.Screen name="RequestNewpassword" component={RequestNewpassword} options={{ headerBackVisible: false, headerShown: false }} />
+        <Stack.Screen name="ForgotPassword" component={ForgotPassword} options={{ headerBackVisible: false, headerShown: false }} />
+        <Stack.Screen name="SignUp" component={SignUp} options={{ headerBackVisible: false, headerShown: false }} />
+        <Stack.Screen name="Login" component={Login} options={{ headerBackVisible: false, headerShown: false }} />
+        <Stack.Screen name="Start" component={Start} options={{ headerBackVisible: false, headerShown: false }} />
 
-        <Stack.Screen
-          name="RequestNewpassword"
-          component={RequestNewpassword}
-          options={{
-            headerBackVisible: false,
-            headerShown: false,
-          }}
-        />
-
-        <Stack.Screen
-          name="ForgotPassword"
-          component={ForgotPassword}
-          options={{
-            headerBackVisible: false,
-            headerShown: false,
-          }}
-        />
-
-        <Stack.Screen
-          name="SignUp"
-          component={SignUp}
-          options={{
-            headerBackVisible: false,
-            headerShown: false,
-          }}
-        />
-
-        <Stack.Screen
-          name="Login"
-          component={Login}
-          options={{
-            headerBackVisible: false,
-            headerShown: false,
-          }}
-        />
-
-        <Stack.Screen
-          name="Start"
-          component={Start}
-          options={{
-            headerBackVisible: false,
-            headerShown: false,
-          }}
-        />
       </Stack.Navigator>
     </NavigationContainer>
   );

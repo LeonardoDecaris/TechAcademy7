@@ -17,6 +17,7 @@ interface PropsInput {
     type?: KeyboardTypeOptions;
     inputProps?: Partial<React.ComponentProps<typeof TextInput>>;
     desabilitar?: boolean;
+    Tamanho?: 'normal' | 'pequeno';
 }
 
 interface PropsController extends PropsLabel, PropsInput {
@@ -29,7 +30,7 @@ interface PropsController extends PropsLabel, PropsInput {
 }
 
 
-const InputAuth = ({ label, labelProps, name, control, rules, span, status, status: statusProp, id, type, placeholder, secureTextEntry, inputProps, config, desabilitar, ...rest }: PropsController) => {
+const InputAuth = ({ label, labelProps, name, control, rules, span, status, status: statusProp, id, type, placeholder, secureTextEntry, inputProps, config, Tamanho = "normal" ,desabilitar, ...rest }: PropsController) => {
 
     const spanStyle = "text-red-500 text-sm pl-2.5";
     const labelStyle = "font-semibold text-base pl-2.5 pb-0.5";
@@ -50,7 +51,7 @@ const InputAuth = ({ label, labelProps, name, control, rules, span, status, stat
              const trataOnChange = (text: string) => { if (config === "cpf") { const digits = text.replace(/\D/g, ""); onChange(digits); } else { onChange(text); } };
 
                 return (
-                    <View className="w-full flex flex-col">
+                    <View className={`flex-col ${Tamanho === "normal" ? "w-full" : "w-[48%]"} `}>
                         <Text className={`${labelStyle} ${status === 'error' ? 'text-red-500/80' : 'text-black/80'}`}  {...labelProps} >
                             {label} {desabilitar && <Text className={`${campoBloqueado}`}> - Campo bloqueado</Text>}
                         </Text>
