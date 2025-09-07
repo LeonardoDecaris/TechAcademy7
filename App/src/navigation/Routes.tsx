@@ -45,6 +45,8 @@ export type RootStackParamList = {
       logoEmpresa?: string;
       imagemCarga?: string;
       valor?: string;
+      valorFrete?: string;
+      descricao?: string;
     };
   };
 

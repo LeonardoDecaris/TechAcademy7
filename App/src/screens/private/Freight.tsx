@@ -16,6 +16,8 @@ interface CardCargaProps {
 	logoEmpresa?: string;
 	imagemCarga?: string;
 	valor?: string;
+	valorFrete?: string;
+	descricao?: string;
 }
 
 type FreightItem = CardCargaProps & {
@@ -32,7 +34,9 @@ const MOCK_DATA: FreightItem[] = [
 		destino: 'São Paulo',
 		logoEmpresa: 'coamo.png',
 		imagemCarga: 'soja.png',
-		valor: '3.200,00'
+		valor: '30.200,00',
+		valorFrete: '3.200,00',
+		descricao: 'Carga de soja de alta qualidade, pronta para transporte. Embalagem segura e adequada para longas distâncias. Ideal para distribuidores e comerciantes que buscam produtos confiáveis.'
 	},
 	{
 		id: '2',
@@ -43,7 +47,9 @@ const MOCK_DATA: FreightItem[] = [
 		destino: 'Maringá',
 		logoEmpresa: 'coamo.png',
 		imagemCarga: 'milho.png',
-		valor: '1.800,00'
+		valor: '10.800,00',
+		valorFrete: '1.800,00',
+		descricao: 'Carga de milho de alta qualidade, pronta para transporte. Embalagem segura e adequada para longas distâncias. Ideal para distribuidores e comerciantes que buscam produtos confiáveis.'
 	},
 	{
 		id: '3',
@@ -54,7 +60,9 @@ const MOCK_DATA: FreightItem[] = [
 		destino: 'Curitiba',
 		logoEmpresa: 'coamo.png',
 		imagemCarga: 'farelo.png',
-		valor: '2.500,00'
+		valor: '20.500,00',
+		valorFrete: '2.500,00',
+		descricao: 'Carga de farelo proteico de alta qualidade, pronta para transporte. Embalagem segura e adequada para longas distâncias. Ideal para distribuidores e comerciantes que buscam produtos confiáveis.'
 	},
 	{
 		id: '4',
@@ -65,7 +73,9 @@ const MOCK_DATA: FreightItem[] = [
 		destino: 'Paranaguá',
 		logoEmpresa: 'coamo.png',
 		imagemCarga: 'trigo.png',
-		valor: '2.900,00'
+		valor: '20.900,00',
+		valorFrete: '2.900,00',
+		descricao: 'Carga de trigo de alta qualidade, pronta para transporte. Embalagem segura e adequada para longas distâncias. Ideal para distribuidores e comerciantes que buscam produtos confiáveis.'
 	},
 	{
 		id: '5',
@@ -76,7 +86,9 @@ const MOCK_DATA: FreightItem[] = [
 		destino: 'Curitiba',
 		logoEmpresa: 'coamo.png',
 		imagemCarga: 'arroz.png',
-		valor: '3.000,00'
+		valor: '30.000,00',
+		valorFrete: '3.000,00',
+		descricao: 'Carga de arroz de alta qualidade, pronta para transporte. Embalagem segura e adequada para longas distâncias. Ideal para distribuidores e comerciantes que buscam produtos confiáveis.'
 	},
 		{
 		id: '6',
@@ -87,7 +99,9 @@ const MOCK_DATA: FreightItem[] = [
 		destino: 'Maringá',
 		logoEmpresa: 'coamo.png',
 		imagemCarga: 'milho.png',
-		valor: '1.800,00'
+		valor: '10.800,00',
+		valorFrete: '1.800,00',
+		descricao: 'Carga de milho de alta qualidade, pronta para transporte. Embalagem segura e adequada para longas distâncias. Ideal para distribuidores e comerciantes que buscam produtos confiáveis.'
 	},
 	{
 		id: '7',
@@ -98,7 +112,9 @@ const MOCK_DATA: FreightItem[] = [
 		destino: 'Curitiba',
 		logoEmpresa: 'coamo.png',
 		imagemCarga: 'farelo.png',
-		valor: '2.500,00'
+		valor: '20.500,00',
+		valorFrete: '2.500,00',
+		descricao: 'Carga de farelo proteico de alta qualidade, pronta para transporte. Embalagem segura e adequada para longas distâncias. Ideal para distribuidores e comerciantes que buscam produtos confiáveis.'
 	},
 	{
 		id: '8',
@@ -109,7 +125,9 @@ const MOCK_DATA: FreightItem[] = [
 		destino: 'Paranaguá',
 		logoEmpresa: 'coamo.png',
 		imagemCarga: 'trigo.png',
-		valor: '2.900,00'
+		valor: '20.900,00',
+		valorFrete: '2.900,00',
+		descricao: 'Carga de trigo de alta qualidade, pronta para transporte. Embalagem segura e adequada para longas distâncias. Ideal para distribuidores e comerciantes que buscam produtos confiáveis.'
 	}
 ];
 
@@ -150,12 +168,15 @@ function Freight() {
 				logoEmpresa={item.logoEmpresa}
 				imagemCarga={item.imagemCarga}
 				valor={item.valor}
+				valorFrete={item.valorFrete}
+				descricao={item.descricao}
 			/>
 		</TouchableOpacity>
 	);
 
 	return (
-		<SafeAreaView style={{ flex: 1, backgroundColor: '#FFFFFF', paddingHorizontal: 6, marginTop: statusBarHeight + 12}}>
+		<SafeAreaView style={{ flex: 1, backgroundColor: '#FFFFFF', paddingHorizontal: 6, paddingTop: statusBarHeight + 12}}>
+			
 			<View className="pb-2.5">
 				<Text className="text-2xl font-extrabold text-center">Fretes Disponiveis</Text>
 			</View>
