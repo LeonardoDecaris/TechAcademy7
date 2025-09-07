@@ -1,10 +1,8 @@
 import React from 'react'
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
-import { TouchableOpacity } from 'react-native'
-import { SafeAreaView, Text, View } from 'react-native'
+import { TouchableOpacity, Text, View, KeyboardAvoidingView, Platform, ScrollView } from 'react-native'
 import { ButtonPadrao } from '@/src/components/form/Buttons'
-import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view'
 
 import InputAuth from '@/src/components/form/InputAuth'
 import { useNavigation } from '@react-navigation/native'
@@ -29,74 +27,76 @@ function ForgotPassword() {
 	}
 
 	return (
-		<KeyboardAwareScrollView
-			contentContainerStyle={{ flexGrow: 1, justifyContent: 'center', paddingHorizontal: 20, backgroundColor: '#FFFFFF', paddingTop: insets.top }}
-			enableOnAndroid
-			keyboardShouldPersistTaps="handled"
-			showsVerticalScrollIndicator={false}
+		<KeyboardAvoidingView
+			style={{ flex: 1, backgroundColor: '#FFFFFF' }}
+			behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
 		>
+			<ScrollView
+				contentContainerStyle={{ flexGrow: 1, justifyContent: 'center', paddingHorizontal: 10, paddingTop: insets.top }}
+				showsVerticalScrollIndicator={false}
+				keyboardShouldPersistTaps="handled"
+			>
+				<View className='mb-10'>
+					<Text className={styleTitle}>Esqueci Minha Senha</Text>
+					<Text className={styleSubTitle}>Vamos redefinir sua senha</Text>
+				</View>
 
-			<View className='mb-10'>
-				<Text className={styleTitle}>Esqueci Minha Senha</Text>
-				<Text className={styleSubTitle}>Vamos redefinir sua senha</Text>
-			</View>
+				<View className='w-full flex-col gap-1.5'>
+					{showTokenField && (
+						<InputAuth
+							id='token'
+							name="token"
+							label='Token'
+							placeholder='Token recebido'
+							control={control}
+							rules={rules.token}
+						/>
+					)}
 
-			<View className='w-full flex-col gap-1.5'>
-				{showTokenField && (
 					<InputAuth
-						id='token'
-						name="token"
-						label='Token'
-						placeholder='Token recebido'
+						id='password'
+						name="password"
+						label='Nova Senha'
+						placeholder='Nova Senha'
+						secureTextEntry={true}
 						control={control}
-						rules={rules.token}
+						rules={rules.password}
+						config='password'
 					/>
-				)}
 
-				<InputAuth
-					id='password'
-					name="password"
-					label='Nova Senha'
-					placeholder='Nova Senha'
-					secureTextEntry={true}
-					control={control}
-					rules={rules.password}
-					config='password'
+					<InputAuth
+						id='confirmaSenha'
+						name="confirmaSenha"
+						label='Confirme a Senha'
+						placeholder='Confirme a senha'
+						control={control}
+						secureTextEntry={true}
+						rules={rules.confirmaSenha}
+						config='password'
+					/>
+				</View>
+
+				<ButtonPadrao
+					title='Redefinir'
+					typeButton='normal'
+					classname='w-full my-[20px]'
+					onPress={handleSubmit(handleForgotPassword)}
 				/>
 
-				<InputAuth
-					id='confirmaSenha'
-					name="confirmaSenha"
-					label='Confirme a Senha'
-					placeholder='Confirme a senha'
-					control={control}
-					secureTextEntry={true}
-					rules={rules.confirmaSenha}
-					config='password'
+				<View className='w-full flex-row justify-end'>
+					<TouchableOpacity onPress={handleNavigation.start}>
+						<Text className='font-medium'>Voltar para o inicio</Text>
+					</TouchableOpacity>
+				</View>
+
+				<AlertNotioncation
+					visible={successVisible}
+					status={success}
+					messagem={notification}
+					onDismiss={closeSuccessNotification}
 				/>
-			</View>
-
-			<ButtonPadrao
-				title='Redefinir'
-				typeButton='normal'
-				classname='w-full my-[20px]'
-				onPress={handleSubmit(handleForgotPassword)}
-			/>
-
-			<View className='w-full flex-row justify-end'>
-				<TouchableOpacity onPress={handleNavigation.start}>
-					<Text className='font-medium'>Voltar para o inicio</Text>
-				</TouchableOpacity>
-			</View>
-
-			<AlertNotioncation
-				visible={successVisible}
-				status={success}
-				messagem={notification}
-				onDismiss={closeSuccessNotification}
-			/>
-
-		</KeyboardAwareScrollView>
+			</ScrollView>
+		</KeyboardAvoidingView>
 	)
 }
 

@@ -25,7 +25,7 @@ type NavigationProp = NativeStackNavigationProp<RootStackParamList, 'Freight'>;
 function Freight() {
 	const [refreshing, setRefreshing] = useState(false);
 	const [filtered, setFiltered] = useState<FreightItem[]>(MOCK_DATA);
-	const [searchQuery, setSearchQuery] = useState<string>(''); // State for search input
+	const [searchQuery, setSearchQuery] = useState<string>('');
 
 	const navigation = useNavigation<NavigationProp>();
 	const insets = useSafeAreaInsets();
@@ -88,7 +88,7 @@ function Freight() {
 				keyExtractor={item => item.id}
 				renderItem={renderItem}
 				ItemSeparatorComponent={() => <View className="h-5" />}
-				contentContainerStyle={{ paddingBottom: 30, paddingHorizontal: 20 }}
+				contentContainerStyle={{ paddingBottom: 30, paddingHorizontal: 10 }}
 				showsVerticalScrollIndicator={false}
 				refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} />}
 				ListEmptyComponent={

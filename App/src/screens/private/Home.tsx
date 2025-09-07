@@ -17,7 +17,6 @@ import CardFreight from '@/src/components/cards/CardFreight';
 import VehicleCard from '@/src/components/cards/VehicleCard';
 import AcessoRapido from '@/src/components/base/AcessoRapido';
 import CardMyContract from '@/src/components/cards/CardMyContract';
-import AlertNotNullVehiculo from '@/src/components/modal/AlertNotNullVehiculo';
 
 type NavigationProp = NativeStackNavigationProp<RootStackParamList>;
 
@@ -31,7 +30,6 @@ function Home() {
     
     const [refreshing, setRefreshing] = useState(false);
     const [showLogout, setShowLogout] = useState(false);
-    const [showAlertNotVehicle, setShowAlertNotVehicle] = useState(false);
 
     const imagemUrl = userData?.imagemUsuario?.imgUrl ? `${BASE_URL}${userData.imagemUsuario.imgUrl}` : '';
 
@@ -61,20 +59,10 @@ function Home() {
 
     const insets = useSafeAreaInsets();
 
-    const usuarioTemVeiculo = false;
-
-    const handleMyVehiclePress = () => {
-        if (usuarioTemVeiculo) {
-            navigation.navigate('RegisterVehicle');
-        } else {
-            setShowAlertNotVehicle(true);
-        }
-    };
-
     return (
         <View style={{ flex: 1, backgroundColor: '#FFFFFF', paddingTop: insets.top + 10}}>
             <ScrollView
-                contentContainerStyle={{ paddingHorizontal: 20, paddingBottom: 50 }}
+                contentContainerStyle={{ paddingHorizontal: 10, paddingBottom: 50 }}
                 refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} />}
                 showsVerticalScrollIndicator={false}
             >
@@ -110,6 +98,7 @@ function Home() {
                     logoEmpresa=""
                     imagemCarga=""
                     valor="Sem valor"
+                    onPress={() => alert('Esta em Desenvolvimento')}
                 />
 
                 <AcessoRapido 
@@ -127,20 +116,14 @@ function Home() {
                 />
 
                 <AcessoRapido 
-                    onPress={handleMyVehiclePress} 
+                    onPress={handleNavigation.myVehicle} 
                     title='Meu Veículo' 
                 />
 
                 <VehicleCard
-                    onPress={handleMyVehiclePress}
+                    onPress={handleNavigation.myVehicle}
                 />
             </ScrollView>
-
-            <AlertNotNullVehiculo
-                visible={showAlertNotVehicle}
-                onCancel={() => setShowAlertNotVehicle(false)}
-                onConfirm={() => {setShowAlertNotVehicle(false);}}
-            />
             
             <AlertLogout 
                 visible={showLogout} 
