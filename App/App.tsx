@@ -6,10 +6,10 @@ import { SafeAreaProvider } from "react-native-safe-area-context";
 
 export default function App() {
   return (
-    <SafeAreaProvider>
-      <AuthProvider>
-        <Routes />
-      </AuthProvider>
-    </SafeAreaProvider>
+      <SafeAreaProvider>
+        <AuthProvider>
+          <Routes />
+        </AuthProvider>
+      </SafeAreaProvider>
   );
 }

@@ -1,28 +1,37 @@
 import { createContext, useContext, useState, ReactNode, useEffect } from "react";
 import * as SecureStore from "expo-secure-store";
-import { decode as atob } from "base-64";
+import { jwtDecode } from "jwt-decode"; 
+
+interface TokenPayload {
+    id_usuario: string;
+    nome: string;
+    user?: {
+        id_usuario: string;
+        nome: string;
+    }
+}
 
 interface AuthContextType {
   token: string | null;
   userId: string | null;
   userName: string | null;
-  login: (token: string) => void;
-  logout: () => void;
+  login: (token: string) => Promise<void>;
+  logout: () => Promise<void>; 
   isAuthenticated: boolean;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
-const decodeToken = (token: string) => {
+const decodeToken = (token: string): Omit<TokenPayload, 'user'> | null => {
     try {
-        const base64Payload = token.split(".")[1];
-        const payload = JSON.parse(atob(base64Payload));
-        return payload.user ?? payload;
+        const decoded: TokenPayload = jwtDecode(token);
+        return decoded.user ?? decoded;
     } catch (error) {
         console.error("Erro ao decodificar token:", error);
         return null;
     }
 };
+
 export const AuthProvider = ({ children }: { children: ReactNode }) => {
   const [token, setToken] = useState<string | null>(null);
   const [userId, setUserId] = useState<string | null>(null);
@@ -31,32 +40,30 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   useEffect(() => {
     const loadAuthData = async () => {
       const storedToken = await SecureStore.getItemAsync("authToken");
-      const storedUserId = await SecureStore.getItemAsync("userId");
-      const storedUserName = await SecureStore.getItemAsync("userName");
-      setToken(storedToken);
-      setUserId(storedUserId);
-      setUserName(storedUserName);
+      if (storedToken) {
+        const userData = decodeToken(storedToken);
+        if (userData) {
+            setToken(storedToken);
+            setUserId(userData.id_usuario);
+            setUserName(userData.nome);
+        }
+      }
     };
     loadAuthData();
   }, []);
 
-  const login = (token: string) => {
-    SecureStore.setItemAsync("authToken", token);
-
+  const login = async (token: string) => {
+    await SecureStore.setItemAsync("authToken", token);
     const userData = decodeToken(token);
     if (userData) {
-      SecureStore.setItemAsync("userId", userData.id_usuario || "");
-      SecureStore.setItemAsync("userName", userData.nome || "");
-      setUserId(userData.id_usuario || null);
-      setUserName(userData.nome || null);
+      setUserId(userData.id_usuario);
+      setUserName(userData.nome);
     }
     setToken(token);
   };
 
-  const logout = () => {
-    SecureStore.deleteItemAsync("authToken");
-    SecureStore.deleteItemAsync("userId");
-    SecureStore.deleteItemAsync("userName");
+  const logout = async () => {
+    await SecureStore.deleteItemAsync("authToken");
     setToken(null);
     setUserId(null);
     setUserName(null);

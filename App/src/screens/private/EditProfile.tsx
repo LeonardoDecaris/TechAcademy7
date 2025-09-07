@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { SafeAreaView, View, Text, Image, Modal, TouchableOpacity, TouchableWithoutFeedback } from 'react-native';
+import { View, Text, Image, Modal, TouchableOpacity, TouchableWithoutFeedback, KeyboardAvoidingView, ScrollView, Platform } from 'react-native';
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
 
 import { BASE_URL } from '@env';
@@ -147,14 +147,22 @@ function EditProfile() {
 	}, [userData, setValue]);
 
 	return (
-		<View className="flex-1 bg-white px-5">
-			<KeyboardAwareScrollView contentContainerStyle={{ paddingTop: 20 }}>
+		<KeyboardAvoidingView
+			style={{ flex: 1 }}
+			behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+		>
+			<ScrollView
+				contentContainerStyle={{ paddingTop: 20, paddingHorizontal: 10, flexGrow: 1 }}
+				showsVerticalScrollIndicator={false}
+				keyboardShouldPersistTaps="handled"
+			>
 
 				<AlertNotioncation
 					visible={successVisible}
 					status={success}
 					messagem={notification}
 					onDismiss={closeSuccessNotification}
+					topOffset={10}
 				/>
 
 				<View className="flex-col gap-3 justify-center items-center pb-5">
@@ -190,7 +198,7 @@ function EditProfile() {
 							</View>
 						</TouchableWithoutFeedback>
 					</Modal>
-					
+
 
 					<ErrorNotification
 						loading={loading}
@@ -278,8 +286,8 @@ function EditProfile() {
 						/>
 					}
 				</View>
-			</KeyboardAwareScrollView>
-		</View>
+			</ScrollView>
+		</KeyboardAvoidingView>
 	);
 }
 

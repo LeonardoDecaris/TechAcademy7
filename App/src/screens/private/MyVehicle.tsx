@@ -15,8 +15,8 @@ function MyVehicle() {
 	const InformartionStyle = "w-full flex-row items-center border border-black rounded-lg p-1.5"
 
 	return (
-		<View style={{ flex: 1,  backgroundColor: '#FFFFFF', paddingTop: 10 }}>
-			<ScrollView contentContainerStyle={{ paddingHorizontal: 20, paddingBottom: 50 }}
+		<View style={{ flex: 1, paddingTop: 10 }}>
+			<ScrollView contentContainerStyle={{ paddingHorizontal: 10, paddingBottom: 50 }}
 				refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} />} showsVerticalScrollIndicator={false} >
 				
 				<TopoMyVehicle

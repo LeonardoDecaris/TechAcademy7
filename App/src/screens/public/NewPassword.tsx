@@ -1,6 +1,6 @@
 import React from 'react'
 
-import { SafeAreaView, Text, View } from 'react-native'
+import { Text, View } from 'react-native'
 import { ButtonPadrao } from '@/src/components/form/Buttons'
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view'
 
@@ -23,15 +23,10 @@ function NewPassword() {
 	const styleTitle = 'text-[48px] text-black text-center font-bold';
 	const insets = useSafeAreaInsets();
 
-	
+
 
 	return (
-		<KeyboardAwareScrollView
-			contentContainerStyle={{ flex: 1, justifyContent: 'center', paddingHorizontal: 20, backgroundColor: '#FFFFFF', paddingTop: insets.top, }}
-			enableOnAndroid
-			keyboardShouldPersistTaps="handled"
-			showsVerticalScrollIndicator={false}
-		>
+		<KeyboardAwareScrollView contentContainerStyle={{ flex: 1, paddingHorizontal: 10, backgroundColor: '#FFFFFF', paddingTop: 60 }} showsVerticalScrollIndicator={false}>
 
 			<View className='mb-10'>
 				<Text className={styleTitle}>Redefinir Senha</Text>

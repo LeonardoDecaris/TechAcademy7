@@ -41,7 +41,7 @@ function useEditarUsuario(userId: string) {
           nome: data.nome,
           cpf: data.cpf,
           email: data.email,
-          cnh: data.cnh ?? null,
+          cnh: data.cnh,
           datanascimento: new Date().toISOString(),
           imagemUsuario_id: data.imagemUsuario_id || null,
         });
@@ -52,9 +52,8 @@ function useEditarUsuario(userId: string) {
 
         setTimeout(handleNavigation.profile, 800);
         
-      } catch (err: unknown) {
+      } catch (err) {
         const error = err as AxiosError<{ errors?: Record<string, string>; message?: string }>;
-        setSuccess(false);
 
         const fieldErrors = error.response?.data?.errors;
         if (fieldErrors && typeof fieldErrors === "object") {
@@ -65,9 +64,9 @@ function useEditarUsuario(userId: string) {
             });
           });
         }
-
-        setNotification(error.response?.data?.message || "Erro ao atualizar dados");
-        console.error("User update error:", error);
+        setSuccess(false);
+        setNotification("Erro ao atualizar dados");
+        setSuccessVisible(false);
       } 
     },
     [setError, userId]
@@ -91,7 +90,7 @@ function useEditarUsuario(userId: string) {
       required: "Email é obrigatório",
     },
     cnh: {
-      required: false,
+      required: "CNH é obrigatória",
     },
   };
 
