@@ -1,4 +1,4 @@
-import { SafeAreaView, Text, View } from "react-native";
+import { SafeAreaView, Text, TouchableOpacity, View } from "react-native";
 import FontAwesome5 from "@expo/vector-icons/build/FontAwesome5";
 
 interface Props {
@@ -6,6 +6,8 @@ interface Props {
 	peso?: string;
 	destino?: string;
 	progresso?: number;
+	onPress?: () => void
+	TypeButton?: boolean;
 }
 
 const CardFreight = (props: Props) => {
@@ -13,7 +15,7 @@ const CardFreight = (props: Props) => {
 	const pesoStyle = "text-black/60 font-semibold text-ms";
 	const destinoStyle = "text-black text-[12px] font-bold";
 	const titleStyle = "text-black font-semibold text-ms pb-2";
-	const containerStyle = "w-full bg-white px-2.5 pt-4 pb-2.5 rounded-2xl shadow-[0px_4px_4px_rgba(0,0,0,0.15)]";
+	const containerStyle = "w-full bg-white px-2.5 pt-4 pb-2.5 rounded-2xl shadow-[0px_4px_4px_rgba(0,0,0,0.25)]";
 
 
 	const toLevel = (p: number) => {
@@ -23,7 +25,7 @@ const CardFreight = (props: Props) => {
 	const level = toLevel(props.progresso ?? 0);
 
 	return (
-		<View className={containerStyle}>
+		<TouchableOpacity {...(props.TypeButton ? { onPress: props.onPress } : {activeOpacity: 1})} className={containerStyle}>
 
 			<Text className={titleStyle}>
 				Progresso da carga: {props.tipo} <Text className={pesoStyle}> / {props.peso}t</Text>
@@ -62,7 +64,7 @@ const CardFreight = (props: Props) => {
 				</View>
 
 			</View>
-		</View>
+		</TouchableOpacity>
 	);
 };
 

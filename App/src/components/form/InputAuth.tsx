@@ -17,6 +17,7 @@ interface PropsInput {
     type?: KeyboardTypeOptions;
     inputProps?: Partial<React.ComponentProps<typeof TextInput>>;
     desabilitar?: boolean;
+    Tamanho?: 'normal' | 'pequeno';
 }
 
 interface PropsController extends PropsLabel, PropsInput {
@@ -29,15 +30,15 @@ interface PropsController extends PropsLabel, PropsInput {
 }
 
 
-const InputAuth = ({ label, labelProps, name, control, rules, span, status, status: statusProp, id, type, placeholder, secureTextEntry, inputProps, config, desabilitar, ...rest }: PropsController) => {
+const InputAuth = ({ label, labelProps, name, control, rules, span, status, status: statusProp, id, type, placeholder, secureTextEntry, inputProps, config, Tamanho = "normal" ,desabilitar, ...rest }: PropsController) => {
 
-    const spanStyle = "text-red-500 text-[10px] pl-2.5";
-    const labelStyle = "font-semibold text-[14px] pl-2.5";
-    const campoBloqueado = "font-semibold text-[14px] pl-2.5 text-red-500/80";
-    const inputStyle = "w-full p-2.5 font-semibold border rounded-lg bg-white";
+    const spanStyle = "text-red-500 text-sm pl-2.5";
+    const labelStyle = "font-semibold text-base pl-2.5 pb-0.5";
+    const campoBloqueado = "font-semibold text-base pl-2.5 text-red-500/80";
+    const inputStyle = "w-full py-2.5 px-2 font-semibold text-base border rounded-lg bg-white";
 
-    const inputPasswordStyle = "w-[85%] p-2.5 font-semibold border rounded-lg bg-white";
-    const mostrarPasswordStyle = "flex items-center justify-center py-2 px-2 border border-black/40 rounded-lg bg-white shadow-[0_2px_4px_rgba(0,0,0,0.25)]";
+    const inputPasswordStyle = "w-[85%] py-2.5 px-2 text-base font-semibold border rounded-lg bg-white";
+    const mostrarPasswordStyle = "flex items-center justify-center py-1.5 px-1.5 border border-black/40 rounded-lg bg-white shadow-[0_2px_4px_rgba(0,0,0,0.25)]";
 
     const StatusInput = {
         normal: ' text-black/80 border-black/40 shadow-[0_2px_4px_rgba(0,0,0,0.25)] ',
@@ -50,7 +51,7 @@ const InputAuth = ({ label, labelProps, name, control, rules, span, status, stat
              const trataOnChange = (text: string) => { if (config === "cpf") { const digits = text.replace(/\D/g, ""); onChange(digits); } else { onChange(text); } };
 
                 return (
-                    <View className="w-full flex flex-col">
+                    <View className={`flex-col ${Tamanho === "normal" ? "w-full" : "w-[48%]"} `}>
                         <Text className={`${labelStyle} ${status === 'error' ? 'text-red-500/80' : 'text-black/80'}`}  {...labelProps} >
                             {label} {desabilitar && <Text className={`${campoBloqueado}`}> - Campo bloqueado</Text>}
                         </Text>

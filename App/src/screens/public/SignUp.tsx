@@ -1,8 +1,8 @@
 import React from "react";
 
-import { TouchableOpacity } from 'react-native'
-import { SafeAreaView, Text, View } from 'react-native'
-import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view'
+import { TouchableOpacity, KeyboardAvoidingView, Platform, ScrollView, Text, View } from 'react-native'
+// A importação do SafeAreaView não é mais necessária se você usa insets
+// import { SafeAreaView } from 'react-native'
 
 import { useNavigation } from '@react-navigation/native'
 import { RootStackParamList } from '@/src/navigation/Routes'
@@ -13,6 +13,7 @@ import DropDown from "@/src/components/form/DropDown";
 import InputAuth from '@/src/components/form/InputAuth'
 import { ButtonPadrao } from '@/src/components/form/Buttons';
 import AlertNotioncation from '@/src/components/modal/AlertNotioncation'
+import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 type NavigationProp = NativeStackNavigationProp<RootStackParamList>;
 
@@ -20,24 +21,30 @@ function SignUp() {
 
 	const navigation = useNavigation<NavigationProp>()
 	const { control, handleSubmit, rules, handleSignUp, closeSuccessNotification, success, successVisible, notification } = useSignUp()
-
+	const insets = useSafeAreaInsets();
 	const styleSubTitle = "text-center text-sm text-black/80 font-medium";
-	const styleTitle = "text-[48px] text-black text-center font-bold";
+	const styleTitle = "text-6xl text-black text-center font-bold";
 
 	const handleNavigation = {
 		login: () => navigation.navigate("Login"),
 	};
 
 	return (
-		<SafeAreaView style={{ flex: 1, paddingHorizontal: 20, backgroundColor: 'white' }}>
-			<KeyboardAwareScrollView contentContainerStyle={{ flex: 1, justifyContent: 'center', alignItems: 'center' }} >
-
+		<KeyboardAvoidingView
+			style={{ flex: 1 }}
+			behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+		>
+			<ScrollView
+				contentContainerStyle={{ flexGrow: 1, paddingHorizontal: 10, paddingTop: insets.top, justifyContent: 'center' }}
+				showsVerticalScrollIndicator={false}
+				keyboardShouldPersistTaps="handled"
+			>
 				<View className='mb-10'>
 					<Text className={styleTitle}>Cadastre-se</Text>
 					<Text className={styleSubTitle}>Vamos começar</Text>
 				</View>
 
-				<View className='w-full flex flex-col gap-2.5'>
+				<View className='w-full flex flex-col gap-1.5'>
 
 					<InputAuth
 						id='nome'
@@ -63,7 +70,7 @@ function SignUp() {
 						id='email'
 						name="email"
 						label='Email'
-						placeholder='Email'
+						placeholder='exemplo@exemplo.com'
 						control={control}
 						rules={rules.email}
 						type="email-address"
@@ -72,7 +79,7 @@ function SignUp() {
 						id='password'
 						name="password"
 						label='Senha'
-						placeholder='Senha'
+						placeholder='Digite a senha'
 						config="password"
 						secureTextEntry={true}
 						control={control}
@@ -126,9 +133,8 @@ function SignUp() {
 						<Text className='font-medium'>Já tenho uma conta</Text>
 					</TouchableOpacity>
 				</View>
-
-			</KeyboardAwareScrollView>
-		</SafeAreaView>
+			</ScrollView>
+		</KeyboardAvoidingView>
 	)
 }
 

@@ -27,7 +27,11 @@ const ErrorNotification: React.FC<ErrorNotificationProps> = ({
       )}
 
       {!loading && statusSuccess !== null && (
-        <Text className={`text-center ${statusSuccess ? "text-green-500" : "text-red-500"} bg-[${statusSuccess ? "#DFFFD6" : "#FFD6D6"}] px-2.5 py-2.5 rounded-md `}>
+        <Text className={`text-center ${statusSuccess ? "text-green-500" : "text-red-500"} px-2.5 py-2.5 rounded-md `}
+          style={{
+            backgroundColor: statusSuccess ? '#DFFFD6' : '#FFD6D6',
+          }}
+        >
           {statusSuccess ? successText : errorText}
         </Text>
       )}

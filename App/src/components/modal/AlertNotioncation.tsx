@@ -1,12 +1,15 @@
 import React, { useEffect, useRef } from "react";
-import { Text } from "react-native";
+import { Text, View } from "react-native";
+import { Ionicons } from "@expo/vector-icons";
 import animation from "@/src/utils/animation";
+import { useSafeAreaInsets } from "react-native-safe-area-context"; // 1. Importar o hook
 
 type NotificacaoProps = {
 	visible: boolean;
 	messagem?: string;
 	status?: boolean;
 	duration?: number;
+	topOffset?: number;
 	onDismiss?: () => void;
 };
 
@@ -14,22 +17,23 @@ type NotificacaoProps = {
 const AlertNotioncation = ({
 	visible,
 	messagem,
-	duration = 800,
+	duration = 2000,
 	onDismiss,
 	status = true,
+	topOffset = 30,
 }: NotificacaoProps) => {
+	const insets = useSafeAreaInsets(); 
 	const timerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
-
-	const statusNotificacao = {
+	const statusConfig = {
 		success: {
-			style:
-				"absolute top-12 left-5 right-5 bg-green-500 rounded-lg py-4 px-5 z-[9999] items-center",
-			title: "Tudo certo!!",
+			style: "bg-green-500",
+			icon: "checkmark-circle-outline",
+			title: "Tudo certo!",
 		},
 		error: {
-			style:
-				"absolute top-12 left-5 right-5 bg-red-500 rounded-lg py-4 px-5 z-[9999] items-center",
-			title: "Algo deu errado!!",
+			style: "bg-red-500",
+			icon: "close-circle-outline",
+			title: "Algo deu errado!",
 		},
 	};
 
@@ -46,18 +50,25 @@ const AlertNotioncation = ({
 
 	if (!visible) return null;
 
-	const statusKey = status ? "success" : "error";
+	const config = status ? statusConfig.success : statusConfig.error;
 
 	return (
 		<animation.FadeDown
 			entering={animation.enter.fadeDown}
 			exiting={animation.exit.fadeDown}
-			className={statusNotificacao[statusKey].style}
+			style={{ top: insets.top + topOffset }}
+			className={`absolute left-5 right-5 rounded-lg p-4 z-[9999] flex-row items-center shadow-lg ${config.style}`}
 		>
-			<Text className="text-white font-bold text-lg pb-1">
-				{statusNotificacao[statusKey].title}
-			</Text>
-			<Text className="text-white text-sm text-center">{messagem}</Text>
+			<Ionicons name={config.icon as any} size={40} color="white" />
+
+			<View className="flex-1 ml-3">
+				<Text className="text-white font-bold text-base">
+					{config.title}
+				</Text>
+				{messagem && (
+					<Text className="text-white text-sm mt-0.5">{messagem}</Text>
+				)}
+			</View>
 		</animation.FadeDown>
 	);
 };

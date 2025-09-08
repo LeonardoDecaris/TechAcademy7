@@ -1,9 +1,7 @@
 import React from 'react'
 
-import { TouchableOpacity } from 'react-native'
-import { SafeAreaView, Text, View } from 'react-native'
+import { TouchableOpacity, Text, View, KeyboardAvoidingView, Platform, ScrollView } from 'react-native'
 import { ButtonPadrao } from '@/src/components/form/Buttons'
-import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view'
 
 import InputAuth from '@/src/components/form/InputAuth'
 import { useNavigation } from '@react-navigation/native'
@@ -12,51 +10,59 @@ import { RootStackParamList } from '@/src/navigation/Routes'
 import { NativeStackNavigationProp } from '@react-navigation/native-stack'
 import AlertNotioncation from '@/src/components/modal/AlertNotioncation'
 import useRequestNewpassword from '@/src/hooks/post/useRequestNewpassword'
+import { useSafeAreaInsets } from 'react-native-safe-area-context'
 
 type NavigationProp = NativeStackNavigationProp<RootStackParamList>
 
 function RequestNewPassword() {
 	const navigation = useNavigation<NavigationProp>()
-	const { control, handleSubmit, rules, handleRequestNewPassword, closeSuccessNotification, success , successVisible, notification} = useRequestNewpassword()
+	const { control, handleSubmit, rules, handleRequestNewPassword, closeSuccessNotification, success, successVisible, notification } = useRequestNewpassword()
+	const insets = useSafeAreaInsets();
 
-	const styleSubTitle = 'text-center text-sm text-black/80 font-medium';
-	const styleTitle = 'text-[48px] text-black text-center font-bold';
+	const styleSubTitle = 'text-center text-base text-black/80 font-medium';
+	const styleTitle = 'text-6xl text-black text-center font-bold';
 
 	const handleNavigation = {
 		start: () => navigation.navigate('Start')
 	}
 
 	return (
-		<SafeAreaView className='flex-1 bg-white px-5'>
-			<KeyboardAwareScrollView contentContainerStyle={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
-
+		<KeyboardAvoidingView
+			style={{ flex: 1, backgroundColor: '#FFFFFF' }}
+			behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+		>
+			<ScrollView
+				contentContainerStyle={{ flexGrow: 1, justifyContent: 'center', paddingHorizontal: 10, paddingTop: insets.top }}
+				showsVerticalScrollIndicator={false}
+				keyboardShouldPersistTaps="handled"
+			>
 				<View className='mb-10'>
 					<Text className={styleTitle}>Solicitar Nova Senha</Text>
 					<Text className={styleSubTitle}>Vamos redefinir sua senha</Text>
 				</View>
 
-				<View className='w-full flex-col gap-2.5'>
+				<View className='w-full flex-col gap-1.5'>
 
-                <InputAuth
-                    id='email'
-                    name="email"
-                    label='Email'
-                    placeholder='Email'
-                    control={control}
-                    rules={rules.email}
-					type="email-address"
-                />
+					<InputAuth
+						id='email'
+						name="email"
+						label='Email'
+						placeholder='exemplo@exemplo.com'
+						control={control}
+						rules={rules.email}
+						type="email-address"
+					/>
 
-                <InputAuth
-                    id='cpf'
-                    name="cpf"
-                    label='CPF'
-                    placeholder='CPF'
-                    config="cpf"
-                    control={control}
-                    rules={rules.cpf}
-					type="number-pad"
-                />
+					<InputAuth
+						id='cpf'
+						name="cpf"
+						label='CPF'
+						placeholder='CPF'
+						config="cpf"
+						control={control}
+						rules={rules.cpf}
+						type="number-pad"
+					/>
 				</View>
 
 				<ButtonPadrao
@@ -78,9 +84,8 @@ function RequestNewPassword() {
 					messagem={notification}
 					onDismiss={closeSuccessNotification}
 				/>
-
-			</KeyboardAwareScrollView>
-		</SafeAreaView>
+			</ScrollView>
+		</KeyboardAvoidingView>
 	)
 }
 

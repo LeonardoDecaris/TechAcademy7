@@ -1,6 +1,6 @@
 import React from 'react'
 
-import { View, Text, SafeAreaView} from 'react-native'
+import { View, Text, SafeAreaView } from 'react-native'
 import { ButtonPadrao } from '@/src/components/form/Buttons'
 
 import { useNavigation } from '@react-navigation/native'
@@ -18,10 +18,10 @@ function Start() {
 	}
 
 	return (
-		<SafeAreaView className='flex-1 justify-center items-center bg-white px-5'>
+		<View style={{ flexGrow: 1, paddingHorizontal: 10, justifyContent: 'center', alignItems: 'center' }}>
 			<View className='mb-10'>
-				<Text className='font-bold text-center text-5xl'>Bem Vindo</Text>
-				<Text className='text-center text-sm font-medium'>Vamos começar</Text>
+				<Text className='font-bold text-center text-6xl'>Bem Vindo</Text>
+				<Text className='text-center text-base font-medium'>Vamos começar</Text>
 			</View>
 
 			<View className='w-full flex-col gap-4'>
@@ -38,7 +38,7 @@ function Start() {
 					onPress={handleNavigation.SignUp}
 				/>
 			</View>
-		</SafeAreaView>
+		</View>
 
 	)
 }

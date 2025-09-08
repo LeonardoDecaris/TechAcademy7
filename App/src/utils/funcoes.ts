@@ -84,10 +84,16 @@ export function maskCpf(value: string = ''): string {
     return '';
   }
 
-  let result = value;
-  for (const { pattern, replacement } of CONSTANTS.CPF.MASK_REGEX) {
-    result = result.replace(pattern, replacement);
-  }
+  // Remove tudo que não for dígito e limita a 11 dígitos
+  let digits = value.replace(/\D/g, '').slice(0, 11);
 
-  return result.slice(0, CONSTANTS.CPF.MAX_LENGTH);
+  // Aplica a máscara manualmente
+  if (digits.length <= 3) return digits;
+  if (digits.length <= 6) return `${digits.slice(0, 3)}.${digits.slice(3)}`;
+  if (digits.length <= 9)
+    return `${digits.slice(0, 3)}.${digits.slice(3, 6)}.${digits.slice(6)}`;
+  return `${digits.slice(0, 3)}.${digits.slice(3, 6)}.${digits.slice(6, 9)}-${digits.slice(
+    9,
+    11
+  )}`;
 }
