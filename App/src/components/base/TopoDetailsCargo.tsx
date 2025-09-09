@@ -16,8 +16,8 @@ const TopoDetailsCargo = ({ nome, destino, saida, tipo, peso, valor, valorFrete,
 	const marcaStyle = "text-base font-semibold text-black/60";
 	const quilometragemStyle = "text-base font-semibold text-black/60 bg-[#D0EBBC] p-2 rounded-lg";
 
-	const anoPlacaStyle = "w-[48%] text-black/80 font-semibold text-lg text-center bg-[#98C2F4] py-2.5 rounded-lg";
-	const anoPlacaInternoStyle = "text-black/60 text-base";
+	const legendaValorStyle = "w-[48%] text-black/80 font-semibold text-base text-center bg-[#98C2F4] py-2.5 rounded-lg";
+	const anoPlacaInternoStyle = "text-black/60 text-sm";
 
 	return (
 		<View className="pb-5">
@@ -35,8 +35,8 @@ const TopoDetailsCargo = ({ nome, destino, saida, tipo, peso, valor, valorFrete,
 			</View>
 
 			<View className="flex-row justify-between w-full">
-				<Text className={anoPlacaStyle}>Frete: <Text className={anoPlacaInternoStyle}>{valorFrete || '-'}</Text></Text>
-				<Text className={anoPlacaStyle}>Valor/C: R$ <Text className={anoPlacaInternoStyle}>{valor || '-'}</Text></Text>
+				<Text className={legendaValorStyle}>Frete: <Text className={anoPlacaInternoStyle}>{'R$ ' +valorFrete || '-'}</Text></Text>
+				<Text className={legendaValorStyle}>Valor: <Text className={anoPlacaInternoStyle}>{'R$ ' + valor || '-'}</Text></Text>
 			</View>
 		</View>
 	);

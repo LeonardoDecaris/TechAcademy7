@@ -10,7 +10,7 @@ import { NativeStackNavigationProp } from '@react-navigation/native-stack'
 
 import InputAuth from '@/src/components/form/InputAuth'
 import AlertNotioncation from '@/src/components/modal/AlertNotioncation'
-import useForgotPassword from '@/src/hooks/post/useForgotPassword'
+import useForgotPassword from '@/src/hooks/hookAuth/hookUser/useForgotPassword'
 import { useSafeAreaInsets } from 'react-native-safe-area-context'
 
 type NavigationProp = NativeStackNavigationProp<RootStackParamList>

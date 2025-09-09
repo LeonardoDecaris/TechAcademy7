@@ -29,7 +29,7 @@ const TopoMyVehicle = (props: Props) => {
 			</View>
 
 			<View className="w-full py-5">
-				<Image source={require('../../assets/image/Caminhão.png')} style={{ resizeMode: 'contain' }} className="w-full h-44  rounded-lg" />
+				<Image source={require('../../assets/image/meu.avif')} className="w-full h-48 rounded-lg  " />
 			</View>
 
 			<View className="flex-row justify-between w-full">

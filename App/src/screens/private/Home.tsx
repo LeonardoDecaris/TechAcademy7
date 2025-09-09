@@ -5,7 +5,7 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { BASE_URL } from '@env';
 
 import { useAuth } from '@/src/context/AuthContext';
-import useGetUserData from '@/src/hooks/get/useGetUserData';
+import useGetUserData from '@/src/hooks/hookAuth/hookUser/useGetUserData';
 
 import { useNavigation } from '@react-navigation/native';
 import { RootStackParamList } from '@/src/navigation/Routes';

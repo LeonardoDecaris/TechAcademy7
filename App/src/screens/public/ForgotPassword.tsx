@@ -10,7 +10,7 @@ import { RootStackParamList } from '@/src/navigation/Routes'
 
 import { NativeStackNavigationProp } from '@react-navigation/native-stack'
 import AlertNotioncation from '@/src/components/modal/AlertNotioncation'
-import useForgotPassword from '@/src/hooks/post/useForgotPassword'
+import useForgotPassword from '@/src/hooks/hookAuth/hookUser/useForgotPassword'
 
 type NavigationProp = NativeStackNavigationProp<RootStackParamList>
 

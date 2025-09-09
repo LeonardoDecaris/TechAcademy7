@@ -30,7 +30,7 @@ export const pickOrTakeImage = async (type: 'camera' | 'gallery') => {
         mediaTypes: ImagePicker.MediaTypeOptions.Images,
         allowsEditing: true,
         aspect: [1, 1],
-        quality: 1,
+        quality: 0.8,
     });
 
     if (!result.canceled && result.assets?.length) {

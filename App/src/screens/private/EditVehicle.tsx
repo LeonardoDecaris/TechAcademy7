@@ -9,7 +9,7 @@ import useRegisterVehicle from "@/src/hooks/hookVehicle/useRegisterVehicle";
 import ErrorNotification from "@/src/components/modal/ErrorNotioncation";
 
 function RegisterVehicle() {
-    const { control, handleSubmit, rules, handleEditar } = useRegisterVehicle();
+    const { control, handleSubmit, rules, } = useRegisterVehicle();
 
     return (
         <KeyboardAvoidingView
@@ -17,7 +17,7 @@ function RegisterVehicle() {
             behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
         >
             <ScrollView
-                contentContainerStyle={{ paddingHorizontal: 10, paddingBottom: 40, flexGrow: 1 }}
+                contentContainerStyle={{ paddingHorizontal: 10, flexGrow: 1 }}
                 showsVerticalScrollIndicator={false}
                 keyboardShouldPersistTaps="handled"
             >
@@ -114,7 +114,7 @@ function RegisterVehicle() {
                 <View className="w-full items-end pt-5 pr-2.5">
                     <ButtonPadrao
                         title='Cadastrar'
-                        onPress={handleSubmit(handleEditar)}
+                        onPress={() => { }}
                         typeButton='normal'
                         classname=' px-5 '
                     />

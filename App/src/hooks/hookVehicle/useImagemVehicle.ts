@@ -1,0 +1,6 @@
+function useImagemVehicle() {
+
+    return(
+        null
+    );
+}

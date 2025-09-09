@@ -1,33 +1,23 @@
 import http from "@/src/service/httpAxios";
 import { useState, useCallback } from "react";
 import { AxiosError } from "axios";
+import { trataFormData } from "@/src/utils/trataFormData";
 
 interface UseEditImageUserReturn {
   loadingUpdate: boolean;
   statusSuccessUpdate: boolean | null;
-  errorUpdate: string | null; // Novo: estado para a mensagem de erro
+  errorUpdate: string | null;
   updateImage: (id: string, uri: string) => Promise<void>;
-  resetStatus: () => void; // Novo: função para resetar o estado
+  resetStatus: () => void;
 }
 
-interface ImageFormData {
-  uri: string;
-  name: string;
-  type: string;
-}
 
-const createImageFormData = (uri: string): ImageFormData => {
-  const nome = uri.split("/").pop() || "image.jpg";
-  const match = /\.(\w+)$/.exec(nome);
-  const type = match ? `image/${match[1]}` : `image`;
-  return { uri, name: nome, type };
-};
 
 function useEditImageUser(): UseEditImageUserReturn {
 
   const [loadingUpdate, setLoadingUpdate] = useState(false);
   const [statusSuccessUpdate, setStatusSuccessUpdate] = useState<boolean | null>(null);
-  const [errorUpdate, setErrorUpdate] = useState<string | null>(null); // Novo estado
+  const [errorUpdate, setErrorUpdate] = useState<string | null>(null);
 
   const updateImage = async (id: string, uri: string): Promise<void> => {
     setLoadingUpdate(true);
@@ -35,7 +25,7 @@ function useEditImageUser(): UseEditImageUserReturn {
     setErrorUpdate(null); 
     
     try {
-      const imageData = createImageFormData(uri);
+      const imageData = trataFormData(uri);
       const formData = new FormData();
       
       formData.append("imgUrl", imageData as any);
@@ -46,11 +36,9 @@ function useEditImageUser(): UseEditImageUserReturn {
 
       setStatusSuccessUpdate(true);
     } catch (err) {
-      const error = err as AxiosError<{ message?: string }>;
-      const errorMessage = error.response?.data?.message || "Erro ao atualizar imagem. Tente novamente.";
-      console.error("Erro ao atualizar imagem:", error.response?.data || error);
-      setErrorUpdate(errorMessage); // Armazena a mensagem de erro
+      setErrorUpdate("erro ao editar a imagem"); 
       setStatusSuccessUpdate(false);
+
     } finally {
       setLoadingUpdate(false);
     }

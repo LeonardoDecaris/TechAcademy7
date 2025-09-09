@@ -1,10 +1,8 @@
 import React, { useEffect, useState } from 'react';
 import { View, Text, Image, Modal, TouchableOpacity, TouchableWithoutFeedback, KeyboardAvoidingView, ScrollView, Platform } from 'react-native';
-import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
 
 import { BASE_URL } from '@env';
 import { dataCnh } from '@/src/data/dataCnh';
-import { useAuth } from '@/src/context/AuthContext';
 
 import * as ImagePicker from 'expo-image-picker';
 import DropDown from '@/src/components/form/DropDown';
@@ -16,21 +14,19 @@ import { useNavigation } from '@react-navigation/native';
 import { RootStackParamList } from '@/src/navigation/Routes';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 
-import useImageUser from '@/src/hooks/post/useImageUser';
-import useEditarUsuario from '@/src/hooks/put/useEditUser';
-import useGetUserData from '@/src/hooks/get/useGetUserData';
-import useEditImageUser from '@/src/hooks/put/useEditImageUser';
+import useImageUser from '@/src/hooks/hookAuth/hookUser/useImageUser';
+import useEditarUsuario from '@/src/hooks/hookAuth/hookUser/useEditUser';
+import useGetUserData from '@/src/hooks/hookAuth/hookUser/useGetUserData';
+import useEditImageUser from '@/src/hooks/hookAuth/hookUser/useEditImageUser';
 import ErrorNotification from '@/src/components/modal/ErrorNotioncation';
 
 type NavigationProp = NativeStackNavigationProp<RootStackParamList>;
 
 function EditProfile() {
-
-	const { userId } = useAuth();
 	const navigation = useNavigation<NavigationProp>();
 
 	const { iniciasNomeUsuario, userData, getUserData } = useGetUserData();
-	const { control, handleSubmit, rules, setValue, handleEditar, successVisible, closeSuccessNotification, notification, success, } = useEditarUsuario(userId ?? '');
+	const { control, handleSubmit, rules, setValue, handleEditar, successVisible, closeSuccessNotification, notification, success, } = useEditarUsuario();
 
 	const { uploadImage, loading, statusSuccess } = useImageUser();
 	const { updateImage, loadingUpdate, statusSuccessUpdate } = useEditImageUser();
@@ -71,7 +67,7 @@ function EditProfile() {
 			mediaTypes: ImagePicker.MediaTypeOptions.Images,
 			allowsEditing: true,
 			aspect: [1, 1],
-			quality: 1,
+			quality: 0.8,
 		});
 
 		if (!result.canceled && result.assets?.length) {

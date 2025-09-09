@@ -27,7 +27,7 @@ function useLogin() {
 	const { control, handleSubmit, formState: { errors } } = useForm<MapLogin>({ mode: "onSubmit" });
 
 	const [success, setSuccess] = useState(false);
-	const [notification, setNotification] = useState("");
+	const [mensage, setMensage] = useState("");
 	const [failedAttempts, setFailedAttempts] = useState(0);
 	const [successVisible, setSuccessVisible] = useState(false);
 	const [lockUntil, setLockUntil] = useState<number | null>(null);
@@ -42,7 +42,7 @@ function useLogin() {
 				const seconds = Math.ceil(remainingMs / 1000);
 
 				setSuccess(false);
-				setNotification(`Muitas tentativas de login. Tente novamente em ${seconds} segundos.`);
+				setMensage(`Muitas tentativas de login. Tente novamente em ${seconds} segundos.`);
 				setSuccessVisible(true);
 
 				return;
@@ -61,11 +61,11 @@ function useLogin() {
 				setLockUntil(null);
 
 				setSuccess(true);
-				setNotification("Login realizado com sucesso!");
+				setMensage(response?.data?.message ?? "Login realizado com sucesso");
 				setSuccessVisible(true);
 
 				setTimeout(navigateToHome, 800);
-			} catch (error) {
+			} catch (error: any) {
 				const attempts = failedAttempts + 1;
 				setFailedAttempts(attempts);
 				setSuccess(false);
@@ -73,9 +73,10 @@ function useLogin() {
 				if (attempts >= 5) {
 					const until = Date.now() + 1 * 60 * 1000;
 					setLockUntil(until);
-					setNotification("Muitas tentativas de login. Tente novamente em 1 minuto.");
+					setMensage("Muitas tentativas de login. Tente novamente em 1 minuto.");
 				} else {
-					setNotification("Erro: Email ou senha inválidos.");
+					const serverMessage = error?.response?.data?.message as string | undefined;
+					setMensage(serverMessage ?? "Erro ao fazer login. Tente novamente.");
 				}
 				setSuccessVisible(true);
 				console.log("Login error:", error);
@@ -105,7 +106,7 @@ function useLogin() {
 		success,
 		handleLogin,
 		handleSubmit,
-		notification,
+		mensage,
 		successVisible,
 		closeSuccessNotification,
 	};

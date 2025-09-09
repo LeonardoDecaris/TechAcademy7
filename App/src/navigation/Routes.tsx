@@ -76,7 +76,7 @@ function Routes() {
           {() => <PrivateRoutes><DetailsFreight /></PrivateRoutes>}
         </Stack.Screen>
 
-        <Stack.Screen name="RegisterVehicle" options={{ headerTitle: "Registrar Veículo", headerTitleAlign: "center", headerBackVisible: true, }}  >
+        <Stack.Screen name="RegisterVehicle" options={{ headerTitle: "Cadastrar Veículo", headerTitleAlign: "center", headerBackVisible: true, }}  >
           {() => <PrivateRoutes><RegisterVehicle /></PrivateRoutes>}
         </Stack.Screen>
 
