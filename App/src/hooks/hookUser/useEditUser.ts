@@ -8,6 +8,7 @@ import http from "@/src/service/httpAxios";
 import { RootStackParamList } from "@/src/navigation/Routes";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import { validarNome, validarCPF, validarEmail } from "@/src/utils/Validacao";
+import { useAuth } from "@/src/context/AuthContext";
 
 type NavigationProp = NativeStackNavigationProp<RootStackParamList>;
 
@@ -24,10 +25,10 @@ interface FormValuesEditarPerfil {
  * @param userId - The ID of the user to edit.
  * @returns An object containing form control, submission handlers, and notification state.
  */
-function useEditarUsuario(userId: string) {
+function useEditarUsuario() {
   const navigation = useNavigation<NavigationProp>();
   const { control, handleSubmit, setValue, setError, formState: { errors } } = useForm<FormValuesEditarPerfil>({ mode: "onSubmit" });
-
+  const { userId } = useAuth();
   const [success, setSuccess] = useState(false);
   const [notification, setNotification] = useState("");
   const [successVisible, setSuccessVisible] = useState(false);

@@ -5,18 +5,19 @@ interface AcessoRapidoPerfilProps {
     titulo: string;
     tipo?: string;
     onPress: () => void;
+    loginOut?: boolean;
 }
 
-const AcessoRapidoPerfil = ({ titulo, tipo, onPress }: AcessoRapidoPerfilProps) => {
+const AcessoRapidoPerfil = ({ titulo, tipo, onPress, loginOut }: AcessoRapidoPerfilProps) => {
 	return (
 	    <TouchableOpacity onPress={onPress} className="flex-row justify-between items-center" >
     
             <View className='flex-row items-center gap-2'>
-                <FontAwesome5 name={tipo} size={26} color="#575757" />
-                <Text className='text-black/80 font-semibold text-base'>{titulo}</Text>
+                <FontAwesome5 name={tipo} size={26} color={loginOut ? "red" : "#575757"} />
+                <Text className={loginOut ? 'text-red-600 font-semibold text-base' : 'text-black font-semibold text-base'}>{titulo}</Text>
             </View>
 
-            <AntDesign name="arrowright" size={26} color="black" />
+            <AntDesign name="arrowright" size={26} color={loginOut ? "red" : "black"} />
         </TouchableOpacity>
 	)
 }

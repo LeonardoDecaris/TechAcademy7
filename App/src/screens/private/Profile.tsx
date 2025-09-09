@@ -1,5 +1,5 @@
 import React, { useCallback, useEffect, useState } from 'react'
-import { ScrollView, RefreshControl, Image, Text, View, TouchableOpacity, Modal, TouchableWithoutFeedback } from 'react-native'
+import { ScrollView, RefreshControl, Image, Text, View, TouchableOpacity, Modal, TouchableWithoutFeedback, Alert } from 'react-native'
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 import { BASE_URL } from '@env';
@@ -10,9 +10,11 @@ import { useNavigation } from '@react-navigation/native';
 import { RootStackParamList } from '@/src/navigation/Routes';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 
-import useGetUserData from '@/src/hooks/get/useGetUserData';
+import useGetUserData from '@/src/hooks/hookAuth/hookUser/useGetUserData';
 import { ButtonPadrao } from '@/src/components/form/Buttons';
 import AcessoRapidoPerfil from '@/src/components/base/AcessoRapidoPerfil';
+import useDeleteUsuario from '@/src/hooks/hookAuth/hookUser/useDeleteUsuario';
+import AlertDeleteUser from '@/src/components/modal/AlterDeleteUser';
 
 type NavigationProp = NativeStackNavigationProp<RootStackParamList>;
 
@@ -23,18 +25,22 @@ function Profile() {
 
 	const { logout } = useAuth();
 	const navigation = useNavigation<NavigationProp>()
+	const {deleteUsuario} = useDeleteUsuario();
 
 	const [loggingOut, setLoggingOut] = useState(false);
 	const [modalVisible, setModalVisible] = useState(false);
 	const [modalImageVisible, setModalImageVisible] = useState(false);
+	const [deletingAccount, setDeletingAccount] = useState(false);
 
 	const handleNavigation = {
 		newPassword: () => navigation.navigate("NewPassword"),
 		editProfile: () => navigation.navigate("EditProfile"),
 		RegisterVehicle: () => navigation.navigate("RegisterVehicle"),
+		myVehicle: () => navigation.navigate("MyVehicle"),
 	};
 
 	const [refreshing, setRefreshing] = useState(false);
+	
 	const { userData, iniciasNomeUsuario, nomeAbreviado, getUserData } = useGetUserData();
 
 	const insets = useSafeAreaInsets();
@@ -103,7 +109,9 @@ function Profile() {
 
 				<View className='py-2.5 gap-5'>
 					<AcessoRapidoPerfil titulo="Editar dados pessoais" tipo="user-edit" onPress={handleNavigation.editProfile} />
+					<AcessoRapidoPerfil titulo="Meu veiculo" tipo="truck" onPress={handleNavigation.myVehicle} />
 					<AcessoRapidoPerfil titulo="Cadastrar veiculo" tipo="truck" onPress={handleNavigation.RegisterVehicle} />
+					<AcessoRapidoPerfil titulo="Cancelar meu Cadastro" loginOut tipo="user-edit" onPress={() => setDeletingAccount(true)} />
 				</View>
 
 				<Text className='text-base text-black/60 font-semibold pt-5 pl-5'>Funcionamento do sistema</Text>
@@ -124,6 +132,11 @@ function Profile() {
 					/>
 				</View>
 
+					<AlertDeleteUser
+						visible={deletingAccount}
+						onConfirm={deleteUsuario}
+						onCancel={() => setDeletingAccount(false)}
+					/>
 				<LogoutModal
 					visible={modalVisible}
 					loading={loggingOut}

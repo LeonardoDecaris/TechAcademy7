@@ -40,7 +40,7 @@ function useSignUp() {
   const handleSignUp = useCallback(
     async (data: SingUp) => {
       try {
-        await http.post("usuario", {
+        const response = await http.post("usuario", {
           nome: data.nome,
           cpf: data.cpf,
           email: data.email,
@@ -50,13 +50,13 @@ function useSignUp() {
         });
         
         setSuccess(true);
-        setNotification("Cadastro realizado com sucesso!");
+        setNotification(response.data.mensagem ?? "Cadastro realizado com sucesso!");
         setSuccessVisible(true);
 
         setTimeout(navigateToLogin, 800);
       } catch (error) {
         setSuccess(false);
-        setNotification("Erro ao realizar cadastro. Verifique os dados e tente novamente.");
+        setNotification("Erro ao realizar cadastro. Tente novamente.");
         setSuccessVisible(true);
         console.log("Registration error:", error);
       }

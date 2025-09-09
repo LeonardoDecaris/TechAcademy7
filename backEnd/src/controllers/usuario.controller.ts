@@ -115,7 +115,7 @@ export const requestPasswordReset = async (req: Request, res: Response) => {
             response.token = token;
             response.expiresAt = new Date(Date.now() + expMinutes * 60 * 1000);
         }
-
+        
         return res.status(200).json(response);
 
     } catch (error) {

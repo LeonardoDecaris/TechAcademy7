@@ -1,4 +1,5 @@
 import * as ImagePicker from "expo-image-picker";
+import { trataFormData } from "@/src/utils/trataFormData";
 import http from "@/src/service/httpAxios";
 import { useState, useCallback } from "react";
 import { AxiosError } from "axios";
@@ -7,36 +8,23 @@ import { Alert } from "react-native";
 interface UseImageUserReturn {
   loading: boolean;
   statusSuccess: boolean | null;
-  error: string | null; // Novo: estado para a mensagem de erro
+  error: string | null;
   uploadImage: (uri: string) => Promise<number | null>;
-  pickImage: () => Promise<number | null>; // Alterado: agora retorna o ID da imagem
-  resetStatus: () => void; // Novo: função para resetar o estado
+  pickImage: () => Promise<number | null>;
+  resetStatus: () => void;
 }
-
-interface ImageFormData {
-  uri: string;
-  name: string;
-  type: string;
-}
-
-const createImageFormData = (uri: string): ImageFormData => {
-  const nome = uri.split("/").pop() || "image.jpg";
-  const match = /\.(\w+)$/.exec(nome);
-  const type = match ? `image/${match[1]}` : `image`;
-  return { uri, name: nome, type };
-};
 
 function useImageUser(): UseImageUserReturn {
   const [loading, setLoading] = useState(false);
   const [statusSuccess, setStatusSuccess] = useState<boolean | null>(null);
-  const [error, setError] = useState<string | null>(null); 
+  const [error, setError] = useState<string | null>(null);
 
   const uploadImage = async (uri: string): Promise<number | null> => {
     setLoading(true);
     setStatusSuccess(null);
-    setError(null); 
+    setError(null);
     try {
-      const imageData = createImageFormData(uri);
+      const imageData = trataFormData(uri);
       const formData = new FormData();
       formData.append("imgUrl", imageData as any);
 
@@ -52,11 +40,11 @@ function useImageUser(): UseImageUserReturn {
 
       const errorMessage = axiosError.response?.data?.message || "Erro ao enviar imagem.";
       console.error("Erro ao enviar imagem:", axiosError.response?.data || axiosError);
-      setError(errorMessage); 
+      setError(errorMessage);
       setStatusSuccess(false);
       return null;
     } finally {
-      setLoading(false); 
+      setLoading(false);
     }
   };
 
@@ -72,14 +60,14 @@ function useImageUser(): UseImageUserReturn {
       mediaTypes: ImagePicker.MediaTypeOptions.Images,
       allowsEditing: true,
       aspect: [1, 1],
-      quality: 1,
+      quality: 0.8,
     });
 
     if (!result.canceled && result.assets?.length) {
-      return await uploadImage(result.assets[0].uri); 
+      return await uploadImage(result.assets[0].uri);
     }
-    
-    return null; 
+
+    return null;
   };
 
   const resetStatus = useCallback(() => {
@@ -87,13 +75,13 @@ function useImageUser(): UseImageUserReturn {
     setError(null);
   }, []);
 
-  return { 
+  return {
     uploadImage,
     pickImage,
-    loading, 
+    loading,
     statusSuccess,
-    error, 
-    resetStatus, 
+    error,
+    resetStatus,
   };
 };
 

@@ -10,7 +10,7 @@ import { RootStackParamList } from '@/src/navigation/Routes';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 
 import CardCargo from "@/src/components/cards/CardCargo";
-import useGetUserData from "@/src/hooks/get/useGetUserData";
+import useGetUserData from "@/src/hooks/hookAuth/hookUser/useGetUserData";
 import CardFreight from "@/src/components/cards/CardFreight";
 import InformationBox from "@/src/components/form/InformarionBox";
 

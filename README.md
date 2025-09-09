@@ -189,3 +189,88 @@ npx ngrok http 3000
   - Subir: docker compose up -d --build
   - Logs: docker compose logs -f backend
   - Parar: docker compose down
+
+---
+
+## Documentação da API (Swagger)
+
+A API expõe a documentação interativa via Swagger UI:
+
+- No PC: http://localhost:3000/api-docs
+- No celular físico (mesma rede): http://SEU_IP_DO_PC:3000/api-docs
+  - Descubra o IP: no Windows, execute no PowerShell: `ipconfig` e use o “Endereço IPv4”.
+
+Caso veja erro de rede no celular, confirme:
+- A API está ouvindo em 0.0.0.0
+- A porta 3000 está liberada no firewall
+- O BASE_URL do App aponta para `http://SEU_IP_DO_PC:3000`
+
+### Autenticação no Swagger
+- Faça login em POST /login com email e senha para receber o token.
+- Clique no botão “Authorize” no topo do Swagger.
+- Informe: `Bearer SEU_TOKEN_AQUI`
+- Agora as rotas protegidas funcionarão no Swagger.
+
+---
+
+## Endpoints essenciais (resumo)
+
+- Autenticação
+  - POST /login → retorna `{ message, token }`
+- Usuário
+  - POST /usuario → cadastro
+  - GET /usuario/:id → detalhes (Bearer)
+  - PUT /usuario/:id → editar (Bearer)
+  - DELETE /usuario/:id → deletar (Bearer)
+- Imagem do usuário
+  - POST /imagem-usuario → upload (multipart/form-data) (Bearer)
+  - PUT /imagem-usuario/:id → atualizar imagem (multipart/form-data) (Bearer)
+- Fluxo “Esqueci minha senha”
+  - POST /request-password-reset → body: `{ email, cpf }`
+  - POST /reset-password → body: `{ email, cpf, token, newPassword }`
+
+Dica: os campos exatos de cada rota aparecem no Swagger (modelo de request/response). Use-o para validar os payloads.
+
+---
+
+## Testando rápido (cURL/Postman)
+
+- Login
+```bash
+curl -X POST http://localhost:3000/login \
+  -H "Content-Type: application/json" \
+  -d '{"email":"seu@email.com","password":"sua_senha"}'
+```
+
+- Requisição autenticada
+```bash
+curl http://localhost:3000/usuario/1 \
+  -H "Authorization: Bearer SEU_TOKEN"
+```
+
+- Upload de imagem (exemplo genérico)
+```bash
+curl -X POST http://localhost:3000/imagem-usuario \
+  -H "Authorization: Bearer SEU_TOKEN" \
+  -F "file=@c:/caminho/para/imagem.jpg"
+```
+Obs.: Verifique no Swagger se há campos extras no form-data (ex.: ids).
+
+---
+
+## Notas importantes
+
+- Mensagens de login
+  - Email incorreto → `400 { message: "Email incorreto" }`
+  - Senha incorreta → `400 { message: "Senha incorreta" }`
+  - No App, exiba `response.data.message` para mostrar exatamente o texto do backend.
+- Reset de senha
+  - O token é assinado com um segredo dinâmico baseado no hash atual da senha.
+  - Ao trocar a senha, tokens antigos perdem validade.
+- Base URL no App
+  - Use `BASE_URL=http://SEU_IP_DO_PC:3000` no App/.env.
+  - Inicie com `npx expo start -c` e abra no celular físico.
+- Imagens no App (dica)
+  - Para reduzir tamanho: use `quality` no ImagePicker e `expo-image-manipulator` com `compress` e `resize`.
+
+---

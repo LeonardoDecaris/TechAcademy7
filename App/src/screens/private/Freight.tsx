@@ -16,6 +16,8 @@ interface CardCargaProps {
 	logoEmpresa?: string;
 	imagemCarga?: string;
 	valor?: string;
+	valorFrete?: string;
+	descricao?: string;
 }
 
 type FreightItem = CardCargaProps & { id: string; };
@@ -63,6 +65,8 @@ function Freight() {
 				logoEmpresa={item.logoEmpresa}
 				imagemCarga={item.imagemCarga}
 				valor={item.valor}
+				valorFrete={item.valorFrete}
+				descricao={item.descricao}
 			/>
 		</TouchableOpacity>
 	);

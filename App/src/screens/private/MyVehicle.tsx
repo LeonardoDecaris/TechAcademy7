@@ -1,8 +1,9 @@
 import React, { useCallback, useState } from 'react'
-import { SafeAreaView, ScrollView, RefreshControl, View, Text } from 'react-native'
+import { SafeAreaView, ScrollView, RefreshControl, View, Text, Alert } from 'react-native'
 
 import TopoMyVehicle from '@/src/components/base/TopoMyVehicle';
 import InformationBox from '@/src/components/form/InformarionBox';
+import { ButtonPadrao } from '@/src/components/form/Buttons';
 
 function MyVehicle() {
 	const [refreshing, setRefreshing] = useState(false);
@@ -18,7 +19,7 @@ function MyVehicle() {
 		<View style={{ flex: 1, paddingTop: 10 }}>
 			<ScrollView contentContainerStyle={{ paddingHorizontal: 10, paddingBottom: 50 }}
 				refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} />} showsVerticalScrollIndicator={false} >
-				
+
 				<TopoMyVehicle
 					modelo="FH16 540"
 					marca="Volvo"
@@ -27,6 +28,13 @@ function MyVehicle() {
 					placa="ABC-1234"
 				/>
 
+				<View className='pb-4'>
+					<InformationBox
+						title='Capacidade'
+						descricao='20 Toneladas'
+					/>
+				</View>
+
 				<View className='w-full bg-white rounded-xl p-2.5 shadow-[0px_4px_4px_rgba(0,0,0,0.25)]'>
 					<Text className='text-base font-bold'>Motorista</Text>
 					<Text className='text-sm font-semibold text-black/60'>Motorista: Lucas Carvalho Pedrozo</Text>
@@ -34,40 +42,20 @@ function MyVehicle() {
 					<Text className='text-sm font-semibold text-black/60'>Categoria: B</Text>
 				</View>
 
-				<View className='w-full flex-col gap-2.5 pt-5'>
-					<InformationBox
-						title='Teste'
-						descricao='Teste'
+				<View className='flex-row justify-between gap-4 items-center pt-5'>
+					<ButtonPadrao
+						title='Excluir'
+						classname='w-[48%] '
+						typeButton='logOutExcluir'
+						onPress={() => { Alert.alert('Excluir veículo em desenvolvimento') }}
 					/>
-					<InformationBox
-						title='Teste'
-						descricao='Teste'
+					<ButtonPadrao
+						title='Editar'
+						classname='w-[48%] '
+						typeButton='normal'
+						onPress={() => { Alert.alert('Editar veículo em desenvolvimento') }}
 					/>
-					<InformationBox
-						title='Teste'
-						descricao='Teste'
-					/>
-					<InformationBox
-						title='Teste'
-						descricao='Teste'
-					/>
-					<InformationBox
-						title='Teste'
-						descricao='Teste'
-					/>
-					<InformationBox
-						title='Teste'
-						descricao='Teste'
-					/>
-					<InformationBox
-						title='Teste'
-						descricao='Teste'
-					/>
-					<InformationBox
-						title='Teste'
-						descricao='Teste'
-					/>
-					
+
 				</View>
 			</ScrollView>
 		</View>

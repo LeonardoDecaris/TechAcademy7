@@ -7,7 +7,7 @@ router.post('/usuario', createUsuario);
 router.get('/usuario', getAllUsuarios);
 router.get('/usuario/:id', getUsuarioById);
 router.put('/usuario/:id', updateUsuario);
-router.delete('/usuario/:id', authMiddleware, deleteUsuario);
+router.delete('/usuario/:id', deleteUsuario);
 
 router.post('/request-password-reset', requestPasswordReset);
 router.post('/reset-password', resetPassword);

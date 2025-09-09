@@ -9,6 +9,8 @@ interface CardCargaProps {
     logoEmpresa?: string;
     imagemCarga?: string;
     valor?: string;
+    valorFrete?: string;
+    descricao?: string;
 }
 
 const CardCargo = (props: CardCargaProps) => {
@@ -25,7 +27,7 @@ const CardCargo = (props: CardCargaProps) => {
                     <Text className="text-[12px] font-semibold text-black/60">Saída: {props.saida}</Text>
                     <Text className="text-[12px] font-semibold text-black/60">Destino: {props.destino}</Text>
                     <Image source={require('../../assets/image/coamo.png')} style={{ width: "50%", resizeMode: 'contain' }} />
-                    <Text className="text-[14px] font-semibold text-black">Valor: R${props.valor}</Text>
+                    <Text className="text-[14px] font-semibold text-black">Valor: R${props.valorFrete}</Text>
                 </View>
                     <Image source={require('../../assets/image/carga.png')} style={{ width: "50%", resizeMode: 'contain', }}  />
             </View>

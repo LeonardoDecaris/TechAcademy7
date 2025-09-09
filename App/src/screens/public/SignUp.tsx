@@ -8,12 +8,13 @@ import { useNavigation } from '@react-navigation/native'
 import { RootStackParamList } from '@/src/navigation/Routes'
 import { NativeStackNavigationProp } from '@react-navigation/native-stack'
 
-import useSignUp from "@/src/hooks/post/useSignUp";
+import useSignUp from "@/src/hooks/hookAuth/useSignUp";
 import DropDown from "@/src/components/form/DropDown";
 import InputAuth from '@/src/components/form/InputAuth'
 import { ButtonPadrao } from '@/src/components/form/Buttons';
 import AlertNotioncation from '@/src/components/modal/AlertNotioncation'
 import { useSafeAreaInsets } from "react-native-safe-area-context";
+import { dataCnh } from "@/src/data/dataCnh";
 
 type NavigationProp = NativeStackNavigationProp<RootStackParamList>;
 
@@ -102,17 +103,9 @@ function SignUp() {
 						label="Tipo de CNH"
 						placeholder="Selecione o tipo de CNH"
 						control={control}
-						rules={{ required: "Selecione o tipo de CNH" }}
-						items={[
-							{ label: "A", value: "A" },
-							{ label: "B", value: "B" },
-							{ label: "AB", value: "AB" },
-							{ label: "C", value: "C" },
-							{ label: "D", value: "D" },
-							{ label: "E", value: "E" },
-						]}
+						rules={rules.cnh}
+						items={dataCnh}
 					/>
-
 				</View>
 
 				<ButtonPadrao

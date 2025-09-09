@@ -1,5 +1,5 @@
 export const dataCnh = [
-	{ label: "C", value: "C" },
-	{ label: "D", value: "D" },
-	{ label: "E", value: "E" },
+	{ label: "Categoria C", value: "C" },
+	{ label: "Categoria D", value: "D" },
+	{ label: "Categoria E", value: "E" },
 ];

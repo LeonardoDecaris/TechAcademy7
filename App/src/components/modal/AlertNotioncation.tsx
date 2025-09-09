@@ -17,7 +17,7 @@ type NotificacaoProps = {
 const AlertNotioncation = ({
 	visible,
 	messagem,
-	duration = 2000,
+	duration = 800,
 	onDismiss,
 	status = true,
 	topOffset = 30,
