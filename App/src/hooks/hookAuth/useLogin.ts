@@ -26,8 +26,8 @@ function useLogin() {
 	const { login } = useAuth();
 	const { control, handleSubmit, formState: { errors } } = useForm<MapLogin>({ mode: "onSubmit" });
 
-	const [success, setSuccess] = useState(false);
 	const [mensage, setMensage] = useState("");
+	const [success, setSuccess] = useState(false);
 	const [failedAttempts, setFailedAttempts] = useState(0);
 	const [successVisible, setSuccessVisible] = useState(false);
 	const [lockUntil, setLockUntil] = useState<number | null>(null);
@@ -44,8 +44,6 @@ function useLogin() {
 				setSuccess(false);
 				setMensage(`Muitas tentativas de login. Tente novamente em ${seconds} segundos.`);
 				setSuccessVisible(true);
-
-				return;
 			}
 
 			try {
@@ -66,6 +64,7 @@ function useLogin() {
 
 				setTimeout(navigateToHome, 800);
 			} catch (error: any) {
+				
 				const attempts = failedAttempts + 1;
 				setFailedAttempts(attempts);
 				setSuccess(false);

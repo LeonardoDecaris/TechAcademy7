@@ -1,4 +1,3 @@
-
 export const MOCK_DATA = [
     {
 		id: '1',
@@ -11,7 +10,9 @@ export const MOCK_DATA = [
 		imagemCarga: 'soja.png',
 		valor: '30.200,00',
 		valorFrete: '3.200,00',
-		descricao: 'Carga de soja de alta qualidade, pronta para transporte. Embalagem segura e adequada para longas distâncias. Ideal para distribuidores e comerciantes que buscam produtos confiáveis.'
+		descricao: 'Carga de soja de alta qualidade, pronta para transporte. Embalagem segura e adequada para longas distâncias. Ideal para distribuidores e comerciantes que buscam produtos confiáveis.',
+		saidaCoord: { latitude: -25.4284, longitude: -49.2733 },
+		destinoCoord: { latitude: -23.5505, longitude: -46.6333 }
 	},
 	{
 		id: '2',
@@ -24,7 +25,9 @@ export const MOCK_DATA = [
 		imagemCarga: 'milho.png',
 		valor: '10.800,00',
 		valorFrete: '1.800,00',
-		descricao: 'Carga de milho de alta qualidade, pronta para transporte. Embalagem segura e adequada para longas distâncias. Ideal para distribuidores e comerciantes que buscam produtos confiáveis.'
+		descricao: 'Carga de milho de alta qualidade, pronta para transporte. Embalagem segura e adequada para longas distâncias. Ideal para distribuidores e comerciantes que buscam produtos confiáveis.',
+		saidaCoord: { latitude: -23.3045, longitude: -51.1696 },
+		destinoCoord: { latitude: -23.4205, longitude: -51.9331 }
 	},
 	{
 		id: '3',
@@ -37,7 +40,9 @@ export const MOCK_DATA = [
 		imagemCarga: 'farelo.png',
 		valor: '20.500,00',
 		valorFrete: '2.500,00',
-		descricao: 'Carga de farelo proteico de alta qualidade, pronta para transporte. Embalagem segura e adequada para longas distâncias. Ideal para distribuidores e comerciantes que buscam produtos confiáveis.'
+		descricao: 'Carga de farelo proteico de alta qualidade, pronta para transporte. Embalagem segura e adequada para longas distâncias. Ideal para distribuidores e comerciantes que buscam produtos confiáveis.',
+		saidaCoord: { latitude: -24.9578, longitude: -53.4595 },
+		destinoCoord: { latitude: -25.4284, longitude: -49.2733 }
 	},
 	{
 		id: '4',
@@ -50,7 +55,9 @@ export const MOCK_DATA = [
 		imagemCarga: 'trigo.png',
 		valor: '20.900,00',
 		valorFrete: '2.900,00',
-		descricao: 'Carga de trigo de alta qualidade, pronta para transporte. Embalagem segura e adequada para longas distâncias. Ideal para distribuidores e comerciantes que buscam produtos confiáveis.'
+		descricao: 'Carga de trigo de alta qualidade, pronta para transporte. Embalagem segura e adequada para longas distâncias. Ideal para distribuidores e comerciantes que buscam produtos confiáveis.',
+		saidaCoord: { latitude: -25.0950, longitude: -50.1619 },
+		destinoCoord: { latitude: -25.5204, longitude: -48.5092 }
 	},
 	{
 		id: '5',
@@ -63,9 +70,11 @@ export const MOCK_DATA = [
 		imagemCarga: 'arroz.png',
 		valor: '30.000,00',
 		valorFrete: '3.000,00',
-		descricao: 'Carga de arroz de alta qualidade, pronta para transporte. Embalagem segura e adequada para longas distâncias. Ideal para distribuidores e comerciantes que buscam produtos confiáveis.'
+		descricao: 'Carga de arroz de alta qualidade, pronta para transporte. Embalagem segura e adequada para longas distâncias. Ideal para distribuidores e comerciantes que buscam produtos confiáveis.',
+		saidaCoord: { latitude: -23.4205, longitude: -51.9331 },
+		destinoCoord: { latitude: -25.4284, longitude: -49.2733 }
 	},
-		{
+	{
 		id: '6',
 		nome: 'Carga de Milho',
 		tipo: 'Grãos',
@@ -76,7 +85,9 @@ export const MOCK_DATA = [
 		imagemCarga: 'milho.png',
 		valor: '10.800,00',
 		valorFrete: '1.800,00',
-		descricao: 'Carga de milho de alta qualidade, pronta para transporte. Embalagem segura e adequada para longas distâncias. Ideal para distribuidores e comerciantes que buscam produtos confiáveis.'
+		descricao: 'Carga de milho de alta qualidade, pronta para transporte. Embalagem segura e adequada para longas distâncias. Ideal para distribuidores e comerciantes que buscam produtos confiáveis.',
+		saidaCoord: { latitude: -23.3045, longitude: -51.1696 },
+		destinoCoord: { latitude: -23.4205, longitude: -51.9331 }
 	},
 	{
 		id: '7',
@@ -89,7 +100,9 @@ export const MOCK_DATA = [
 		imagemCarga: 'farelo.png',
 		valor: '20.500,00',
 		valorFrete: '2.500,00',
-		descricao: 'Carga de farelo proteico de alta qualidade, pronta para transporte. Embalagem segura e adequada para longas distâncias. Ideal para distribuidores e comerciantes que buscam produtos confiáveis.'
+		descricao: 'Carga de farelo proteico de alta qualidade, pronta para transporte. Embalagem segura e adequada para longas distâncias. Ideal para distribuidores e comerciantes que buscam produtos confiáveis.',
+		saidaCoord: { latitude: -24.9578, longitude: -53.4595 },
+		destinoCoord: { latitude: -25.4284, longitude: -49.2733 }
 	},
 	{
 		id: '8',
@@ -102,6 +115,72 @@ export const MOCK_DATA = [
 		imagemCarga: 'trigo.png',
 		valor: '20.900,00',
 		valorFrete: '2.900,00',
-		descricao: 'Carga de trigo de alta qualidade, pronta para transporte. Embalagem segura e adequada para longas distâncias. Ideal para distribuidores e comerciantes que buscam produtos confiáveis.'
+		descricao: 'Carga de trigo de alta qualidade, pronta para transporte. Embalagem segura e adequada para longas distâncias. Ideal para distribuidores e comerciantes que buscam produtos confiáveis.',
+		saidaCoord: { latitude: -25.0950, longitude: -50.1619 },
+		destinoCoord: { latitude: -25.5204, longitude: -48.5092 }
+	},
+
+	// --- Novos (Juranda) ---
+	{
+		id: '9',
+		nome: 'Soja Premium',
+		tipo: 'Grãos',
+		peso: '38',
+		saida: 'Juranda',
+		destino: 'Maringá',
+		logoEmpresa: 'coamo.png',
+		imagemCarga: 'soja.png',
+		valor: '22.400,00',
+		valorFrete: '2.250,00',
+		descricao: 'Soja premium pronta para esmagamento. Carga sensível à umidade, requer transporte rápido.',
+		saidaCoord: { latitude: -24.4202, longitude: -52.8414 },
+		destinoCoord: { latitude: -23.4205, longitude: -51.9331 }
+	},
+	{
+		id: '10',
+		nome: 'Milho Safrinha',
+		tipo: 'Grãos',
+		peso: '42',
+		saida: 'Juranda',
+		destino: 'Curitiba',
+		logoEmpresa: 'coamo.png',
+		imagemCarga: 'milho.png',
+		valor: '19.800,00',
+		valorFrete: '3.150,00',
+		descricao: 'Milho de safrinha bem seco, ideal para indústria de ração. Atenção a rota de descida da serra.',
+		saidaCoord: { latitude: -24.4202, longitude: -52.8414 },
+		destinoCoord: { latitude: -25.4284, longitude: -49.2733 }
+	},
+
+	// --- Novos (Campo Mourão) ---
+	{
+		id: '11',
+		nome: 'Farelo de Soja',
+		tipo: 'Farelo',
+		peso: '45',
+		saida: 'Campo Mourão',
+		destino: 'Paranaguá',
+		logoEmpresa: 'coamo.png',
+		imagemCarga: 'farelo.png',
+		valor: '26.700,00',
+		valorFrete: '4.100,00',
+		descricao: 'Farelo de soja para exportação. Exige lona bem fechada.',
+		saidaCoord: { latitude: -24.0463, longitude: -52.3780 },
+		destinoCoord: { latitude: -25.5204, longitude: -48.5092 }
+	},
+	{
+		id: '12',
+		nome: 'Trigo Selecionado',
+		tipo: 'Grãos',
+		peso: '40',
+		saida: 'Campo Mourão',
+		destino: 'São Paulo',
+		logoEmpresa: 'coamo.png',
+		imagemCarga: 'trigo.png',
+		valor: '24.300,00',
+		valorFrete: '5.600,00',
+		descricao: 'Trigo limpo para moagem. Evitar umidade e contaminação cruzada.',
+		saidaCoord: { latitude: -24.0463, longitude: -52.3780 },
+		destinoCoord: { latitude: -23.5505, longitude: -46.6333 }
 	}
 ];

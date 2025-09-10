@@ -1,46 +1,46 @@
-import React from 'react'
+import React, { useCallback, memo } from 'react';
+import { View, Text } from 'react-native';
+import { ButtonPadrao } from '@/src/components/form/Buttons';
+import { useNavigation } from '@react-navigation/native';
+import { RootStackParamList } from '@/src/navigation/Routes';
+import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 
-import { View, Text, SafeAreaView } from 'react-native'
-import { ButtonPadrao } from '@/src/components/form/Buttons'
+type NavigationProp = NativeStackNavigationProp<RootStackParamList>;
 
-import { useNavigation } from '@react-navigation/native'
-import { RootStackParamList } from '@/src/navigation/Routes'
-import { NativeStackNavigationProp } from '@react-navigation/native-stack'
+const headingWrapperStyle = 'mb-10';
+const actionsWrapperStyle = 'w-full flex-col gap-4';
+const headingStyle = 'font-bold text-center text-6xl';
+const subHeadingStyle = 'text-center text-base font-medium';
+const containerStyle = 'flex-1 px-2.5 justify-center items-center';
 
-type NavigationProp = NativeStackNavigationProp<RootStackParamList>
+const Start = () => {
+	const navigation = useNavigation<NavigationProp>();
 
-function Start() {
-	const navigation = useNavigation<NavigationProp>()
-
-	const handleNavigation = {
-		Login: () => navigation.navigate('Login'),
-		SignUp: () => navigation.navigate('SignUp'),
-	}
+	const goLogin = useCallback(() => navigation.navigate('Login'), [navigation]);
+	const goSignUp = useCallback(() => navigation.navigate('SignUp'), [navigation]);
 
 	return (
-		<View style={{ flexGrow: 1, paddingHorizontal: 10, justifyContent: 'center', alignItems: 'center' }}>
-			<View className='mb-10'>
-				<Text className='font-bold text-center text-6xl'>Bem Vindo</Text>
-				<Text className='text-center text-base font-medium'>Vamos começar</Text>
+		<View className={containerStyle}>
+			<View className={headingWrapperStyle}>
+				<Text className={headingStyle}>Bem Vindo</Text>
+				<Text className={subHeadingStyle}>Vamos começar</Text>
 			</View>
-
-			<View className='w-full flex-col gap-4'>
+			<View className={actionsWrapperStyle}>
 				<ButtonPadrao
 					title="Login"
 					typeButton="normal"
 					classname="w-full"
-					onPress={handleNavigation.Login}
+					onPress={goLogin}
 				/>
 				<ButtonPadrao
 					title="Cadastrar"
 					typeButton="normal"
 					classname="w-full"
-					onPress={handleNavigation.SignUp}
+					onPress={goSignUp}
 				/>
 			</View>
 		</View>
+	);
+};
 
-	)
-}
-
-export default Start;
+export default memo(Start);

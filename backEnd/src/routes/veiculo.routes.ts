@@ -9,13 +9,9 @@ router.get('/veiculo/:id', authMiddleware, getVeiculoById);
 router.put('/veiculo/:id', authMiddleware, updateVeiculo);
 router.delete('/veiculo/:id', authMiddleware, deleteVeiculo);
 
-// GET: lista veículos do usuário
 router.get('/usuario/:usuarioId/veiculo', authMiddleware, getVeiculoByUsuarioId);
-// POST: vincula veículo ao usuário
 router.post('/usuario/:usuarioId/veiculo', createVeiculoByUsuarioId);
-// PUT por usuário valida posse do veículo
 router.put('/usuario/:usuarioId/veiculo/:id', authMiddleware, updateVeiculoByUsuarioId);
-// DELETE: desvincula; ?hard=true apaga o veículo
 router.delete('/usuario/:usuarioId/veiculo', authMiddleware, deleteVeiculoByUsuarioId);
 
 export default router;
