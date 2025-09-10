@@ -1,48 +1,62 @@
-import React, { useCallback, useState } from 'react'
+import React, { useCallback, useEffect, useState } from 'react'
 import { SafeAreaView, ScrollView, RefreshControl, View, Text, Alert } from 'react-native'
 
 import TopoMyVehicle from '@/src/components/base/TopoMyVehicle';
 import InformationBox from '@/src/components/form/InformarionBox';
 import { ButtonPadrao } from '@/src/components/form/Buttons';
+import useGetVehicleData from '@/src/hooks/hookVehicle/useGetVehicleData';
+import useGetUserData from '@/src/hooks/hookUser/useGetUserData';
+import { BASE_URL } from '@env';
 
 function MyVehicle() {
 	const [refreshing, setRefreshing] = useState(false);
+	const {getVehicleData, veiculo} = useGetVehicleData();
+	const {userData,getUserData} = useGetUserData();
+
+	const imagemUrl = veiculo?.veiculo?.imagemVeiculo?.imgUrl ? `${BASE_URL}${veiculo.veiculo.imagemVeiculo.imgUrl}` : '';
+console.log('imagemUrl', imagemUrl);
 
 	const onRefresh = useCallback(async () => {
 		setRefreshing(true);
+		await getVehicleData();
+		await getUserData();
 		setRefreshing(false);
 	}, []);
 
-	const InformartionStyle = "w-full flex-row items-center border border-black rounded-lg p-1.5"
+	useEffect(() => {
+		getVehicleData();
+		getUserData();
+	}, [getVehicleData, getUserData]);
 
 	return (
 		<View style={{ flex: 1, paddingTop: 10 }}>
-			<ScrollView contentContainerStyle={{ paddingHorizontal: 10, paddingBottom: 50 }}
+			<ScrollView contentContainerStyle={{flexGrow: 1 , paddingHorizontal: 10, paddingBottom: 20}}
 				refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} />} showsVerticalScrollIndicator={false} >
 
 				<TopoMyVehicle
-					modelo="FH16 540"
-					marca="Volvo"
-					quilometragem={12.499}
-					ano={2000}
-					placa="ABC-1234"
+					modelo={veiculo?.veiculo?.modelo || 'Não informado'}
+					marca={veiculo?.veiculo?.marca || 'Não informado'}
+					quilometragem={veiculo?.veiculo?.quilometragem || 'Não informado'}
+					ano={veiculo?.veiculo?.ano || 'Não informado'}
+					imagem={imagemUrl}
+					placa={veiculo?.veiculo?.placa || 'Não informado'}
 				/>
 
 				<View className='pb-4'>
 					<InformationBox
 						title='Capacidade'
-						descricao='20 Toneladas'
+						descricao={veiculo?.veiculo?.capacidade + ' toneladas' || 'Não informado'}
 					/>
 				</View>
 
 				<View className='w-full bg-white rounded-xl p-2.5 shadow-[0px_4px_4px_rgba(0,0,0,0.25)]'>
 					<Text className='text-base font-bold'>Motorista</Text>
-					<Text className='text-sm font-semibold text-black/60'>Motorista: Lucas Carvalho Pedrozo</Text>
-					<Text className='text-sm font-semibold text-black/60'>Email: lucaspedroozo@hotmail.com</Text>
-					<Text className='text-sm font-semibold text-black/60'>Categoria: B</Text>
+					<Text className='text-sm font-semibold text-black/60'>Motorista: {userData?.nome} </Text>
+					<Text className='text-sm font-semibold text-black/60'>Email: {userData?.email}</Text>
+					<Text className='text-sm font-semibold text-black/60'>Categoria: {userData?.cnh}</Text>
 				</View>
 
-				<View className='flex-row justify-between gap-4 items-center pt-5'>
+				<View className=' flex-1 flex-row justify-between gap-4 items-end pt-5'>
 					<ButtonPadrao
 						title='Excluir'
 						classname='w-[48%] '

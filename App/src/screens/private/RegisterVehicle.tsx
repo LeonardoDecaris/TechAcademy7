@@ -1,15 +1,97 @@
-import { Image, Platform, ScrollView, View } from "react-native";
+import { useState } from "react";
+import { Image, Platform, ScrollView, View, KeyboardAvoidingView, TouchableOpacity, Text } from "react-native";
 
+import { BASE_URL } from '@env';
 import InputAuth from "@/src/components/form/InputAuth";
-import { ButtonPadrao, ButtonUpload } from "@/src/components/form/Buttons";
 import AlertNotioncation from "@/src/components/modal/AlertNotioncation";
-import { KeyboardAvoidingView } from "react-native";
+import { ButtonPadrao, ButtonUpload } from "@/src/components/form/Buttons";
 
-import useRegisterVehicle from "@/src/hooks/hookVehicle/useRegisterVehicle";
+import * as ImagePicker from 'expo-image-picker';
 import ErrorNotification from "@/src/components/modal/ErrorNotioncation";
+import useRegisterVehicle from "@/src/hooks/hookVehicle/useRegisterVehicle";
+import useImagemVehicle from "@/src/hooks/hookVehicle/useImagemVehicle";
+
 
 function RegisterVehicle() {
-    const { control, handleSubmit, rules, handleEditar } = useRegisterVehicle();
+    const { control, handleSubmit, rules, handleEditar, notification, success, successVisible, closeSuccessNotification, setValue } = useRegisterVehicle();
+    const { uploadImage, loading, statusSuccess } = useImagemVehicle();
+    const [selectedImage, setSelectedImage] = useState<string | null>(null);
+    const [isSaving, setIsSaving] = useState(false);
+
+
+    const requestPermission = async (type: 'camera' | 'gallery') => {
+        if (type === 'camera') {
+            const result = await ImagePicker.requestCameraPermissionsAsync();
+            return result.granted;
+        } else {
+            const result = await ImagePicker.requestMediaLibraryPermissionsAsync();
+            return result.granted;
+        }
+    };
+
+    const pickOrTakeImage = async (type: 'camera' | 'gallery') => {
+        const hasPermission = await requestPermission(type);
+        if (!hasPermission) {
+            alert(
+                type === 'camera'
+                    ? 'Permissão para acessar a câmera é necessária!'
+                    : 'Permissão para acessar a galeria é necessária!'
+            );
+            return null;
+        }
+
+        const pickerFn =
+            type === 'camera'
+                ? ImagePicker.launchCameraAsync
+                : ImagePicker.launchImageLibraryAsync;
+
+        const result = await pickerFn({
+            mediaTypes: ImagePicker.MediaTypeOptions.Images,
+            allowsEditing: true,
+            aspect: [1, 1],
+            quality: 0.8,
+        });
+
+        if (!result.canceled && result.assets?.length) {
+            return result.assets[0].uri;
+        }
+        return null;
+    };
+
+    const handlePickImage = async () => {
+        const uri = await pickOrTakeImage('gallery');
+        if (uri) setSelectedImage(uri);
+    };
+
+    const handleTakePhoto = async () => {
+        const uri = await pickOrTakeImage('camera');
+        if (uri) setSelectedImage(uri);
+    };
+
+    const handleRegister = async () => {
+        if (!selectedImage) {
+            alert('Por favor, selecione uma imagem para o veículo.');
+            return;
+        }
+
+        setIsSaving(true);
+
+        try {
+            const imageId = await uploadImage(selectedImage);
+            if (imageId) {
+                setValue('imagemVeiculo_id', imageId);
+                await handleSubmit(handleEditar)();
+            } else {
+                alert('Falha ao fazer upload da imagem. Tente novamente.');
+            }
+        } catch (error) {
+            console.error("Erro no registro:", error);
+            alert('Ocorreu um erro ao registrar o veículo.');
+        } finally {
+            setIsSaving(false);
+        }
+    };
+
 
     return (
         <KeyboardAvoidingView
@@ -22,26 +104,37 @@ function RegisterVehicle() {
                 keyboardShouldPersistTaps="handled"
             >
 
-                <View className="w-full py-5 flex-col gap-2">
-                    <View className="w-full ">
-                        <Image source={require('../../assets/image/meu.avif')} className="w-full h-44 rounded-lg " />
-                    </View>
+                <AlertNotioncation
+                    visible={successVisible}
+                    status={success}
+                    messagem={notification}
+                    onDismiss={closeSuccessNotification}
+                    topOffset={10}
+                />
+
+                <View className="w-full py-5 flex-col gap-2 items-center">
+                    <TouchableOpacity className="w-full" onPress={handlePickImage}>
+                        {selectedImage ? (
+                            <Image source={{ uri: selectedImage }} className="w-full h-44 rounded-lg" />
+                        ) : (
+                            <View className="w-full h-44 rounded-lg bg-gray-200 justify-center items-center">
+                                <Text className="text-gray-500">Selecione uma imagem</Text>
+                            </View>
+                        )}
+                    </TouchableOpacity>
 
 
                     <ErrorNotification
-                        loadingText="Carregando imagem..."
-                        successText="Imagem enviada com sucesso!"
-                        errorText="Erro ao enviar imagem."
-                    />
-                    <ErrorNotification
-                        loadingText="Atualizando..."
-                        successText="Imagem atualizada com sucesso!"
-                        errorText="Erro ao atualizar imagem."
-                    />
+						loading={loading}
+						statusSuccess={statusSuccess}
+						loadingText="Carregando imagem..."
+						successText="Imagem enviada com sucesso!"
+						errorText="Erro ao enviar imagem."
+					/>
 
                     <View className="flex-row justify-center gap-2">
-                        <ButtonUpload onPress={() => { }} title="Alterar Foto" />
-                        <ButtonUpload onPress={() => { }} title="Tirar Foto" />
+                        <ButtonUpload onPress={handlePickImage} title="Escolher Foto" />
+                        <ButtonUpload onPress={handleTakePhoto} title="Tirar Foto" />
                     </View>
                 </View>
 
@@ -69,6 +162,7 @@ function RegisterVehicle() {
                         rules={rules.placa}
                         name="placa"
                         id='placa'
+                        quantity={7}
                         placeholder='Placa do veículo'
                         label='Placa'
                         type="default"
@@ -83,6 +177,7 @@ function RegisterVehicle() {
                             placeholder='Ano de fabricação'
                             label='Ano de fabricação'
                             type="numeric"
+                            quantity={4}
                             Tamanho="pequeno"
                         />
                         <InputAuth
@@ -107,26 +202,22 @@ function RegisterVehicle() {
                             label='Capacidade (T)'
                             type="numeric"
                             Tamanho="pequeno"
+                            quantity={8}
                         />
                     </View>
                 </View>
 
                 <View className="w-full items-end pt-5 pr-2.5">
                     <ButtonPadrao
-                        title='Cadastrar'
-                        onPress={handleSubmit(handleEditar)}
+                        title={isSaving ? 'Cadastrando...' : 'Cadastrar'}
+                        onPress={handleRegister}
+                        disabled={isSaving}
                         typeButton='normal'
                         classname=' px-5 '
                     />
                 </View>
 
             </ScrollView>
-            <AlertNotioncation
-                visible={false}
-                status={true}
-                messagem={'fsdf'}
-                onDismiss={() => { }}
-            />
         </KeyboardAvoidingView>
     );
 }

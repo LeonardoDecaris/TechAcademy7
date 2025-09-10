@@ -5,7 +5,7 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { BASE_URL } from '@env';
 
 import { useAuth } from '@/src/context/AuthContext';
-import useGetUserData from '@/src/hooks/hookAuth/hookUser/useGetUserData';
+import useGetUserData from '@/src/hooks/hookUser/useGetUserData';
 
 import { useNavigation } from '@react-navigation/native';
 import { RootStackParamList } from '@/src/navigation/Routes';
@@ -17,6 +17,7 @@ import CardFreight from '@/src/components/cards/CardFreight';
 import VehicleCard from '@/src/components/cards/VehicleCard';
 import AcessoRapido from '@/src/components/base/AcessoRapido';
 import CardMyContract from '@/src/components/cards/CardMyContract';
+import useGetVehicleData from '@/src/hooks/hookVehicle/useGetVehicleData';
 
 type NavigationProp = NativeStackNavigationProp<RootStackParamList>;
 
@@ -27,10 +28,11 @@ function Home() {
     const { logout } = useAuth();
     const navigation = useNavigation<NavigationProp>();
     const { userData, getUserData, iniciasNomeUsuario, nomeAbreviado } = useGetUserData();
+    const {getVehicleData, veiculo: data} = useGetVehicleData();
     
     const [refreshing, setRefreshing] = useState(false);
     const [showLogout, setShowLogout] = useState(false);
-
+    const imagemVeiculo = data?.veiculo?.imagemVeiculo?.imgUrl ? `${BASE_URL}${data.veiculo.imagemVeiculo.imgUrl}` : '';
     const imagemUrl = userData?.imagemUsuario?.imgUrl ? `${BASE_URL}${userData.imagemUsuario.imgUrl}` : '';
 
     const handleNavigation = {
@@ -42,6 +44,7 @@ function Home() {
     const onRefresh = useCallback(async () => {
         setRefreshing(true);
         await getUserData();
+        await getVehicleData();
         setRefreshing(false);
     }, [getUserData]);
 
@@ -55,7 +58,8 @@ function Home() {
 
     useEffect(() => {
         getUserData();
-    }, [getUserData]);
+        getVehicleData();
+    }, [getUserData, getVehicleData]);
 
     const insets = useSafeAreaInsets();
 
@@ -122,6 +126,11 @@ function Home() {
 
                 <VehicleCard
                     onPress={handleNavigation.myVehicle}
+                    modelo={data?.veiculo?.modelo}
+                    marca={data?.veiculo?.marca}
+                    ano={data?.veiculo?.ano}
+                    placa={data?.veiculo?.placa}
+                    imagem={imagemVeiculo}
                 />
             </ScrollView>
             

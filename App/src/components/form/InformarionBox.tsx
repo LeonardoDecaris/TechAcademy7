@@ -10,7 +10,7 @@ const InformationBox = (props: InformationBoxProps) => {
     return(
         <View className={InformationStyle}>
             <Text className="font-semibold text-[14px]">{props.title}:</Text>
-            <Text className="font-medium text-[14px]">{props.descricao}</Text>
+            <Text className="font-medium text-[14px]"> {props.descricao}</Text>
         </View>
     );
 }

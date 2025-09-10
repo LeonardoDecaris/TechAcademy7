@@ -6,7 +6,7 @@ import { useNavigation } from '@react-navigation/native'
 import { RootStackParamList } from '@/src/navigation/Routes'
 import { NativeStackNavigationProp } from '@react-navigation/native-stack'
 
-import useLogin from '@/src/hooks/hookAuth/hookUser/useLogin'
+import useLogin from '@/src/hooks/hookAuth/useLogin'
 import InputAuth from '@/src/components/form/InputAuth'
 import { ButtonPadrao } from '@/src/components/form/Buttons'
 import AlertNotioncation from '@/src/components/modal/AlertNotioncation'

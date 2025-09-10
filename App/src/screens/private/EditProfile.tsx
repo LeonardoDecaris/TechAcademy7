@@ -14,10 +14,10 @@ import { useNavigation } from '@react-navigation/native';
 import { RootStackParamList } from '@/src/navigation/Routes';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 
-import useImageUser from '@/src/hooks/hookAuth/hookUser/useImageUser';
-import useEditarUsuario from '@/src/hooks/hookAuth/hookUser/useEditUser';
-import useGetUserData from '@/src/hooks/hookAuth/hookUser/useGetUserData';
-import useEditImageUser from '@/src/hooks/hookAuth/hookUser/useEditImageUser';
+import useImageUser from '@/src/hooks/hookUser/useImageUser';
+import useEditarUsuario from '@/src/hooks/hookUser/useEditUser';
+import useGetUserData from '@/src/hooks/hookUser/useGetUserData';
+import useEditImageUser from '@/src/hooks/hookUser/useEditImageUser';
 import ErrorNotification from '@/src/components/modal/ErrorNotioncation';
 
 type NavigationProp = NativeStackNavigationProp<RootStackParamList>;

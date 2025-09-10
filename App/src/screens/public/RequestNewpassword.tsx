@@ -9,7 +9,7 @@ import { RootStackParamList } from '@/src/navigation/Routes'
 
 import { NativeStackNavigationProp } from '@react-navigation/native-stack'
 import AlertNotioncation from '@/src/components/modal/AlertNotioncation'
-import useRequestNewpassword from '@/src/hooks/hookAuth/hookUser/useRequestNewpassword'
+import useRequestNewpassword from '@/src/hooks/hookAuth/useRequestNewpassword'
 import { useSafeAreaInsets } from 'react-native-safe-area-context'
 
 type NavigationProp = NativeStackNavigationProp<RootStackParamList>

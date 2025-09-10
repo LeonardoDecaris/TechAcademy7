@@ -10,11 +10,13 @@ import { useNavigation } from '@react-navigation/native';
 import { RootStackParamList } from '@/src/navigation/Routes';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 
-import useGetUserData from '@/src/hooks/hookAuth/hookUser/useGetUserData';
 import { ButtonPadrao } from '@/src/components/form/Buttons';
 import AcessoRapidoPerfil from '@/src/components/base/AcessoRapidoPerfil';
-import useDeleteUsuario from '@/src/hooks/hookAuth/hookUser/useDeleteUsuario';
+
 import AlertDeleteUser from '@/src/components/modal/AlterDeleteUser';
+import useDeleteUsuario from '@/src/hooks/hookUser/useDeleteUsuario';
+import useGetUserData from '@/src/hooks/hookUser/useGetUserData';
+import useGetVehicleData from '@/src/hooks/hookVehicle/useGetVehicleData';
 
 type NavigationProp = NativeStackNavigationProp<RootStackParamList>;
 
@@ -25,7 +27,7 @@ function Profile() {
 
 	const { logout } = useAuth();
 	const navigation = useNavigation<NavigationProp>()
-	const {deleteUsuario} = useDeleteUsuario();
+	const { deleteUsuario } = useDeleteUsuario();
 
 	const [loggingOut, setLoggingOut] = useState(false);
 	const [modalVisible, setModalVisible] = useState(false);
@@ -40,8 +42,9 @@ function Profile() {
 	};
 
 	const [refreshing, setRefreshing] = useState(false);
-	
+
 	const { userData, iniciasNomeUsuario, nomeAbreviado, getUserData } = useGetUserData();
+	const { getVehicleData, veiculo } = useGetVehicleData();
 
 	const insets = useSafeAreaInsets();
 	const imagemUrl = userData?.imagemUsuario?.imgUrl ? `${BASE_URL}${userData.imagemUsuario.imgUrl}` : ''
@@ -49,12 +52,14 @@ function Profile() {
 	const onRefresh = useCallback(async () => {
 		setRefreshing(true);
 		await getUserData();
+		await getVehicleData();
 		setRefreshing(false);
 	}, [getUserData]);
 
 	useEffect(() => {
 		getUserData();
-	}, [getUserData]);
+		getVehicleData();
+	}, [getUserData, getVehicleData]);
 
 	const handleConfirmLogout = async () => {
 		try {
@@ -109,8 +114,17 @@ function Profile() {
 
 				<View className='py-2.5 gap-5'>
 					<AcessoRapidoPerfil titulo="Editar dados pessoais" tipo="user-edit" onPress={handleNavigation.editProfile} />
-					<AcessoRapidoPerfil titulo="Meu veiculo" tipo="truck" onPress={handleNavigation.myVehicle} />
-					<AcessoRapidoPerfil titulo="Cadastrar veiculo" tipo="truck" onPress={handleNavigation.RegisterVehicle} />
+
+					{!veiculo?.veiculo ? (
+						<>
+							<AcessoRapidoPerfil titulo="Cadastrar veiculo" tipo="truck" onPress={handleNavigation.RegisterVehicle} />
+						</>
+					) : (
+						<>
+							<AcessoRapidoPerfil titulo="Meu veiculo" tipo="truck" onPress={handleNavigation.myVehicle} />
+						</>
+					)}
+
 					<AcessoRapidoPerfil titulo="Cancelar meu Cadastro" loginOut tipo="user-edit" onPress={() => setDeletingAccount(true)} />
 				</View>
 
@@ -132,19 +146,19 @@ function Profile() {
 					/>
 				</View>
 
-					<AlertDeleteUser
-						visible={deletingAccount}
-						onConfirm={deleteUsuario}
-						onCancel={() => setDeletingAccount(false)}
-					/>
+				<AlertDeleteUser
+					visible={deletingAccount}
+					onConfirm={deleteUsuario}
+					onCancel={() => setDeletingAccount(false)}
+				/>
 				<LogoutModal
 					visible={modalVisible}
 					loading={loggingOut}
 					onCancel={() => setModalVisible(false)}
 					onConfirm={handleConfirmLogout}
 				/>
-			</ScrollView>
-		</View>
+			</ScrollView >
+		</View >
 	)
 }
 

@@ -2,6 +2,9 @@ import { Request, Response } from 'express';
 import Caminhoneiro from '../models/caminhoneiro.model';
 import Usuario from '../models/usuario.model';
 import Veiculo from '../models/veiculo.model';
+import ImagemVeiculo from '../models/imagem.caminhao.model';
+import fs from 'fs';
+import path from 'path';
 
 export const createCaminhoneiro = async (req: Request, res: Response): Promise<Response> => {
     try {
@@ -34,14 +37,14 @@ export const getCaminhoneiroById = async (req: Request<{ id: string }>, res: Res
             where: { usuario_id: req.params.id },
             include: [
                 {
-                    model: Usuario,
-                    as: 'usuario', 
-                    required: false
-                },
-                {
                     model: Veiculo,
                     as: 'veiculo',
-                    required: false
+                    required: false,
+                    include: [{
+                        model: ImagemVeiculo,
+                        as: 'imagemVeiculo',
+                        required: false
+                    }]
                 },
             ],
         });
@@ -76,15 +79,49 @@ export const updateCaminhoneiro = async (req: Request<{ id: string }>, res: Resp
 }
 
 export const deleteCaminhoneiro = async (req: Request<{ id: string }>, res: Response) => {
+    const t = await Caminhoneiro.sequelize?.transaction();
     try {
-        const deleted = await Caminhoneiro.destroy({
-            where: { id_caminhoneiro: req.params.id }
+        const caminhoneiro = await Caminhoneiro.findOne({
+            where: { usuario_id: req.params.id },
+            transaction: t
         });
-        if (deleted) {
-            return res.status(204).send();
+
+        if (!caminhoneiro) {
+            await t?.rollback();
+            return res.status(404).json({ message: 'Caminhoneiro not found' });
         }
-        return res.status(404).json({ message: 'Caminhoneiro not found' });
+
+        let veiculo = null as any;
+        if (caminhoneiro.veiculo_id) {
+            veiculo = await Veiculo.findByPk(caminhoneiro.veiculo_id, { transaction: t });
+        }
+
+        if (veiculo?.imagemVeiculo_id) {
+            const imagem = await ImagemVeiculo.findByPk(veiculo.imagemVeiculo_id, { transaction: t });
+            if (imagem?.imgUrl) {
+                const imagePath = path.join(
+                    __dirname,
+                    '..',
+                    '..',
+                    imagem.imgUrl.replace(/^[\\/]/, '')
+                );
+                if (fs.existsSync(imagePath)) {
+                    try { fs.unlinkSync(imagePath); } catch { /* ignora erro */ }
+                }
+            }
+            if (imagem) await imagem.destroy({ transaction: t });
+        }
+
+        if (veiculo) {
+            await veiculo.destroy({ transaction: t });
+        }
+
+        await caminhoneiro.destroy({ transaction: t });
+
+        await t?.commit();
+        return res.status(204).send();
     } catch (error) {
+        await t?.rollback();
         if (error instanceof Error) {
             return res.status(500).json({ message: error.message });
         }

@@ -1,9 +1,9 @@
+import { useState, useCallback } from "react";
+
+import { Alert } from "react-native";
+import http from "@/src/service/httpAxios";
 import * as ImagePicker from "expo-image-picker";
 import { trataFormData } from "@/src/utils/trataFormData";
-import http from "@/src/service/httpAxios";
-import { useState, useCallback } from "react";
-import { AxiosError } from "axios";
-import { Alert } from "react-native";
 
 interface UseImageUserReturn {
   loading: boolean;
@@ -35,11 +35,11 @@ function useImageUser(): UseImageUserReturn {
       setStatusSuccess(true);
       return response.data.id_imagem;
 
-    } catch (err) {
-      const axiosError = err as AxiosError<{ message?: string }>;
+    } catch (error: any ) {
 
-      const errorMessage = axiosError.response?.data?.message || "Erro ao enviar imagem.";
-      console.error("Erro ao enviar imagem:", axiosError.response?.data || axiosError);
+      const errorMessage = error.response?.data?.message || "Erro ao enviar imagem.";
+      console.error("Erro ao enviar imagem:", error.response?.data || error);
+      
       setError(errorMessage);
       setStatusSuccess(false);
       return null;

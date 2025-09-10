@@ -37,7 +37,6 @@ function useGetUserData() {
       setUserData(data);
     } catch (error) {
       console.error("Failed to fetch user data:", error);
-      throw new Error("Unable to fetch user data");
     }
   }, [userId]);
 

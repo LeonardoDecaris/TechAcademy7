@@ -3,9 +3,11 @@ import { Image, Text, View } from "react-native";
 interface Props {
 	modelo?: string;
 	marca?: string;
-	quilometragem?: number;
-	ano?: number;
+	quilometragem?: string;
+	ano?: string;
 	placa?: string;
+	DadosVeiculo?: any;
+	imagem?: string;
 }
 
 const TopoMyVehicle = (props: Props) => {
@@ -29,7 +31,7 @@ const TopoMyVehicle = (props: Props) => {
 			</View>
 
 			<View className="w-full py-5">
-				<Image source={require('../../assets/image/meu.avif')} className="w-full h-48 rounded-lg  " />
+				<Image source={{ uri: props.imagem }} className="w-full h-48 rounded-lg  " />
 			</View>
 
 			<View className="flex-row justify-between w-full">

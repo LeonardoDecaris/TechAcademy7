@@ -18,6 +18,7 @@ interface PropsInput {
     inputProps?: Partial<React.ComponentProps<typeof TextInput>>;
     desabilitar?: boolean;
     Tamanho?: 'normal' | 'pequeno';
+    quantity?: number;
 }
 
 interface PropsController extends PropsLabel, PropsInput {
@@ -30,7 +31,7 @@ interface PropsController extends PropsLabel, PropsInput {
 }
 
 
-const InputAuth = ({ label, labelProps, name, control, rules, span, status, status: statusProp, id, type, placeholder, secureTextEntry, inputProps, config, Tamanho = "normal" ,desabilitar, ...rest }: PropsController) => {
+const InputAuth = ({ label, labelProps, name, control, rules, span, status, status: statusProp, id, type, placeholder, secureTextEntry, inputProps, config, Tamanho = "normal", quantity, desabilitar, ...rest }: PropsController) => {
 
     const spanStyle = "text-red-500 text-sm pl-2.5";
     const labelStyle = "font-semibold text-base pl-2.5 pb-0.5";
@@ -77,6 +78,7 @@ const InputAuth = ({ label, labelProps, name, control, rules, span, status, stat
                                 className={`${inputStyle} ${StatusInput[status]}`}
                                 onChangeText={trataOnChange}
                                 secureTextEntry={secureTextEntry}
+                                maxLength={quantity ? quantity : undefined}
                                 editable={!desabilitar}
                                 value={config === "cpf" ? maskCpf(String(value ?? "")) : value}
                                 {...rest}
