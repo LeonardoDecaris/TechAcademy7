@@ -48,7 +48,7 @@ const VehicleCard = (props: Props) => {
 						<Text className="text-[12px] font-semibold text-black/60">Placa: {props.placa}</Text>
 					</View>
 					<View className="w-[46%]">
-						<Image source={{ uri: props.imagem }} className="w-full h-36 rounded-md" />
+						<Image source={{ uri: props.imagem }} className="w-full h-36 rounded-md" style={{ resizeMode: 'contain' }} />
 					</View>
 				</>
 			)}

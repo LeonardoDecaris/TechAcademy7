@@ -1,5 +1,5 @@
-import React, { useCallback, useEffect, useState } from 'react'
-import { ScrollView, RefreshControl, Image, Text, View, TouchableOpacity, Modal, TouchableWithoutFeedback, Alert } from 'react-native'
+import React, { memo, useCallback, useEffect, useMemo, useState } from 'react';
+import { ScrollView, RefreshControl, Image, Text, View, TouchableOpacity, Modal, TouchableWithoutFeedback } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 import { BASE_URL } from '@env';
@@ -20,73 +20,81 @@ import useGetVehicleData from '@/src/hooks/hookVehicle/useGetVehicleData';
 
 type NavigationProp = NativeStackNavigationProp<RootStackParamList>;
 
-function Profile() {
+const quickAccessWrapperStyle = 'py-2.5 gap-5';
+const actionsWrapperStyle = 'flex-row justify-between items-center pt-5';
+const sectionTitleStyle = 'text-base text-black/60 font-semibold pt-5 pl-5';
+const logoInitialStyle = 'rounded-full bg-gray-200 items-center justify-center';
+const avatarStyle = 'w-28 h-28 absolute -bottom-[90px] left-1/2 transform -translate-x-1/2 -translate-y-1/2 rounded-full';
 
-	const logoInical = "rounded-full bg-gray-200 items-center justify-center"
-	const logoStyle = "w-28 h-28 absolute -bottom-[90px] left-1/2 transform -translate-x-1/2 -translate-y-1/2 rounded-full ";
-
+const Profile = () => {
+	
+	const insets = useSafeAreaInsets();
+	const containerStyle = useMemo(() => ({ flex: 1, backgroundColor: '#FFFFFF', paddingHorizontal: 10, paddingTop: insets.top + 10 }), [insets.top]);
+	
 	const { logout } = useAuth();
 	const navigation = useNavigation<NavigationProp>()
+
 	const { deleteUsuario } = useDeleteUsuario();
-
 	const [loggingOut, setLoggingOut] = useState(false);
-	const [modalVisible, setModalVisible] = useState(false);
-	const [modalImageVisible, setModalImageVisible] = useState(false);
-	const [deletingAccount, setDeletingAccount] = useState(false);
-
-	const handleNavigation = {
-		newPassword: () => navigation.navigate("NewPassword"),
-		editProfile: () => navigation.navigate("EditProfile"),
-		RegisterVehicle: () => navigation.navigate("RegisterVehicle"),
-		myVehicle: () => navigation.navigate("MyVehicle"),
-	};
-
 	const [refreshing, setRefreshing] = useState(false);
+	const [modalVisible, setModalVisible] = useState(false);
+	const [deletingAccount, setDeletingAccount] = useState(false);
+	const [modalImageVisible, setModalImageVisible] = useState(false);
 
-	const { userData, iniciasNomeUsuario, nomeAbreviado, getUserData } = useGetUserData();
+	const goMyVehicle = useCallback(() => navigation.navigate('MyVehicle'), [navigation]);
+	const goNewPassword = useCallback(() => navigation.navigate('NewPassword'), [navigation]);
+	const goEditProfile = useCallback(() => navigation.navigate('EditProfile'), [navigation]);
+	const goRegisterVehicle = useCallback(() => navigation.navigate('RegisterVehicle'), [navigation]);
+
 	const { getVehicleData, veiculo } = useGetVehicleData();
+	const { userData, iniciasNomeUsuario, nomeAbreviado, getUserData } = useGetUserData();
 
-	const insets = useSafeAreaInsets();
-	const imagemUrl = userData?.imagemUsuario?.imgUrl ? `${BASE_URL}${userData.imagemUsuario.imgUrl}` : ''
+	const imagemUrl = useMemo(
+		() => (userData?.imagemUsuario?.imgUrl ? `${BASE_URL}${userData.imagemUsuario.imgUrl}` : ''),
+		[userData?.imagemUsuario?.imgUrl]
+	);
 
-	const onRefresh = useCallback(async () => {
-		setRefreshing(true);
-		await getUserData();
-		await getVehicleData();
-		setRefreshing(false);
-	}, [getUserData]);
-
-	useEffect(() => {
-		getUserData();
-		getVehicleData();
-	}, [getUserData, getVehicleData]);
-
-	const handleConfirmLogout = async () => {
+	const handleConfirmLogout = useCallback(async () => {
+		setLoggingOut(true);
 		try {
-			setLoggingOut(true);
 			await logout();
 			setModalVisible(false);
 			navigation.reset({ index: 0, routes: [{ name: 'Login' as never }] });
+		} catch (error) {
 		} finally {
 			setLoggingOut(false);
 		}
-	};
+	}, [logout, navigation]);
 
+	const onRefresh = useCallback(async () => {
+		setRefreshing(true);
+		try {
+			await Promise.all([getUserData(), getVehicleData()]);
+		} finally {
+			setRefreshing(false);
+		}
+	}, [getUserData, getVehicleData]);
+
+	useEffect(() => {
+		(async () => {
+			await Promise.all([getUserData(), getVehicleData()]);
+		})();
+	}, [getUserData, getVehicleData]);
 
 	return (
-		<View style={{ flex: 1, backgroundColor: '#FFFFFF', paddingHorizontal: 10, paddingTop: insets.top + 10 }}>
+		<View style={containerStyle}>
 			<ScrollView
 				contentContainerStyle={{ paddingHorizontal: 6, paddingBottom: 140 }}
 				refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} />}
 			>
-				<View className="w-full relative">
-					<Image source={require('../../assets/image/image.png')} style={{ width: "100%", height: 130 }} className='rounded-2xl' />
+				<View className='w-full relative'>
+					<Image source={require('../../assets/image/image.png')} style={{ width: '100%', height: 130 }} className='rounded-2xl' />
 					{imagemUrl ? (
 						<TouchableOpacity onPress={() => setModalImageVisible(true)}>
-							<Image source={{ uri: imagemUrl }} className={`${logoStyle}`} />
+							<Image source={{ uri: imagemUrl }} className={avatarStyle} />
 						</TouchableOpacity>
 					) : (
-						<View className={`${logoStyle} ${logoInical} shadow-[0_2px_6px_rgba(0,0,0,0.25)] `}>
+						<View className={`${avatarStyle} ${logoInitialStyle} shadow-[0_2px_6px_rgba(0,0,0,0.25)]`}>
 							<Text className='font-bold text-black text-3xl'>{iniciasNomeUsuario}</Text>
 						</View>
 					)}
@@ -110,32 +118,26 @@ function Profile() {
 					<Text className="text-black/60 text-center">{userData?.email}</Text>
 				</View>
 
-				<Text className='text-base text-black/60 font-semibold pt-5 pl-5'>Informações pessoais</Text>
+				<Text className={sectionTitleStyle}>Informações pessoais</Text>
 
-				<View className='py-2.5 gap-5'>
-					<AcessoRapidoPerfil titulo="Editar dados pessoais" tipo="user-edit" onPress={handleNavigation.editProfile} />
-
-					{!veiculo?.veiculo ? (
-						<>
-							<AcessoRapidoPerfil titulo="Cadastrar veiculo" tipo="truck" onPress={handleNavigation.RegisterVehicle} />
-						</>
+				<View className={quickAccessWrapperStyle}>
+					<AcessoRapidoPerfil titulo='Editar dados pessoais' tipo='user-edit' onPress={goEditProfile} />
+					{veiculo?.veiculo ? (
+						<AcessoRapidoPerfil titulo='Meu veiculo' tipo='truck' onPress={goMyVehicle} />
 					) : (
-						<>
-							<AcessoRapidoPerfil titulo="Meu veiculo" tipo="truck" onPress={handleNavigation.myVehicle} />
-						</>
+						<AcessoRapidoPerfil titulo='Cadastrar veiculo' tipo='truck' onPress={goRegisterVehicle} />
 					)}
-
-					<AcessoRapidoPerfil titulo="Cancelar meu Cadastro" loginOut tipo="user-edit" onPress={() => setDeletingAccount(true)} />
+					<AcessoRapidoPerfil titulo='Cancelar meu Cadastro' loginOut tipo='user-edit' onPress={() => setDeletingAccount(true)} />
 				</View>
 
-				<Text className='text-base text-black/60 font-semibold pt-5 pl-5'>Funcionamento do sistema</Text>
+				<Text className={sectionTitleStyle}>Funcionamento do sistema</Text>
 
-				<View className='flex-row justify-between items-center pt-5'>
+				<View className={actionsWrapperStyle}>
 					<ButtonPadrao
 						title="Redefinir Senha"
 						typeButton="normal"
 						classname="px-5"
-						onPress={handleNavigation.newPassword}
+						onPress={goNewPassword}
 					/>
 
 					<ButtonPadrao
@@ -160,6 +162,6 @@ function Profile() {
 			</ScrollView >
 		</View >
 	)
-}
+};
 
-export default Profile;
+export default memo(Profile);

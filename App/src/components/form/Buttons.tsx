@@ -6,9 +6,10 @@ interface ButtonProps {
 	typeButton?: 'normal' | 'logOutExcluir' | 'aceite';
 	classname?: string;
 	disabled?: boolean;
+	accessibilityLabel?: string;
 }
 
-const ButtonPadrao = ({ title, onPress, typeButton = "normal", classname, }: ButtonProps) => {
+const ButtonPadrao = ({ title, onPress, typeButton = 'normal', classname, accessibilityLabel }: ButtonProps) => {
 
 	const buttonStyles = {
 		normal: 'bg-[#322F2F]',
@@ -16,27 +17,35 @@ const ButtonPadrao = ({ title, onPress, typeButton = "normal", classname, }: But
 		aceite: 'bg-green-500',
 	}
 
-    return(
-		<TouchableOpacity onPress={onPress} className={`py-2.5 rounded-lg ${buttonStyles[typeButton]} ${classname}`}>
-			<Text className={'text-white text-center font-bold text-lg'}>
-				{title}
-			</Text>
-      	</TouchableOpacity>
-    )
+	return (
+		<TouchableOpacity
+			onPress={onPress}
+			className={`py-2.5 rounded-lg ${buttonStyles[typeButton]} ${classname}`}
+			accessibilityRole="button"
+			accessibilityLabel={accessibilityLabel || title}
+		>
+			<Text className='text-white text-center font-bold text-lg'>{title}</Text>
+		</TouchableOpacity>
+	);
 }
 
-const ButtonUpload =  ({ title, onPress, classname, disabled }: ButtonProps) => {
+const ButtonUpload = ({ title, onPress, classname, disabled, accessibilityLabel }: ButtonProps) => {
 
 	const buttonStyles = "py-2 px-4 rounded-lg border border-black bg-[#322F2F]";
 	const titleStyles = "text-white text-base text-center font-bold";
 
-    return (
-		<TouchableOpacity onPress={onPress} className={`${buttonStyles} ${classname}`} disabled={disabled}>
-			<Text className={titleStyles}>
-				{title}
-			</Text>
-      	</TouchableOpacity>
-    );
+	return (
+		<TouchableOpacity
+			onPress={onPress}
+			className={`${buttonStyles} ${classname}`}
+			disabled={disabled}
+			accessibilityRole="button"
+			accessibilityState={disabled ? { disabled: true } : undefined}
+			accessibilityLabel={accessibilityLabel || title}
+		>
+			<Text className={titleStyles}>{title}</Text>
+		</TouchableOpacity>
+	);
 }
 
 export {ButtonPadrao, ButtonUpload};

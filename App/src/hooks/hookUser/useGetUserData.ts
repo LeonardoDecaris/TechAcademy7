@@ -1,4 +1,4 @@
-import { useState, useCallback, useMemo, useEffect } from "react";
+import { useState, useCallback, useMemo } from "react";
 
 import http from "@/src/service/httpAxios";
 import { useAuth } from "@/src/context/AuthContext";
@@ -27,18 +27,44 @@ function useGetUserData() {
   const { userId } = useAuth();
   const [userData, setUserData] = useState<User>();
 
+  const [mensage, setMensage] = useState("");
+	const [success, setSuccess] = useState(false);
+	const [successVisible, setSuccessVisible] = useState(false);
+
   const getUserData = useCallback(async () => {
     if (!userId) {
       throw new Error("User ID is not available");
     }
 
+    setUserData(undefined);
+    setMensage("");
+    setSuccess(false);
+    setSuccessVisible(false);
+
+    const TIMEOUT_MS = 10000;
+
     try {
-      const { data } = await http.get<User>(`usuario/${userId}`);
+      const timeoutPromise = new Promise<never>((_, reject) =>
+        setTimeout(() => reject(new Error("TIMEOUT")), TIMEOUT_MS)
+      );
+      const requestPromise = http.get<User>(`usuario/${userId}`);
+      const { data } = await Promise.race([requestPromise, timeoutPromise]);
       setUserData(data);
-    } catch (error) {
-      console.error("Failed to fetch user data:", error);
+    } catch (error: any) {
+      if (error?.message === "TIMEOUT") {
+        setMensage("Tempo excedido ao buscar dados do usuário.");
+      } else {
+        setMensage("Erro ao buscar dados do usuário.");
+      }
+      setSuccess(false);
+      setSuccessVisible(true);
     }
+    
   }, [userId]);
+
+  const closeSuccessNotification = useCallback(() => {
+		setSuccessVisible(false);
+	}, []);
 
   const iniciasNomeUsuario = useMemo(
     () => getInitials(userData?.nome ?? ""),
@@ -55,6 +81,10 @@ function useGetUserData() {
     iniciasNomeUsuario,
     nomeAbreviado,
     getUserData,
+    mensage,
+    success,
+    successVisible,
+    closeSuccessNotification,
   };
 }
 

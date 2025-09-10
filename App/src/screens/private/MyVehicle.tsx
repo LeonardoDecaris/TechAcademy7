@@ -1,78 +1,93 @@
-import React, { useCallback, useEffect, useState } from 'react'
-import { SafeAreaView, ScrollView, RefreshControl, View, Text, Alert } from 'react-native'
+import React, { memo, useCallback, useEffect, useMemo, useState } from 'react';
+import { ScrollView, RefreshControl, View, Text, Alert } from 'react-native';
 
-import TopoMyVehicle from '@/src/components/base/TopoMyVehicle';
-import InformationBox from '@/src/components/form/InformarionBox';
-import { ButtonPadrao } from '@/src/components/form/Buttons';
-import useGetVehicleData from '@/src/hooks/hookVehicle/useGetVehicleData';
-import useGetUserData from '@/src/hooks/hookUser/useGetUserData';
 import { BASE_URL } from '@env';
+import { ButtonPadrao } from '@/src/components/form/Buttons';
+import TopoMyVehicle from '@/src/components/base/TopoMyVehicle';
+import useGetUserData from '@/src/hooks/hookUser/useGetUserData';
+import InformationBox from '@/src/components/form/InformarionBox';
+import useGetVehicleData from '@/src/hooks/hookVehicle/useGetVehicleData';
 
-function MyVehicle() {
+const driverLabelStyle = 'text-sm font-semibold text-black/60';
+const driverCardStyle = 'w-full bg-white rounded-xl p-2.5 shadow-[0px_4px_4px_rgba(0,0,0,0.25)]';
+const actionBarStyle = 'flex-1 flex-row justify-between gap-4 items-end pt-5';
+
+const MyVehicle = () => {
+
+	const { userData, getUserData } = useGetUserData();
 	const [refreshing, setRefreshing] = useState(false);
-	const {getVehicleData, veiculo} = useGetVehicleData();
-	const {userData,getUserData} = useGetUserData();
+	const { getVehicleData, veiculo } = useGetVehicleData();
 
-	const imagemUrl = veiculo?.veiculo?.imagemVeiculo?.imgUrl ? `${BASE_URL}${veiculo.veiculo.imagemVeiculo.imgUrl}` : '';
-console.log('imagemUrl', imagemUrl);
+	const imagemUrl = useMemo(() => (
+		veiculo?.veiculo?.imagemVeiculo?.imgUrl ? `${BASE_URL}${veiculo.veiculo.imagemVeiculo.imgUrl}` : ''
+	), [veiculo]);
+
+	const capacidadeFormatada = useMemo(() => {
+		const c = veiculo?.veiculo?.capacidade;
+		if (c === undefined || c === null || c === '') return 'Não informado';
+		return `${c} toneladas`;
+	}, [veiculo]);
 
 	const onRefresh = useCallback(async () => {
 		setRefreshing(true);
-		await getVehicleData();
-		await getUserData();
-		setRefreshing(false);
-	}, []);
+		try {
+			await Promise.all([getUserData(), getVehicleData()]);
+		} finally {
+			setRefreshing(false);
+		}
+	}, [getUserData, getVehicleData]);
 
 	useEffect(() => {
-		getVehicleData();
-		getUserData();
-	}, [getVehicleData, getUserData]);
+		(async () => {
+			await Promise.all([getUserData(), getVehicleData()]);
+		})();
+	}, [getUserData, getVehicleData]);
+
 
 	return (
 		<View style={{ flex: 1, paddingTop: 10 }}>
-			<ScrollView contentContainerStyle={{flexGrow: 1 , paddingHorizontal: 10, paddingBottom: 20}}
-				refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} />} showsVerticalScrollIndicator={false} >
-
+			<ScrollView
+				contentContainerStyle={{ flexGrow: 1, paddingHorizontal: 10, paddingBottom: 20 }}
+				refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} />}
+				showsVerticalScrollIndicator={false}
+			>
 				<TopoMyVehicle
-					modelo={veiculo?.veiculo?.modelo || 'Não informado'}
-					marca={veiculo?.veiculo?.marca || 'Não informado'}
-					quilometragem={veiculo?.veiculo?.quilometragem || 'Não informado'}
-					ano={veiculo?.veiculo?.ano || 'Não informado'}
 					imagem={imagemUrl}
+					ano={veiculo?.veiculo?.ano || 'Não informado'}
 					placa={veiculo?.veiculo?.placa || 'Não informado'}
+					marca={veiculo?.veiculo?.marca || 'Não informado'}
+					modelo={veiculo?.veiculo?.modelo || 'Não informado'}
+					quilometragem={veiculo?.veiculo?.quilometragem || 'Não informado'}
 				/>
 
 				<View className='pb-4'>
-					<InformationBox
-						title='Capacidade'
-						descricao={veiculo?.veiculo?.capacidade + ' toneladas' || 'Não informado'}
-					/>
+					<InformationBox title='Capacidade' descricao={capacidadeFormatada} />
 				</View>
 
-				<View className='w-full bg-white rounded-xl p-2.5 shadow-[0px_4px_4px_rgba(0,0,0,0.25)]'>
+				<View className={driverCardStyle}>
 					<Text className='text-base font-bold'>Motorista</Text>
-					<Text className='text-sm font-semibold text-black/60'>Motorista: {userData?.nome} </Text>
-					<Text className='text-sm font-semibold text-black/60'>Email: {userData?.email}</Text>
-					<Text className='text-sm font-semibold text-black/60'>Categoria: {userData?.cnh}</Text>
+					<Text className={driverLabelStyle}>Motorista: {userData?.nome || 'Não informado'}</Text>
+					<Text className={driverLabelStyle}>Email: {userData?.email || 'Não informado'}</Text>
+					<Text className={driverLabelStyle}>Categoria: {userData?.cnh || 'Não informado'}</Text>
 				</View>
 
-				<View className=' flex-1 flex-row justify-between gap-4 items-end pt-5'>
+				<View className={actionBarStyle}>
 					<ButtonPadrao
 						title='Excluir'
-						classname='w-[48%] '
+						classname='w-[48%]'
 						typeButton='logOutExcluir'
-						onPress={() => { Alert.alert('Excluir veículo em desenvolvimento') }}
+						onPress={() => { Alert.alert('Excluir veículo em desenvolvimento'); }}
 					/>
 					<ButtonPadrao
 						title='Editar'
-						classname='w-[48%] '
+						classname='w-[48%]'
 						typeButton='normal'
-						onPress={() => { Alert.alert('Editar veículo em desenvolvimento') }}
+						onPress={() => { Alert.alert('Editar veículo em desenvolvimento'); }}
 					/>
-
 				</View>
 			</ScrollView>
 		</View>
-	)
-}
-export default MyVehicle;
+	);
+};
+
+export default memo(MyVehicle);

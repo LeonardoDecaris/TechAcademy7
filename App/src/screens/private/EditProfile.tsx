@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useCallback, useMemo, memo } from 'react';
 import { View, Text, Image, Modal, TouchableOpacity, TouchableWithoutFeedback, KeyboardAvoidingView, ScrollView, Platform } from 'react-native';
 
 import { BASE_URL } from '@env';
@@ -22,125 +22,139 @@ import ErrorNotification from '@/src/components/modal/ErrorNotioncation';
 
 type NavigationProp = NativeStackNavigationProp<RootStackParamList>;
 
-function EditProfile() {
-	const navigation = useNavigation<NavigationProp>();
+const avatarSize = 100;
+const buttonsRowStyle = 'flex-row gap-2';
+const formWrapperStyle = 'w-full flex-col gap-2.5';
+const actionsRowStyle = 'w-full flex-row gap-4 my-[20px]';
+const imageModalCloseStyle = 'absolute top-10 right-10 z-10';
+const avatarFallbackTextStyle = 'font-bold text-black text-3xl';
+const avatarContainerStyle = 'flex-col gap-3 justify-center items-center pb-5';
+const avatarFallbackWrapperStyle = 'h-24 w-24 rounded-full bg-gray-200 items-center justify-center';
 
+const EditProfile = () => {
+	
+	const navigation = useNavigation<NavigationProp>();
 	const { iniciasNomeUsuario, userData, getUserData } = useGetUserData();
 	const { control, handleSubmit, rules, setValue, handleEditar, successVisible, closeSuccessNotification, notification, success, } = useEditarUsuario();
 
 	const { uploadImage, loading, statusSuccess } = useImageUser();
 	const { updateImage, loadingUpdate, statusSuccessUpdate } = useEditImageUser();
 
-	const imagemUrl = userData?.imagemUsuario?.imgUrl ? `${BASE_URL}${userData.imagemUsuario.imgUrl}` : '';
-	const [modalImageVisible, setModalImageVisible] = useState(false);
-
 	const [saving, setSaving] = useState(false);
+	const savingLabel = saving ? 'Salvando...' : 'Salvar';
+	const disableSave = saving || loading || loadingUpdate;
+	const [modalImageVisible, setModalImageVisible] = useState(false);
 	const [selectedImage, setSelectedImage] = useState<string | null>(null);
 
-	const requestPermission = async (type: 'camera' | 'gallery') => {
+	const imagemUrl = useMemo(
+		() => (userData?.imagemUsuario?.imgUrl ? `${BASE_URL}${userData.imagemUsuario.imgUrl}` : ''),
+		[userData?.imagemUsuario?.imgUrl]
+	);
+
+	const requestPermission = useCallback(async (type: 'camera' | 'gallery') => {
 		if (type === 'camera') {
 			const result = await ImagePicker.requestCameraPermissionsAsync();
 			return result.granted;
-		} else {
-			const result = await ImagePicker.requestMediaLibraryPermissionsAsync();
-			return result.granted;
 		}
-	};
+		const result = await ImagePicker.requestMediaLibraryPermissionsAsync();
+		return result.granted;
+	}, []);
 
-	const pickOrTakeImage = async (type: 'camera' | 'gallery') => {
-		const hasPermission = await requestPermission(type);
-		if (!hasPermission) {
-			alert(
+	const pickOrTakeImage = useCallback(
+		async (type: 'camera' | 'gallery') => {
+			const hasPermission = await requestPermission(type);
+			if (!hasPermission) {
+				alert(type === 'camera' ? 'Permissão para acessar a câmera é necessária!' : 'Permissão para acessar a galeria é necessária!');
+				return null;
+			}
+
+			const pickerFn =
 				type === 'camera'
-					? 'Permissão para acessar a câmera é necessária!'
-					: 'Permissão para acessar a galeria é necessária!'
-			);
+					? ImagePicker.launchCameraAsync
+					: ImagePicker.launchImageLibraryAsync;
+
+			const result = await pickerFn({
+				mediaTypes: ImagePicker.MediaTypeOptions.Images,
+				allowsEditing: true,
+				aspect: [1, 1],
+				quality: 0.8,
+			});
+
+			if (!result.canceled && result.assets?.length) return result.assets[0].uri;
 			return null;
-		}
+		},
+		[requestPermission]
+	);
 
-		const pickerFn =
-			type === 'camera'
-				? ImagePicker.launchCameraAsync
-				: ImagePicker.launchImageLibraryAsync;
-
-		const result = await pickerFn({
-			mediaTypes: ImagePicker.MediaTypeOptions.Images,
-			allowsEditing: true,
-			aspect: [1, 1],
-			quality: 0.8,
-		});
-
-		if (!result.canceled && result.assets?.length) {
-			return result.assets[0].uri;
-		}
-		return null;
-	};
-
-	const handlePickImage = async () => {
+	const handlePickImage = useCallback(async () => {
 		const uri = await pickOrTakeImage('gallery');
 		if (uri) setSelectedImage(uri);
-	};
+	}, [pickOrTakeImage]);
 
-	const handleTakePhoto = async () => {
+	const handleTakePhoto = useCallback(async () => {
 		const uri = await pickOrTakeImage('camera');
 		if (uri) setSelectedImage(uri);
-	};
+	}, [pickOrTakeImage]);
 
-	const handleSave = async () => {
+	const persistForm = useCallback(
+		async (imagemUsuarioId: string | null) => {
+			if (imagemUsuarioId) setValue('imagemUsuario_id', String(imagemUsuarioId));
+			await handleSubmit(async (data) => {
+				await handleEditar(data);
+			})();
+		},
+		[handleEditar, handleSubmit, setValue]
+	);
+
+	const handleSave = useCallback(async () => {
 		setSaving(true);
 		try {
-			let imagemUsuarioId = null;
+			let imagemUsuarioId: string | null = null;
 			let imagemError = false;
 
 			if (selectedImage && selectedImage !== imagemUrl) {
 				const idAtual = userData?.imagemUsuario?.id_imagem;
-
 				if (idAtual && imagemUrl) {
 					await updateImage(String(idAtual), selectedImage);
 					if (statusSuccessUpdate === false) imagemError = true;
-					imagemUsuarioId = idAtual;
+					imagemUsuarioId = String(idAtual);
 				} else {
 					const idImagem = await uploadImage(selectedImage);
 					if (!idImagem || statusSuccess === false) imagemError = true;
-					imagemUsuarioId = idImagem;
+					imagemUsuarioId = idImagem ? String(idImagem) : null;
 				}
 			} else if (imagemUrl) {
 				const idAtual = userData?.imagemUsuario?.id_imagem;
-				imagemUsuarioId = idAtual ?? null;
+				imagemUsuarioId = idAtual ? String(idAtual) : null;
 			}
 
-			if (imagemError) {
-				setSaving(false);
-				return;
-			}
-
-			if (imagemUsuarioId) {
-				setValue('imagemUsuario_id', String(imagemUsuarioId));
-			}
-
-			await handleSubmit(async (data) => {
-				await handleEditar(data);
-			})();
-
+			if (imagemError) return;
+			await persistForm(imagemUsuarioId);
 		} catch (error) {
 			console.error(error);
 		} finally {
 			setSaving(false);
 		}
-	};
+	}, [imagemUrl, persistForm, selectedImage, statusSuccess, statusSuccessUpdate, updateImage, uploadImage, userData?.imagemUsuario?.id_imagem]);
 
 	useEffect(() => {
 		getUserData();
 	}, [getUserData]);
 
 	useEffect(() => {
-		if (userData) {
-			setValue('nome', userData.nome || '');
-			setValue('email', userData.email || '');
-			setValue('cpf', userData.cpf || '');
-			setValue('cnh', userData.cnh || '');
-		}
+		if (!userData) return;
+		const fields: Record<string, string> = {
+			nome: userData.nome ?? '',
+			email: userData.email ?? '',
+			cpf: userData.cpf ?? '',
+			cnh: userData.cnh ?? '',
+		};
+
+		Object.entries(fields).forEach(([field, value]) => {
+			setValue(field as any, value, { shouldDirty: false });
+		});
 	}, [userData, setValue]);
+
 
 	return (
 		<KeyboardAvoidingView
@@ -150,9 +164,8 @@ function EditProfile() {
 			<ScrollView
 				contentContainerStyle={{ paddingTop: 20, paddingHorizontal: 10, flexGrow: 1 }}
 				showsVerticalScrollIndicator={false}
-				keyboardShouldPersistTaps="handled"
+				keyboardShouldPersistTaps='handled'
 			>
-
 				<AlertNotioncation
 					visible={successVisible}
 					status={success}
@@ -161,130 +174,151 @@ function EditProfile() {
 					topOffset={10}
 				/>
 
-				<View className="flex-col gap-3 justify-center items-center pb-5">
+				<View className={avatarContainerStyle}>
 					{selectedImage ? (
-						<TouchableOpacity onPress={() => setSelectedImage(null)}>
+						<TouchableOpacity
+							onPress={() => setSelectedImage(null)}
+							accessibilityLabel='Remover nova imagem selecionada'
+						>
 							<Image
 								source={{ uri: selectedImage }}
-								style={{ width: 100, height: 100, borderRadius: 50 }}
+								style={{ width: avatarSize, height: avatarSize, borderRadius: avatarSize / 2 }}
 							/>
 						</TouchableOpacity>
 					) : imagemUrl ? (
-						<TouchableOpacity onPress={() => setModalImageVisible(true)}>
+						<TouchableOpacity
+							onPress={() => setModalImageVisible(true)}
+							accessibilityLabel='Ampliar imagem do perfil'
+						>
 							<Image
 								source={{ uri: imagemUrl }}
-								style={{ width: 100, height: 100, borderRadius: 50 }}
+								style={{ width: avatarSize, height: avatarSize, borderRadius: avatarSize / 2 }}
 							/>
 						</TouchableOpacity>
 					) : (
-						<View className="h-24 w-24 rounded-full bg-gray-200 items-center justify-center">
-							<Text className="font-bold text-black text-3xl">{iniciasNomeUsuario}</Text>
+						<View className={avatarFallbackWrapperStyle}>
+							<Text className={avatarFallbackTextStyle}>{iniciasNomeUsuario}</Text>
 						</View>
 					)}
 
-					<Modal visible={modalImageVisible} transparent animationType="fade">
+					<Modal visible={modalImageVisible} transparent animationType='fade'>
 						<TouchableWithoutFeedback onPress={() => setModalImageVisible(false)}>
-							<View style={{ flex: 1, backgroundColor: 'rgba(0,0,0,0.8)', justifyContent: 'center', alignItems: 'center' }}>
-								<TouchableOpacity className='absolute top-10 right-10 z-10' onPress={() => setModalImageVisible(false)}>
+							<View
+								style={{
+									flex: 1,
+									backgroundColor: 'rgba(0,0,0,0.8)',
+									justifyContent: 'center',
+									alignItems: 'center',
+								}}
+							>
+								<TouchableOpacity
+									className={imageModalCloseStyle}
+									onPress={() => setModalImageVisible(false)}
+									accessibilityLabel='Fechar visualização da imagem'
+								>
 									<Text className='text-white text-2xl'>✕</Text>
 								</TouchableOpacity>
 								<TouchableWithoutFeedback>
-									<Image source={{ uri: imagemUrl }} style={{ minWidth: 100, minHeight: 100, width: 300, height: 300, borderRadius: 20 }} resizeMode="contain" />
+									<Image
+										source={{ uri: imagemUrl }}
+										style={{ minWidth: 100, minHeight: 100, width: 300, height: 300, borderRadius: 20 }}
+										resizeMode='contain'
+									/>
 								</TouchableWithoutFeedback>
 							</View>
 						</TouchableWithoutFeedback>
 					</Modal>
 
-
 					<ErrorNotification
 						loading={loading}
 						statusSuccess={statusSuccess}
-						loadingText="Carregando imagem..."
-						successText="Imagem enviada com sucesso!"
-						errorText="Erro ao enviar imagem."
+						loadingText='Carregando imagem...'
+						successText='Imagem enviada com sucesso!'
+						errorText='Erro ao enviar imagem.'
 					/>
 					<ErrorNotification
 						loading={loadingUpdate}
 						statusSuccess={statusSuccessUpdate}
-						loadingText="Atualizando..."
-						successText="Imagem atualizada com sucesso!"
-						errorText="Erro ao atualizar imagem."
+						loadingText='Atualizando...'
+						successText='Imagem atualizada com sucesso!'
+						errorText='Erro ao atualizar imagem.'
 					/>
 
-					<View className="flex-row gap-2">
-						<ButtonUpload onPress={handlePickImage} title="Alterar Foto" />
-						<ButtonUpload onPress={handleTakePhoto} title="Tirar Foto" />
+					<View className={buttonsRowStyle}>
+						<ButtonUpload
+							onPress={handlePickImage}
+							title='Alterar Foto'
+							accessibilityLabel='Selecionar nova foto da galeria'
+						/>
+						<ButtonUpload
+							onPress={handleTakePhoto}
+							title='Tirar Foto'
+							accessibilityLabel='Tirar foto com a câmera'
+						/>
 					</View>
 				</View>
 
-				<View className="w-full flex-col gap-2.5">
+				<View className={formWrapperStyle}>
 					<InputAuth
-						id="nome"
-						name="nome"
-						label="Nome"
-						placeholder="Nome completo"
+						id='nome'
+						name='nome'
+						label='Nome'
+						placeholder='Nome completo'
 						control={control}
 						rules={rules.nome}
-						type="default"
+						type='default'
 					/>
 					<InputAuth
-						id="email"
-						name="email"
-						label="Email"
-						placeholder="Email"
+						id='email'
+						name='email'
+						label='Email'
+						placeholder='Email'
 						desabilitar
-						status="error"
+						statusInput='error'
 						control={control}
 						rules={rules.email}
-						type="email-address"
+						type='email-address'
 					/>
 					<InputAuth
-						id="cpf"
-						name="cpf"
-						label="CPF"
-						placeholder="CPF"
+						id='cpf'
+						name='cpf'
+						label='CPF'
+						placeholder='CPF'
 						control={control}
 						rules={rules.cpf}
-						config="cpf"
-						type="number-pad"
+						config='cpf'
+						type='number-pad'
 					/>
 					<DropDown
-						name="cnh"
-						label="Tipo de CNH"
-						placeholder="Selecione o tipo de CNH"
+						name='cnh'
+						label='Tipo de CNH'
+						placeholder='Selecione o tipo de CNH'
 						control={control}
 						rules={rules.cnh}
 						items={dataCnh}
 					/>
 				</View>
 
-				<View className="w-full flex-row gap-4 my-[20px]">
+				<View className={actionsRowStyle}>
 					<ButtonPadrao
-						title="Cancelar"
-						typeButton="normal"
-						classname="flex-1"
+						title='Cancelar'
+						typeButton='normal'
+						classname='flex-1'
 						onPress={() => navigation.goBack()}
+						accessibilityLabel='Cancelar edição e voltar'
 					/>
-					{(saving) ? (
-						<ButtonPadrao
-							title="Salvando..."
-							typeButton="normal"
-							classname="flex-1"
-							onPress={handleSave}
-							disabled
-						/>
-					) :
-						<ButtonPadrao
-							title="Salvar"
-							typeButton="normal"
-							classname="flex-1"
-							onPress={handleSave}
-						/>
-					}
+					<ButtonPadrao
+						title={savingLabel}
+						typeButton='normal'
+						classname='flex-1'
+						onPress={handleSave}
+						disabled={disableSave}
+						accessibilityLabel='Salvar alterações do perfil'
+					/>
 				</View>
 			</ScrollView>
 		</KeyboardAvoidingView>
 	);
-}
+};
 
-export default EditProfile;
+export default memo(EditProfile);

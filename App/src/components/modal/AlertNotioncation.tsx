@@ -1,8 +1,8 @@
-import React, { useEffect, useRef } from "react";
+import React, { useEffect, useRef, useCallback, memo } from "react";
 import { Text, View } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import animation from "@/src/utils/animation";
-import { useSafeAreaInsets } from "react-native-safe-area-context"; // 1. Importar o hook
+import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 type NotificacaoProps = {
 	visible: boolean;
@@ -11,8 +11,29 @@ type NotificacaoProps = {
 	duration?: number;
 	topOffset?: number;
 	onDismiss?: () => void;
+	successTitle?: string;
+	errorTitle?: string;
 };
 
+type StatusKey = "success" | "error";
+
+const STATUS_CONFIG: Record<StatusKey, { style: string; icon: keyof typeof Ionicons.glyphMap; defaultTitle: string }> = {
+	success: {
+		style: "bg-green-500",
+		icon: "checkmark-circle-outline",
+		defaultTitle: "Tudo certo!",
+	},
+	error: {
+		style: "bg-red-500",
+		icon: "close-circle-outline",
+		defaultTitle: "Algo deu errado!",
+	},
+};
+
+const containerBaseClass = "absolute left-5 right-5 rounded-lg p-4 z-[9999] flex-row items-center shadow-lg";
+const textTitleClass = "text-white font-bold text-base";
+const textMessageClass = "text-white text-sm mt-0.5";
+const contentWrapperClass = "flex-1 ml-3";
 
 const AlertNotioncation = ({
 	visible,
@@ -21,53 +42,49 @@ const AlertNotioncation = ({
 	onDismiss,
 	status = true,
 	topOffset = 30,
+	successTitle,
+	errorTitle,
 }: NotificacaoProps) => {
-	const insets = useSafeAreaInsets(); 
+	const insets = useSafeAreaInsets();
 	const timerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
-	const statusConfig = {
-		success: {
-			style: "bg-green-500",
-			icon: "checkmark-circle-outline",
-			title: "Tudo certo!",
-		},
-		error: {
-			style: "bg-red-500",
-			icon: "close-circle-outline",
-			title: "Algo deu errado!",
-		},
-	};
+
+	const clearTimer = useCallback(() => {
+		if (timerRef.current) {
+			clearTimeout(timerRef.current);
+			timerRef.current = null;
+		}
+	}, []);
+
+	const scheduleDismiss = useCallback(() => {
+		clearTimer();
+		timerRef.current = setTimeout(() => {
+			onDismiss?.();
+		}, duration);
+	}, [clearTimer, duration, onDismiss]);
 
 	useEffect(() => {
-		if (visible) {
-			timerRef.current = setTimeout(() => {
-				onDismiss?.();
-			}, duration);
-		}
-		return () => {
-			if (timerRef.current) clearTimeout(timerRef.current);
-		};
-	}, [visible, duration, onDismiss]);
+		if (visible) scheduleDismiss();
+		return clearTimer;
+	}, [visible, scheduleDismiss, clearTimer]);
 
 	if (!visible) return null;
 
-	const config = status ? statusConfig.success : statusConfig.error;
+	const cfg = status ? STATUS_CONFIG.success : STATUS_CONFIG.error;
+	const title = status ? successTitle || cfg.defaultTitle : errorTitle || cfg.defaultTitle;
 
 	return (
 		<animation.FadeDown
 			entering={animation.enter.fadeDown}
 			exiting={animation.exit.fadeDown}
 			style={{ top: insets.top + topOffset }}
-			className={`absolute left-5 right-5 rounded-lg p-4 z-[9999] flex-row items-center shadow-lg ${config.style}`}
+			className={`${containerBaseClass} ${cfg.style}`}
+			accessibilityRole="alert"
+			accessibilityLabel={title}
 		>
-			<Ionicons name={config.icon as any} size={40} color="white" />
-
-			<View className="flex-1 ml-3">
-				<Text className="text-white font-bold text-base">
-					{config.title}
-				</Text>
-				{messagem && (
-					<Text className="text-white text-sm mt-0.5">{messagem}</Text>
-				)}
+			<Ionicons name={cfg.icon} size={40} color="white" />
+			<View className={contentWrapperClass}>
+				<Text className={textTitleClass}>{title}</Text>
+				{!!messagem && <Text className={textMessageClass}>{messagem}</Text>}
 			</View>
 		</animation.FadeDown>
 	);

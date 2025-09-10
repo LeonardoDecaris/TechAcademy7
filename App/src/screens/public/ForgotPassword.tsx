@@ -1,76 +1,72 @@
-import React from 'react'
+import React, { memo, useCallback } from 'react';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
+import { TouchableOpacity, Text, View, KeyboardAvoidingView, Platform, ScrollView } from 'react-native';
 
-import { TouchableOpacity, Text, View, KeyboardAvoidingView, Platform, ScrollView } from 'react-native'
-import { ButtonPadrao } from '@/src/components/form/Buttons'
+import { useNavigation } from '@react-navigation/native';
+import { RootStackParamList } from '@/src/navigation/Routes';
+import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 
-import InputAuth from '@/src/components/form/InputAuth'
-import { useNavigation } from '@react-navigation/native'
-import { RootStackParamList } from '@/src/navigation/Routes'
-
-import { NativeStackNavigationProp } from '@react-navigation/native-stack'
-import AlertNotioncation from '@/src/components/modal/AlertNotioncation'
+import InputAuth from '@/src/components/form/InputAuth';
+import { ButtonPadrao } from '@/src/components/form/Buttons';
 import useForgotPassword from '@/src/hooks/hookAuth/useForgotPassword';
+import AlertNotioncation from '@/src/components/modal/AlertNotioncation';
 
-type NavigationProp = NativeStackNavigationProp<RootStackParamList>
+type NavigationProp = NativeStackNavigationProp<RootStackParamList>;
 
-function ForgotPassword() {
-	const navigation = useNavigation<NavigationProp>()
-	const { control, handleSubmit, rules, handleForgotPassword, success, notification, successVisible, closeSuccessNotification, showTokenField, } = useForgotPassword()
+const headerWrapperStyle = 'mb-10';
+const formWrapperStyle = 'w-full flex-col gap-1.5';
+const footerWrapperStyle = 'w-full flex-row justify-end';
+const pageTitleStyle = 'text-6xl text-black text-center font-bold';
+const pageSubtitleStyle = 'text-center text-base text-black/80 font-medium';
+
+const ForgotPassword = () => {
+	const navigation = useNavigation<NavigationProp>();
+	const { control, handleSubmit, rules, handleForgotPassword, success, notification, successVisible, closeSuccessNotification, showTokenField } = useForgotPassword();
 	const insets = useSafeAreaInsets();
 
-	const styleSubTitle = 'text-center text-base text-black/80 font-medium';
-	const styleTitle = 'text-6xl text-black text-center font-bold';
-
-	const handleNavigation = {
-		start: () => navigation.navigate('Start')
-	}
+	const goStart = useCallback(() => navigation.navigate('Start'), [navigation]);
+	const onSubmit = useCallback(() => handleSubmit(handleForgotPassword)(), [handleSubmit, handleForgotPassword]);
 
 	return (
-		<KeyboardAvoidingView
-			style={{ flex: 1, backgroundColor: '#FFFFFF' }}
-			behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
-		>
+		<KeyboardAvoidingView style={{ flex: 1, backgroundColor: '#FFFFFF' }} behavior={Platform.OS === 'ios' ? 'padding' : 'height'}>
 			<ScrollView
 				contentContainerStyle={{ flexGrow: 1, justifyContent: 'center', paddingHorizontal: 10, paddingTop: insets.top }}
 				showsVerticalScrollIndicator={false}
-				keyboardShouldPersistTaps="handled"
+				keyboardShouldPersistTaps='handled'
 			>
-				<View className='mb-10'>
-					<Text className={styleTitle}>Esqueci Minha Senha</Text>
-					<Text className={styleSubTitle}>Vamos redefinir sua senha</Text>
+				<View className={headerWrapperStyle}>
+					<Text className={pageTitleStyle}>Esqueci Minha Senha</Text>
+					<Text className={pageSubtitleStyle}>Vamos redefinir sua senha</Text>
 				</View>
 
-				<View className='w-full flex-col gap-1.5'>
+				<View className={formWrapperStyle}>
 					{showTokenField && (
 						<InputAuth
 							id='token'
-							name="token"
+							name='token'
 							label='Token'
 							placeholder='Token recebido'
 							control={control}
 							rules={rules.token}
 						/>
 					)}
-
 					<InputAuth
 						id='password'
-						name="password"
+						name='password'
 						label='Nova Senha'
 						placeholder='Nova Senha'
-						secureTextEntry={true}
+						secureTextEntry
 						control={control}
 						rules={rules.password}
 						config='password'
 					/>
-
 					<InputAuth
 						id='confirmaSenha'
-						name="confirmaSenha"
+						name='confirmaSenha'
 						label='Confirme a Senha'
 						placeholder='Confirme a senha'
 						control={control}
-						secureTextEntry={true}
+						secureTextEntry
 						rules={rules.confirmaSenha}
 						config='password'
 					/>
@@ -80,11 +76,11 @@ function ForgotPassword() {
 					title='Redefinir'
 					typeButton='normal'
 					classname='w-full my-[20px]'
-					onPress={handleSubmit(handleForgotPassword)}
+					onPress={onSubmit}
 				/>
 
-				<View className='w-full flex-row justify-end'>
-					<TouchableOpacity onPress={handleNavigation.start}>
+				<View className={footerWrapperStyle}>
+					<TouchableOpacity onPress={goStart}>
 						<Text className='font-medium'>Voltar para o inicio</Text>
 					</TouchableOpacity>
 				</View>
@@ -97,8 +93,8 @@ function ForgotPassword() {
 				/>
 			</ScrollView>
 		</KeyboardAvoidingView>
-	)
-}
+	);
+};
 
-export default ForgotPassword;
+export default memo(ForgotPassword);
 

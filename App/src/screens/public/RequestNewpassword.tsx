@@ -1,67 +1,63 @@
-import React from 'react'
+import React, { memo, useCallback } from 'react';
+import { TouchableOpacity, Text, View, KeyboardAvoidingView, Platform, ScrollView } from 'react-native';
 
-import { TouchableOpacity, Text, View, KeyboardAvoidingView, Platform, ScrollView } from 'react-native'
-import { ButtonPadrao } from '@/src/components/form/Buttons'
+import { useNavigation } from '@react-navigation/native';
+import { RootStackParamList } from '@/src/navigation/Routes';
+import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 
-import InputAuth from '@/src/components/form/InputAuth'
-import { useNavigation } from '@react-navigation/native'
-import { RootStackParamList } from '@/src/navigation/Routes'
+import InputAuth from '@/src/components/form/InputAuth';
+import { ButtonPadrao } from '@/src/components/form/Buttons';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
+import AlertNotioncation from '@/src/components/modal/AlertNotioncation';
+import useRequestNewpassword from '@/src/hooks/hookAuth/useRequestNewpassword';
 
-import { NativeStackNavigationProp } from '@react-navigation/native-stack'
-import AlertNotioncation from '@/src/components/modal/AlertNotioncation'
-import useRequestNewpassword from '@/src/hooks/hookAuth/useRequestNewpassword'
-import { useSafeAreaInsets } from 'react-native-safe-area-context'
+type NavigationProp = NativeStackNavigationProp<RootStackParamList>;
 
-type NavigationProp = NativeStackNavigationProp<RootStackParamList>
+const headerWrapperStyle = 'mb-10';
+const formWrapperStyle = 'w-full flex-col gap-1.5';
+const footerWrapperStyle = 'w-full flex-row justify-end';
+const pageTitleStyle = 'text-6xl text-black text-center font-bold';
+const pageSubtitleStyle = 'text-center text-base text-black/80 font-medium';
 
-function RequestNewPassword() {
-	const navigation = useNavigation<NavigationProp>()
-	const { control, handleSubmit, rules, handleRequestNewPassword, closeSuccessNotification, success, successVisible, notification } = useRequestNewpassword()
+const RequestNewPassword = () => {
 	const insets = useSafeAreaInsets();
+	const navigation = useNavigation<NavigationProp>();
+	const { control, handleSubmit, rules, handleRequestNewPassword, closeSuccessNotification, success, successVisible, notification } = useRequestNewpassword();
 
-	const styleSubTitle = 'text-center text-base text-black/80 font-medium';
-	const styleTitle = 'text-6xl text-black text-center font-bold';
-
-	const handleNavigation = {
-		start: () => navigation.navigate('Start')
-	}
+	const goStart = useCallback(() => navigation.navigate('Start'), [navigation]);
+	const onSubmit = useCallback(() => handleSubmit(handleRequestNewPassword)(), [handleSubmit, handleRequestNewPassword]);
 
 	return (
-		<KeyboardAvoidingView
-			style={{ flex: 1, backgroundColor: '#FFFFFF' }}
-			behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
-		>
+		<KeyboardAvoidingView style={{ flex: 1, backgroundColor: '#FFFFFF' }} behavior={Platform.OS === 'ios' ? 'padding' : 'height'}>
 			<ScrollView
 				contentContainerStyle={{ flexGrow: 1, justifyContent: 'center', paddingHorizontal: 10, paddingTop: insets.top }}
 				showsVerticalScrollIndicator={false}
-				keyboardShouldPersistTaps="handled"
+				keyboardShouldPersistTaps='handled'
 			>
-				<View className='mb-10'>
-					<Text className={styleTitle}>Solicitar Nova Senha</Text>
-					<Text className={styleSubTitle}>Vamos redefinir sua senha</Text>
+				<View className={headerWrapperStyle}>
+					<Text className={pageTitleStyle}>Solicitar Nova Senha</Text>
+					<Text className={pageSubtitleStyle}>Vamos redefinir sua senha</Text>
 				</View>
 
-				<View className='w-full flex-col gap-1.5'>
-
+				<View className={formWrapperStyle}>
 					<InputAuth
 						id='email'
-						name="email"
+						name='email'
 						label='Email'
 						placeholder='exemplo@exemplo.com'
 						control={control}
 						rules={rules.email}
-						type="email-address"
+						type='email-address'
 					/>
-
 					<InputAuth
 						id='cpf'
-						name="cpf"
+						name='cpf'
 						label='CPF'
 						placeholder='CPF'
-						config="cpf"
+						config='cpf'
 						control={control}
 						rules={rules.cpf}
-						type="number-pad"
+						type='number-pad'
 					/>
 				</View>
 
@@ -69,11 +65,11 @@ function RequestNewPassword() {
 					title='Solicitar'
 					typeButton='normal'
 					classname='w-full my-[20px]'
-					onPress={handleSubmit(handleRequestNewPassword)}
+					onPress={onSubmit}
 				/>
 
-				<View className='w-full flex-row justify-end'>
-					<TouchableOpacity onPress={handleNavigation.start}>
+				<View className={footerWrapperStyle}>
+					<TouchableOpacity onPress={goStart}>
 						<Text className='font-medium'>Voltar para o inicio</Text>
 					</TouchableOpacity>
 				</View>
@@ -86,8 +82,8 @@ function RequestNewPassword() {
 				/>
 			</ScrollView>
 		</KeyboardAvoidingView>
-	)
-}
+	);
+};
 
-export default RequestNewPassword;
+export default memo(RequestNewPassword);
 

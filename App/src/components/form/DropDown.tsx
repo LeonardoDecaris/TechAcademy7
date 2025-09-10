@@ -5,12 +5,12 @@ import { Picker } from "@react-native-picker/picker";
 interface DropDownProps {
     name: string;
     label?: string;
-    placeholder?: string;
     span?: string;
+    placeholder?: string;
 
-    items: { label: string; value: string }[];
-    rules?: RegisterOptions;
     control: Control<any>;
+    rules?: RegisterOptions;
+    items: { label: string; value: string }[];
 }
 
 const DropDown = ({ name, control, label, rules, items, placeholder, span }: DropDownProps) => {
