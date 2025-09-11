@@ -48,7 +48,11 @@ const DetailsFreight = () => {
 
         <View className={cardsRowStyle}>
           <CardInfoCompany />
-          <CardDeliveryTime />
+          <CardDeliveryTime 
+            destino={freight.destino}
+            distancia={freight.distancia}
+            prazo={freight.prazo}
+          />
         </View>
 
         <Text className={descriptionTitleStyle}>Descrição do frete</Text>

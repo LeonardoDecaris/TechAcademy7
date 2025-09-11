@@ -31,7 +31,6 @@ interface PropsController extends PropsLabel, PropsInput {
 
 const spanStyle = 'text-red-500 text-sm pl-2.5';
 const labelStyle = 'font-semibold text-base pl-2.5 pb-0.5';
-const campoBloqueado = 'font-semibold text-base pl-2.5 text-red-500/80';
 const inputStyle = 'w-full py-2.5 px-2 font-semibold text-base border rounded-lg bg-white';
 const inputPasswordStyle = 'w-[85%] py-2.5 px-2 text-base font-semibold border rounded-lg bg-white';
 const mostrarPasswordStyle = 'flex items-center justify-center py-1.5 px-1.5 border border-black/40 rounded-lg bg-white shadow-[0_2px_4px_rgba(0,0,0,0.25)]';
@@ -62,7 +61,7 @@ const InputAuth = ({ label, labelProps, name, control, rules, span, statusInput,
                 return (
                     <View className={`flex-col ${Tamanho === 'normal' ? 'w-full' : 'w-[48%]'} `}>
                         <Text className={`${labelStyle} ${status === 'error' ? 'text-red-500/80' : 'text-black/80'}`} {...labelProps}>
-                            {label} {desabilitar && <Text className={campoBloqueado}> - Campo bloqueado</Text>}
+                            {label}
                         </Text>
 
                         {config === 'password' ? (

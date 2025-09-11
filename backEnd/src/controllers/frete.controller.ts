@@ -1,5 +1,11 @@
 import { Request, Response } from 'express';
 import Frete from '../models/frete.model';
+import Carga from '../models/carga.model';
+import ImagemCarga from '../models/imagem_carga.model';
+import Status from '../models/status.model';
+import Caminhoneiro from '../models/caminhoneiro.model';
+import Empresa from '../models/empresa.model';
+import ImagemEmpresa from '../models/imagem_empresa.model';
 
 export const createFrete = async (req: Request, res: Response) => {
     try {
@@ -15,7 +21,40 @@ export const createFrete = async (req: Request, res: Response) => {
 
 export const getAllFretes = async (req: Request, res: Response) => {
     try {
-        const fretes = await Frete.findAll();
+        const fretes = await Frete.findAll({
+            include: [
+                {
+                model: Carga,
+                as: 'carga',
+                required: false,
+                include: [{
+                    model: ImagemCarga,
+                    as: 'imagemCarga',
+                    required: false
+                }],
+            },
+            {
+                model: Status,
+                as: 'status',
+                required: false 
+            },
+            {
+              model: Caminhoneiro,
+              as: 'caminhoneiro',
+              required: false  
+            },
+            {
+                model: Empresa,
+                as: 'empresa',
+                required: false,
+                include: [{
+                    model: ImagemEmpresa,
+                    as: 'imagemEmpresa',
+                    required: false
+                }]
+            }
+        ]
+        });
         return res.status(200).json(fretes);
     } catch (error) {
         if (error instanceof Error) {

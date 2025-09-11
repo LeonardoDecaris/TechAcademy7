@@ -9,9 +9,9 @@ import { RootStackParamList } from '@/src/navigation/Routes'
 import { NativeStackNavigationProp } from '@react-navigation/native-stack'
 
 import InputAuth from '@/src/components/form/InputAuth'
-import AlertNotioncation from '@/src/components/modal/AlertNotioncation'
 import { useSafeAreaInsets } from 'react-native-safe-area-context'
 import useForgotPassword from '@/src/hooks/hookAuth/useForgotPassword'
+import AlertNotioncation from '@/src/components/modal/AlertNotioncation'
 
 type NavigationProp = NativeStackNavigationProp<RootStackParamList>
 
@@ -21,9 +21,6 @@ function NewPassword() {
 
 	const styleSubTitle = 'text-center text-sm text-black/80 font-medium';
 	const styleTitle = 'text-[48px] text-black text-center font-bold';
-	const insets = useSafeAreaInsets();
-
-
 
 	return (
 		<KeyboardAwareScrollView contentContainerStyle={{ flex: 1, paddingHorizontal: 10, backgroundColor: '#FFFFFF', paddingTop: 60 }} showsVerticalScrollIndicator={false}>

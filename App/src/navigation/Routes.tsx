@@ -39,6 +39,8 @@ export type RootStackParamList = {
       saida?: string;
       destino?: string;
       logoEmpresa?: string;
+      distancia?: string;
+      prazo?: string;
       imagemCarga?: string;
       valor?: string;
       valorFrete?: string;

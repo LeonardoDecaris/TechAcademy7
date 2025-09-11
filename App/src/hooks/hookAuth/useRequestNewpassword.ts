@@ -15,43 +15,51 @@ interface RequestNewPassword {
 }
 
 /**
- * Custom hook to manage the password reset request form and submission.
- * @returns An object containing form control, submission handlers, and notification state.
+w * Hook responsável por gerenciar o formulário de solicitação de redefinição de senha.
+ * @returns Objeto com regras, controles, handlers de envio e estado de notificações.
  */
 function useRequestNewpassword() {
   const navigation = useNavigation<NavigationProp>();
 
   const { control, handleSubmit, formState: { errors } } = useForm<RequestNewPassword>({ mode: "onSubmit" });
-  
+
   const [success, setSuccess] = useState(false);
   const [notification, setNotification] = useState("");
   const [successVisible, setSuccessVisible] = useState(false);
 
-
-  const handleRequestNewPassword = useCallback( async (data: RequestNewPassword) => {
-
+  const handleRequestNewPassword = useCallback(
+    async (data: RequestNewPassword) => {
       try {
+
         const res = await http.post("request-password-reset", {
           email: data.email,
           cpf: data.cpf,
         });
 
-
+        const backendMessage =
+          res?.data?.message || "Solicitação registrada com sucesso.";
         const devToken = res?.data?.token as string | undefined;
+
         setSuccess(true);
-        setNotification("Solicitação de nova senha enviada com sucesso!");
+        setNotification(backendMessage);
         setSuccessVisible(true);
 
         setTimeout(() => {
-          navigation.navigate("ForgotPassword", { email: data.email, cpf: data.cpf, token: devToken });
+          navigation.navigate("ForgotPassword", {
+            email: data.email,
+            cpf: data.cpf,
+            token: devToken,
+          });
         }, 800);
-
       } catch (error: any) {
+
+        const backendMessage =
+          error?.response?.data?.message ||
+          "Erro ao solicitar nova senha. Verifique os dados.";
+
         setSuccess(false);
-        setNotification("Erro ao solicitar nova senha. Verifique suas informações.");
+        setNotification(backendMessage);
         setSuccessVisible(true);
-        
-        console.log("[SolicitarNovaSenha] Erro na requisição", error);
       }
     },
     [navigation]
@@ -63,7 +71,7 @@ function useRequestNewpassword() {
 
   const rules = {
     email: {
-      required: "Email é obrigatório",
+      required: "E-mail é obrigatório",
       validate: validarEmail,
     },
     cpf: {

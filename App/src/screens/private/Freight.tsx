@@ -4,11 +4,12 @@ import { useNavigation } from '@react-navigation/native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 
-import { MOCK_DATA } from '@/src/data/fretes';
 import CardCargo from '@/src/components/cards/CardCargo';
 import { RootStackParamList } from '@/src/navigation/Routes';
 import { obterLocalizacao } from '@/src/utils/minhaLocalizacao';
 import { haversineKm } from '@/src/utils/distance';
+import { ORIGENS_PARANA } from '@/src/data/fretesCoordsParana';
+import useFreight from '@/src/hooks/useFreight';
 
 interface Coord {
 	latitude: number;
@@ -26,30 +27,30 @@ interface CardCargaProps {
 	valor?: string;
 	valorFrete?: string;
 	descricao?: string;
-	destinoCoord?: Coord;
-	saidaCoord?: Coord;
 }
 
 type FreightItem = CardCargaProps & { id: string; };
 
 type NavigationProp = NativeStackNavigationProp<RootStackParamList, 'Freight'>;
 
-const containerBaseStyle = 'flex-1 bg-white';
 const headerWrapperStyle = 'pb-2.5';
-const headerTitleStyle = 'text-2xl font-extrabold text-center';
 const searchWrapperStyle = 'px-5 pb-3';
-const searchInputStyle = 'bg-gray-100 rounded-lg p-3 text-base border border-gray-200';
-const locationBarStyle = 'px-5 pb-4 flex-row items-center justify-end';
-const smallBtnStyle = 'px-3 py-2 rounded-md bg-blue-600';
-const smallBtnTxtStyle = 'text-white font-medium text-xs';
-const toggleBtnStyle = 'px-3 py-2 rounded-md bg-gray-200 ml-2';
-const toggleBtnTxtStyle = 'text-gray-800 font-medium text-xs';
+const containerBaseStyle = 'flex-1 bg-white';
 const emptyWrapperStyle = 'items-center mt-16';
 const emptyTextStyle = 'text-gray-500 text-base';
-const distanceBadgeStyle = 'absolute bottom-2 right-2 bg-black/70 px-2 py-1 rounded-md';
+const smallBtnStyle = 'px-3 py-2 rounded-md bg-blue-600';
+const smallBtnTxtStyle = 'text-white font-medium text-xs';
+const toggleBtnTxtStyle = 'text-gray-800 font-medium text-xs';
+const headerTitleStyle = 'text-2xl font-extrabold text-center';
+const toggleBtnStyle = 'px-3 py-2 rounded-md bg-gray-200 ml-2';
 const distanceBadgeTxtStyle = 'text-white text-[11px] font-semibold';
+const locationBarStyle = 'px-5 pb-4 flex-row items-center justify-end';
+const distanceBadgeStyle = 'absolute bottom-2 right-2 bg-black/70 px-2 py-1 rounded-md';
+const searchInputStyle = 'bg-gray-100 rounded-lg p-3 text-base border border-gray-200';
 
 const Freight = () => {
+	const { freightData, getFreightDado, isLoading } = useFreight();
+
 	const [refreshing, setRefreshing] = useState(false);
 	const [searchQuery, setSearchQuery] = useState('');
 	const [userCoord, setUserCoord] = useState<Coord | null>(null);
@@ -75,46 +76,75 @@ const Freight = () => {
 		}
 	}, []);
 
-	useEffect(() => {
-		requestLocation(); // busca ao montar
-	}, [requestLocation]);
+	const dataBase = useMemo<FreightItem[]>(() => {
+		if (!Array.isArray(freightData)) return [];
+		return freightData.map(f => ({
+			id: String(f.id_frete),
+			nome: f.carga?.nome,
+			tipo: f.carga?.nome || f.carga?.descricao,
+			peso: f.carga?.peso,
+			saida: f.saida,
+			destino: f.destino,
+			logoEmpresa: f.empresa?.imagemEmpresa?.imgUrl,
+			imagemCarga: f.carga?.imagemCarga?.imgUrl,
+			valorFrete: f.valor_frete,
+			descricao: f.carga?.descricao
+		}));
+	}, [freightData]);
 
-	const filtered = useMemo(() => {
-		if (!searchQuery.trim()) return MOCK_DATA;
-		const q = searchQuery.toLowerCase();
-		return MOCK_DATA.filter(
-			(item: FreightItem) =>
+	const filtered = useMemo<FreightItem[]>(() => {
+		const q = searchQuery.trim().toLowerCase();
+		if (!q) return dataBase;
+		return dataBase.filter(
+			(item) =>
 				item.nome?.toLowerCase().includes(q) ||
 				item.tipo?.toLowerCase().includes(q) ||
 				item.saida?.toLowerCase().includes(q) ||
 				item.destino?.toLowerCase().includes(q)
 		);
-	}, [searchQuery]);
+	}, [searchQuery, dataBase]);
+
+	const normalizeName = (s?: string) =>
+		(s || '')
+			.normalize('NFD')
+			.replace(/\p{Diacritic}/gu, '')
+			.toLowerCase()
+			.trim();
+
+	const originMap = useMemo(() => {
+		const map = new Map<string, Coord>();
+		ORIGENS_PARANA.forEach(o => {
+			map.set(normalizeName(o.nome), o.saidaCoord);
+		});
+		return map;
+	}, []);
 
 	const withDistance = useMemo(() => {
 		if (!userCoord) return filtered;
-		const mapped = filtered.map((f: FreightItem) => {
-			const baseCoord = f.saidaCoord ?? null;
-			let distanceKm: number | undefined;
-			if (baseCoord?.latitude != null && baseCoord?.longitude != null) {
-				distanceKm = Number(haversineKm(userCoord, baseCoord).toFixed(1));
-			}
-			return { ...f, distanceKm };
-		});
 
-		const afterRadius = radiusKm
-			? mapped.filter(m => m.distanceKm != null && m.distanceKm <= radiusKm)
-			: mapped;
+		return filtered
+			.map((f: FreightItem) => {
+				let coord: Coord | undefined;
+				if (f.saida) coord = originMap.get(normalizeName(f.saida));
 
-		if (sortNearest) {
-			afterRadius.sort((a, b) => {
+				let distanceKm: number | undefined;
+				if (coord) {
+					distanceKm = Number(haversineKm(userCoord, coord).toFixed(1));
+				}
+
+				return { ...f, distanceKm };
+			})
+			.filter(item => {
+				if (radiusKm == null) return true;
+				return item.distanceKm != null && item.distanceKm <= radiusKm;
+			})
+			.sort((a, b) => {
+				if (!sortNearest) return 0;
 				if (a.distanceKm == null) return 1;
 				if (b.distanceKm == null) return -1;
 				return a.distanceKm - b.distanceKm;
 			});
-		}
-		return afterRadius;
-	}, [filtered, userCoord, sortNearest, radiusKm]);
+	}, [filtered, userCoord, sortNearest, radiusKm, originMap]);
 
 	const handleSearch = useCallback((query: string) => {
 		setSearchQuery(query);
@@ -145,6 +175,12 @@ const Freight = () => {
 			return null;
 		});
 	}, []);
+
+	useEffect(() => {
+		(async () => {
+			await Promise.all([getFreightDado(), requestLocation()]);
+		})();
+	}, [getFreightDado, requestLocation]);
 
 	const renderItem = useCallback(
 		({ item }: { item: FreightItem & { distanceKm?: number } }) => (
@@ -219,7 +255,13 @@ const Freight = () => {
 				refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} />}
 				ListEmptyComponent={
 					<View className={emptyWrapperStyle}>
-						<Text className={emptyTextStyle}>Nenhum frete encontrado</Text>
+						<Text className={emptyTextStyle}>
+							{isLoading
+								? 'Carregando fretes...'
+								: dataBase.length === 0
+									? 'Nenhum frete carregado'
+									: 'Nenhum frete corresponde à busca'}
+						</Text>
 					</View>
 				}
 				keyboardShouldPersistTaps="handled"

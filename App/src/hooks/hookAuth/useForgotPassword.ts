@@ -18,8 +18,7 @@ interface ForgotPassword {
 }
 
 /**
- * Custom hook to manage the password reset form and submission.
- * @returns An object containing form control, submission handlers, notification state, and token field visibility.
+ * Hook para redefinir senha.
  */
 function useForgotPassword() {
   const route = useRoute<ForgotPasswordRoute>();
@@ -38,41 +37,50 @@ function useForgotPassword() {
 
   const passwordValue = watch("password");
 
-
   const handleForgotPassword = useCallback(
     async (data: ForgotPassword) => {
       try {
         const tokenToUse = tokenParam || data.token;
+
         if (!email || !cpf) {
           setSuccess(false);
-          setNotification("Email e CPF não informados. Volte e solicite novamente.");
-          setSuccessVisible(true);
-          return;
-        }
-        if (!tokenToUse) {
-          setSuccess(false);
-          setNotification("Informe o token enviado para seu email.");
+          setNotification("E-mail e CPF não informados. Volte e solicite novamente.");
           setSuccessVisible(true);
           return;
         }
 
-        await http.post("reset-password", {
+        if (!tokenToUse) {
+          setSuccess(false);
+          setNotification("Token Não informado. Volte e solicite novamente.");
+          setSuccessVisible(true);
+          return;
+        }
+
+        const res = await http.post("reset-password", {
           email,
           cpf,
           token: tokenToUse,
           newPassword: data.password,
         });
 
+        const backendMessage =
+          res?.data?.message || "Senha redefinida com sucesso.";
+
         setSuccess(true);
-        setNotification("Senha redefinida com sucesso!");
+        setNotification(backendMessage);
         setSuccessVisible(true);
 
         setTimeout(() => {
           navigation.navigate("Login");
         }, 800);
-      } catch (error) {
+      } catch (error: any) {
+
+        const backendMessage =
+          error?.response?.data?.message ||
+          "Erro ao redefinir senha. Verifique suas informações.";
+
         setSuccess(false);
-        setNotification("Erro ao redefinir senha. Verifique suas informações.");
+        setNotification(backendMessage);
         setSuccessVisible(true);
       }
     },
@@ -91,8 +99,9 @@ function useForgotPassword() {
     },
     confirmaSenha: {
       required: "Confirmação de senha é obrigatória",
-      validate: (value: string) => value === passwordValue || "As senhas não conferem",
-    }
+      validate: (value: string) =>
+        value === passwordValue || "As senhas não conferem",
+    },
   };
 
   return {

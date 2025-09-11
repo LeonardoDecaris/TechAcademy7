@@ -4,21 +4,21 @@ import { View, Text, Image, Modal, TouchableOpacity, TouchableWithoutFeedback, K
 import { BASE_URL } from '@env';
 import { dataCnh } from '@/src/data/dataCnh';
 
+import { useNavigation } from '@react-navigation/native';
+import { RootStackParamList } from '@/src/navigation/Routes';
+import { NativeStackNavigationProp } from '@react-navigation/native-stack';
+
 import * as ImagePicker from 'expo-image-picker';
 import DropDown from '@/src/components/form/DropDown';
 import InputAuth from '@/src/components/form/InputAuth';
 import AlertNotioncation from '@/src/components/modal/AlertNotioncation';
+import ErrorNotification from '@/src/components/modal/ErrorNotioncation';
 import { ButtonPadrao, ButtonUpload } from '@/src/components/form/Buttons';
-
-import { useNavigation } from '@react-navigation/native';
-import { RootStackParamList } from '@/src/navigation/Routes';
-import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 
 import useImageUser from '@/src/hooks/hookUser/useImageUser';
 import useEditarUsuario from '@/src/hooks/hookUser/useEditUser';
 import useGetUserData from '@/src/hooks/hookUser/useGetUserData';
 import useEditImageUser from '@/src/hooks/hookUser/useEditImageUser';
-import ErrorNotification from '@/src/components/modal/ErrorNotioncation';
 
 type NavigationProp = NativeStackNavigationProp<RootStackParamList>;
 
@@ -32,7 +32,7 @@ const avatarContainerStyle = 'flex-col gap-3 justify-center items-center pb-5';
 const avatarFallbackWrapperStyle = 'h-24 w-24 rounded-full bg-gray-200 items-center justify-center';
 
 const EditProfile = () => {
-	
+
 	const navigation = useNavigation<NavigationProp>();
 	const { iniciasNomeUsuario, userData, getUserData } = useGetUserData();
 	const { control, handleSubmit, rules, setValue, handleEditar, successVisible, closeSuccessNotification, notification, success, } = useEditarUsuario();
@@ -68,11 +68,9 @@ const EditProfile = () => {
 				return null;
 			}
 
-			const pickerFn =
-				type === 'camera'
-					? ImagePicker.launchCameraAsync
-					: ImagePicker.launchImageLibraryAsync;
-
+			const pickerFn = type === 'camera'
+				? ImagePicker.launchCameraAsync
+				: ImagePicker.launchImageLibraryAsync;
 			const result = await pickerFn({
 				mediaTypes: ImagePicker.MediaTypeOptions.Images,
 				allowsEditing: true,
@@ -138,10 +136,6 @@ const EditProfile = () => {
 	}, [imagemUrl, persistForm, selectedImage, statusSuccess, statusSuccessUpdate, updateImage, uploadImage, userData?.imagemUsuario?.id_imagem]);
 
 	useEffect(() => {
-		getUserData();
-	}, [getUserData]);
-
-	useEffect(() => {
 		if (!userData) return;
 		const fields: Record<string, string> = {
 			nome: userData.nome ?? '',
@@ -149,11 +143,14 @@ const EditProfile = () => {
 			cpf: userData.cpf ?? '',
 			cnh: userData.cnh ?? '',
 		};
-
 		Object.entries(fields).forEach(([field, value]) => {
 			setValue(field as any, value, { shouldDirty: false });
 		});
 	}, [userData, setValue]);
+	
+	useEffect(() => {
+		getUserData();
+	}, [getUserData]);
 
 
 	return (
@@ -274,7 +271,6 @@ const EditProfile = () => {
 						label='Email'
 						placeholder='Email'
 						desabilitar
-						statusInput='error'
 						control={control}
 						rules={rules.email}
 						type='email-address'

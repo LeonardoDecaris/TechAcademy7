@@ -17,9 +17,9 @@ import CardFreight from '@/src/components/cards/CardFreight';
 import VehicleCard from '@/src/components/cards/VehicleCard';
 import AcessoRapido from '@/src/components/base/AcessoRapido';
 import CardMyContract from '@/src/components/cards/CardMyContract';
+import AlertNotioncation from '@/src/components/modal/AlertNotioncation';
 import useGetVehicleData from '@/src/hooks/hookVehicle/useGetVehicleData';
 import AlertNotNullVehiculo from '@/src/components/modal/AlertNotNullVehiculo';
-import AlertNotioncation from '@/src/components/modal/AlertNotioncation';
 
 type NavigationProp = NativeStackNavigationProp<RootStackParamList>;
 

@@ -1,9 +1,11 @@
 import React, { memo, useCallback } from 'react';
 import { Text, TouchableOpacity, View, KeyboardAvoidingView, Platform, ScrollView } from 'react-native';
-import { useSafeAreaInsets } from 'react-native-safe-area-context';
+
 import { useNavigation } from '@react-navigation/native';
 import { RootStackParamList } from '@/src/navigation/Routes';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
+
 import useLogin from '@/src/hooks/hookAuth/useLogin';
 import InputAuth from '@/src/components/form/InputAuth';
 import { ButtonPadrao } from '@/src/components/form/Buttons';
