@@ -12,14 +12,15 @@ import { RootStackParamList } from '@/src/navigation/Routes';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 
 import { Ionicons } from '@expo/vector-icons';
-import AlertLogout from '@/src/components/modal/AlertLogout';
 import CardFreight from '@/src/components/cards/CardFreight';
 import VehicleCard from '@/src/components/cards/VehicleCard';
 import AcessoRapido from '@/src/components/base/AcessoRapido';
 import CardMyContract from '@/src/components/cards/CardMyContract';
-import AlertNotioncation from '@/src/components/modal/AlertNotioncation';
+import useGetFreightConfirm from '@/src/hooks/useGetFreightComfirm';
+import ModalConfirmation from '@/src/components/modal/ModalConfirmation';
+import AlertNotification from '@/src/components/modal/AlertNotification';
 import useGetVehicleData from '@/src/hooks/hookVehicle/useGetVehicleData';
-import AlertNotNullVehiculo from '@/src/components/modal/AlertNotNullVehiculo';
+import { formatDateTime } from '@/src/utils/funcoes';
 
 type NavigationProp = NativeStackNavigationProp<RootStackParamList>;
 
@@ -30,28 +31,31 @@ const headerRowStyle = 'flex-row items-center justify-between pb-10';
 const avatarWrapperStyle = 'h-[50px] w-[50px] rounded-full bg-gray-300 items-center justify-center';
 
 const Home = () => {
+    
     const { logout } = useAuth();
     const navigation = useNavigation<NavigationProp>();
+
     const { getVehicleData, veiculo: data } = useGetVehicleData();
-    const { userData, getUserData, iniciasNomeUsuario, nomeAbreviado, closeSuccessNotification, mensage, success, successVisible } = useGetUserData();
+    const { userData, getUserData, iniciasNomeUsuario, nomeAbreviado } = useGetUserData();
+    const { getDados: getDadosFrete, closeSuccessNotification, mensage, success, successVisible, dadosFrete } = useGetFreightConfirm(data?.id_caminhoneiro || 0);
 
     const [button, setButton] = useState(false);
     const [refreshing, setRefreshing] = useState(false);
     const [showLogout, setShowLogout] = useState(false);
     const [showNoVehicle, setShowNoVehicle] = useState(false);
 
-    const imagemUrl = useMemo(
-        () => (userData?.imagemUsuario?.imgUrl ? `${BASE_URL}${userData.imagemUsuario.imgUrl}` : ''),
-        [userData?.imagemUsuario?.imgUrl]
+    const imagemUrl = useMemo( () => userData?.imagemUsuario?.imgUrl ? `${BASE_URL}${userData.imagemUsuario.imgUrl}` : '', [userData?.imagemUsuario?.imgUrl] );
+    const imagemVeiculo = useMemo( () =>  data?.veiculo?.imagemVeiculo?.imgUrl ? `${BASE_URL}${data.veiculo.imagemVeiculo.imgUrl}`  : '', [data?.veiculo?.imagemVeiculo?.imgUrl]);
+
+    const goProfile = useCallback(
+        () => navigation.navigate('Profile'),
+        [navigation]
     );
 
-    const imagemVeiculo = useMemo(
-        () => (data?.veiculo?.imagemVeiculo?.imgUrl ? `${BASE_URL}${data.veiculo.imagemVeiculo.imgUrl}` : ''),
-        [data?.veiculo?.imagemVeiculo?.imgUrl]
+    const goDetailsEnvio = useCallback(
+        () => navigation.navigate('DetailsEnvio'),
+        [navigation]
     );
-
-    const goProfile = useCallback(() => navigation.navigate('Profile'), [navigation]);
-    const goDetailsEnvio = useCallback(() => navigation.navigate('DetailsEnvio'), [navigation]);
 
     const goMyVehicle = useCallback(() => {
         if (data?.veiculo) {
@@ -63,57 +67,75 @@ const Home = () => {
         }
     }, [data?.veiculo, navigation]);
 
+    useEffect(() => {
+        getUserData();
+        getVehicleData();
+    }, [getUserData, getVehicleData]);
+
+    useEffect(() => {
+        if (data?.id_caminhoneiro) {
+            getDadosFrete();
+        }
+    }, [data?.id_caminhoneiro, getDadosFrete]);
+
     const onRefresh = useCallback(async () => {
         setRefreshing(true);
         try {
             await Promise.all([getUserData(), getVehicleData()]);
+            if (data?.id_caminhoneiro) {
+                await getDadosFrete();
+            }
         } finally {
             setRefreshing(false);
         }
-    }, [getUserData, getVehicleData]);
+    }, [getUserData, getVehicleData, getDadosFrete, data?.id_caminhoneiro]);
 
-    const handleLogout = useCallback(async () => { await logout(); navigation.reset({ index: 0, routes: [{ name: 'Login' as never }] }); }, [logout, navigation]);
-
-    const handleDevPress = useCallback(() => {
-        alert('Esta em Desenvolvimento');
-    }, []);
+    const handleLogout = useCallback(
+        async () => {
+            await logout();
+            navigation.reset({ index: 0, routes: [{ name: 'Login' as never }] });
+        },
+        [logout, navigation]
+    );
 
     const handleConfirmCreateVehicle = useCallback(() => {
         setShowNoVehicle(false);
         navigation.navigate('RegisterVehicle');
     }, [navigation]);
 
-    const handleCancelCreateVehicle = useCallback(() => {
-        setShowNoVehicle(false);
-    }, []);
-
-    useEffect(() => {
-        (async () => {
-            await Promise.all([getUserData(), getVehicleData()]);
-        })();
-    }, [getUserData, getVehicleData]);
-
     const insets = useSafeAreaInsets();
-
-    const containerStyle = useMemo(() => ({ flex: 1, backgroundColor: '#FFFFFF', paddingTop: insets.top + 10 }), [insets.top]);
+    const containerStyle = useMemo( () => ({flex: 1, backgroundColor: '#FFFFFF', paddingTop: insets.top + 10 }), [insets.top]);
 
     return (
         <View style={containerStyle}>
             <ScrollView
                 contentContainerStyle={{ paddingHorizontal: 10, paddingBottom: 50 }}
-                refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} />}
+                refreshControl={
+                    <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
+                }
                 showsVerticalScrollIndicator={false}
             >
                 <View className={headerRowStyle}>
                     <View className={headerLeftRowStyle}>
-                        <TouchableOpacity onPress={goProfile} className={avatarWrapperStyle} accessibilityLabel="Ir para perfil">
+                        <TouchableOpacity
+                            onPress={goProfile}
+                            className={avatarWrapperStyle}
+                            accessibilityLabel="Ir para perfil"
+                        >
                             {imagemUrl ? (
-                                <Image source={{ uri: imagemUrl }} className='w-[50px] h-[50px] rounded-full bg-gray-200' />
+                                <Image
+                                    source={{ uri: imagemUrl }}
+                                    className="w-[50px] h-[50px] rounded-full bg-gray-200"
+                                />
                             ) : (
-                                <Text className={avatarTextStyle}>{iniciasNomeUsuario}</Text>
+                                <Text className={avatarTextStyle}>
+                                    {iniciasNomeUsuario}
+                                </Text>
                             )}
                         </TouchableOpacity>
-                        <Text className={greetingTextStyle}>Olá, {nomeAbreviado ?? 'Usuário'}!</Text>
+                        <Text className={greetingTextStyle}>
+                            Olá, {nomeAbreviado ?? 'Usuário'}!
+                        </Text>
                     </View>
                     <TouchableOpacity
                         onPress={() => setShowLogout(true)}
@@ -125,29 +147,36 @@ const Home = () => {
 
                 <CardMyContract
                     motorista={userData?.nome}
-                    nome="Sem carga"
-                    tipo="Nenhum"
-                    peso="0"
-                    saida="Nenhum"
-                    destino="Nenhum"
+                    nome={dadosFrete?.carga?.nome}
+                    tipo={dadosFrete?.carga?.tipoCarga?.nome}
+                    peso={dadosFrete?.carga?.peso}
+                    saida={dadosFrete?.saida}
+                    destino={dadosFrete?.destino}
                     logoEmpresa=""
                     imagemCarga=""
-                    valor="Sem valor"
-                    onPress={handleDevPress}
+                    valorFrete={dadosFrete?.valor_frete}
+                    saidaHora={formatDateTime(dadosFrete?.data_saida) || 'sem horario'}
+                    onPress={() => navigation.navigate('DetailsEnvio')}
                 />
 
-                <AcessoRapido onPress={goDetailsEnvio} title='Detalhes do envio' />
+                <AcessoRapido
+                    onPress={goDetailsEnvio}
+                    title="Detalhes do envio"
+                />
 
                 <CardFreight
-                    tipo="Nenhum"
-                    peso="0"
-                    destino="Nenhum"
-                    progresso={0}
+                    tipo={dadosFrete?.carga?.tipoCarga?.nome}
+                    peso={dadosFrete?.carga?.peso}
+                    destino={dadosFrete?.destino}
+                    progresso={dadosFrete?.status?.id_status}
                     TypeButton={true}
                     onPress={goDetailsEnvio}
                 />
 
-                <AcessoRapido onPress={goMyVehicle} title='Meu Veículo' />
+                <AcessoRapido
+                    onPress={goMyVehicle}
+                    title="Meu Veículo"
+                />
 
                 <VehicleCard
                     onPress={goMyVehicle}
@@ -160,30 +189,25 @@ const Home = () => {
                 />
             </ScrollView>
 
-            <AlertLogout
+            <ModalConfirmation
+                mode="logout"
                 visible={showLogout}
+                onConfirm={handleLogout}
                 onCancel={() => setShowLogout(false)}
-                onConfirm={async () => {
-                    setShowLogout(false);
-                    await handleLogout();
-                }}
             />
 
-         	<AlertNotioncation
-                    visible={successVisible}
-                    status={success}
-                    messagem={mensage}
-                    onDismiss={closeSuccessNotification}
-                />
+            <AlertNotification
+                visible={successVisible}
+                status={success as 'success' | 'error' | 'loading'}
+                messagem={mensage}
+                onDismiss={closeSuccessNotification}
+            />
 
-            <AlertNotNullVehiculo
+            <ModalConfirmation
+                mode="no_vehicle"
                 visible={showNoVehicle}
-                onCancel={handleCancelCreateVehicle}
                 onConfirm={handleConfirmCreateVehicle}
-                confirmText="Cadastrar"
-                cancelText="Fechar"
-                title="Nenhum veículo cadastrado"
-                message="Você ainda não possui veículo cadastrado. Deseja cadastrar agora?"
+                onCancel={() => setShowNoVehicle(false)}
             />
         </View>
     );

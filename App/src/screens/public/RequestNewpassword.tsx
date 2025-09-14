@@ -10,6 +10,7 @@ import { ButtonPadrao } from '@/src/components/form/Buttons';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import AlertNotioncation from '@/src/components/modal/AlertNotioncation';
 import useRequestNewpassword from '@/src/hooks/hookAuth/useRequestNewpassword';
+import AlertNotification from '@/src/components/modal/AlertNotification';
 
 type NavigationProp = NativeStackNavigationProp<RootStackParamList>;
 
@@ -22,7 +23,7 @@ const pageSubtitleStyle = 'text-center text-base text-black/80 font-medium';
 const RequestNewPassword = () => {
 	const insets = useSafeAreaInsets();
 	const navigation = useNavigation<NavigationProp>();
-	const { control, handleSubmit, rules, handleRequestNewPassword, closeSuccessNotification, success, successVisible, notification } = useRequestNewpassword();
+	const { control, handleSubmit, rules, handleRequestNewPassword, status, message, closeNotification, notificationVisible } = useRequestNewpassword();
 
 	const goStart = useCallback(() => navigation.navigate('Start'), [navigation]);
 	const onSubmit = useCallback(() => handleSubmit(handleRequestNewPassword)(), [handleSubmit, handleRequestNewPassword]);
@@ -34,6 +35,13 @@ const RequestNewPassword = () => {
 				showsVerticalScrollIndicator={false}
 				keyboardShouldPersistTaps='handled'
 			>
+				<AlertNotification
+					visible={notificationVisible}
+					status={status as "success" | "error" | "loading"}
+					messagem={message}
+					onDismiss={closeNotification}
+				/>
+
 				<View className={headerWrapperStyle}>
 					<Text className={pageTitleStyle}>Solicitar Nova Senha</Text>
 					<Text className={pageSubtitleStyle}>Vamos redefinir sua senha</Text>
@@ -73,13 +81,6 @@ const RequestNewPassword = () => {
 						<Text className='font-medium'>Voltar para o inicio</Text>
 					</TouchableOpacity>
 				</View>
-
-				<AlertNotioncation
-					visible={successVisible}
-					status={success}
-					messagem={notification}
-					onDismiss={closeSuccessNotification}
-				/>
 			</ScrollView>
 		</KeyboardAvoidingView>
 	);

@@ -6,6 +6,7 @@ import { useNavigation } from "@react-navigation/native";
 import { RootStackParamList } from "@/src/navigation/Routes";
 import { validarCPF, validarEmail } from "@/src/utils/Validacao";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
+import { AxiosError } from "axios";
 
 type NavigationProp = NativeStackNavigationProp<RootStackParamList>;
 
@@ -15,7 +16,7 @@ interface RequestNewPassword {
 }
 
 /**
-w * Hook responsável por gerenciar o formulário de solicitação de redefinição de senha.
+ * Hook responsável por gerenciar o formulário de solicitação de redefinição de senha.
  * @returns Objeto com regras, controles, handlers de envio e estado de notificações.
  */
 function useRequestNewpassword() {
@@ -23,50 +24,61 @@ function useRequestNewpassword() {
 
   const { control, handleSubmit, formState: { errors } } = useForm<RequestNewPassword>({ mode: "onSubmit" });
 
-  const [success, setSuccess] = useState(false);
-  const [notification, setNotification] = useState("");
-  const [successVisible, setSuccessVisible] = useState(false);
+  const [status, setStatus] = useState("");
+  const [message, setMessage] = useState("");
+  const [notificationVisible, setNotificationVisible] = useState(false);
+  const [loading, setLoading] = useState(false);
 
   const handleRequestNewPassword = useCallback(
     async (data: RequestNewPassword) => {
-      try {
+      setLoading(true);
+      setStatus("loading");
+      setMessage("Enviando solicitação...");
+      setNotificationVisible(true);
 
+      try {
         const res = await http.post("request-password-reset", {
           email: data.email,
           cpf: data.cpf,
         });
 
-        const backendMessage =
-          res?.data?.message || "Solicitação registrada com sucesso.";
+        const backendMessage = res?.data?.message || "Solicitação registrada com sucesso.";
         const devToken = res?.data?.token as string | undefined;
 
-        setSuccess(true);
-        setNotification(backendMessage);
-        setSuccessVisible(true);
-
+        setNotificationVisible(false);
         setTimeout(() => {
-          navigation.navigate("ForgotPassword", {
-            email: data.email,
-            cpf: data.cpf,
-            token: devToken,
-          });
-        }, 800);
-      } catch (error: any) {
+          setStatus("success");
+          setMessage(backendMessage);
+          setNotificationVisible(true);
 
-        const backendMessage =
-          error?.response?.data?.message ||
-          "Erro ao solicitar nova senha. Verifique os dados.";
+          setTimeout(() => {
+            navigation.navigate("ForgotPassword", {
+              email: data.email,
+              cpf: data.cpf,
+              token: devToken,
+            });
+          }, 1000);
+        }, 300);
 
-        setSuccess(false);
-        setNotification(backendMessage);
-        setSuccessVisible(true);
+      } catch (err) {
+        const error = err as AxiosError<{ message?: string }>;
+        const backendMessage = error?.response?.data?.message || "Erro ao solicitar nova senha. Verifique os dados.";
+
+        setNotificationVisible(false);
+        setTimeout(() => {
+          setStatus("error");
+          setMessage(backendMessage);
+          setNotificationVisible(true);
+        }, 300);
+      } finally {
+        setLoading(false);
       }
     },
     [navigation]
   );
 
-  const closeSuccessNotification = useCallback(() => {
-    setSuccessVisible(false);
+  const closeNotification = useCallback(() => {
+    setNotificationVisible(false);
   }, []);
 
   const rules = {
@@ -85,11 +97,12 @@ function useRequestNewpassword() {
     control,
     handleSubmit,
     errors,
-    success,
-    notification,
-    successVisible,
-    closeSuccessNotification,
+    status,
+    message,
+    notificationVisible,
+    closeNotification,
     handleRequestNewPassword,
+    loading,
   };
 }
 

@@ -9,7 +9,7 @@ import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import useLogin from '@/src/hooks/hookAuth/useLogin';
 import InputAuth from '@/src/components/form/InputAuth';
 import { ButtonPadrao } from '@/src/components/form/Buttons';
-import AlertNotioncation from '@/src/components/modal/AlertNotioncation';
+import AlertNotification from '@/src/components/modal/AlertNotification';
 
 type NavigationProp = NativeStackNavigationProp<RootStackParamList>;
 
@@ -20,10 +20,10 @@ const titleStyle = 'text-7xl h-[76px] text-black text-center font-bold';
 const subtitleStyle = 'text-center text-base text-black/80 font-medium';
 
 const Login = () => {
-	
+
 	const insets = useSafeAreaInsets();
 	const navigation = useNavigation<NavigationProp>();
-	const { control, handleSubmit, handleLogin, rules, successVisible, closeSuccessNotification, mensage, success } = useLogin();
+	const { control, handleSubmit, handleLogin, rules, successVisible, closeSuccessNotification, mensage, success, isDisabled } = useLogin();
 
 	const goSignUp = useCallback(() => navigation.navigate('SignUp'), [navigation]);
 	const goForgotPassword = useCallback(() => navigation.navigate('RequestNewpassword'), [navigation]);
@@ -36,9 +36,10 @@ const Login = () => {
 				showsVerticalScrollIndicator={false}
 				keyboardShouldPersistTaps='handled'
 			>
-				<AlertNotioncation
+
+				<AlertNotification
 					visible={successVisible}
-					status={success}
+					status={success as "success" | "error" | "loading"}
 					messagem={mensage}
 					onDismiss={closeSuccessNotification}
 				/>
@@ -76,6 +77,7 @@ const Login = () => {
 					onPress={onSubmit}
 					typeButton='normal'
 					classname='w-full my-[20px]'
+					disabled={isDisabled}
 				/>
 
 				<View className={footerWrapperStyle}>

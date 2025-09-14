@@ -15,12 +15,12 @@ interface Props {
     destino?: string;
     logoEmpresa?: string;
     imagemCarga?: string;
-    valor?: string;
+    valorFrete?: string;
+    saidaHora?: string;
     onPress?: () => void;
 }
 
 const CardMyContract = (props: Props) => {
-    const semHorario = "Sem horario";
 
     return (
         <View className="w-full p-2.5 bg-amber-800/10 rounded-2xl border border-white" style={{ boxShadow: "0 4px 4px rgba(0, 0, 0, 0.10)" }} >
@@ -32,7 +32,7 @@ const CardMyContract = (props: Props) => {
                 </Text>
 
                 <Text className="text-sm font-medium">
-                    Horário de partida: <Text className="text-black font-normal">{semHorario}</Text>
+                    Horário de partida: <Text className="text-black font-normal">{props.saidaHora}</Text>
                 </Text>
             </View>
             <TouchableOpacity onPress={props.onPress}>
@@ -44,7 +44,7 @@ const CardMyContract = (props: Props) => {
                     destino={props.destino}
                     logoEmpresa={props.logoEmpresa}
                     imagemCarga={props.imagemCarga}
-                    valor={props.valor}
+                    valorFrete={props.valorFrete}
                 />
             </TouchableOpacity>
         </View>

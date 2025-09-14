@@ -25,20 +25,32 @@ interface SingUp {
  */
 function useSignUp() {
   const navigation = useNavigation<NavigationProp>();
-  
+
   const { control, handleSubmit, watch, formState: { errors } } = useForm<SingUp>({ mode: "onSubmit" });
   const password = watch("password");
 
-  const [success, setSuccess] = useState(false);
-  const [notification, setNotification] = useState("");
+  const [status, setStatus] = useState("");
+  const [mensage, setMensage] = useState("");
   const [successVisible, setSuccessVisible] = useState(false);
 
   const navigateToLogin = useCallback(() => {
     navigation.navigate("Login");
   }, [navigation]);
 
+  const closeSuccessNotification = useCallback(() => {
+    setSuccessVisible(false);
+    if (status === "success") {
+      navigateToLogin();
+    }
+  }, [status, navigateToLogin]);
+
+
   const handleSignUp = useCallback(
     async (data: SingUp) => {
+      setStatus("loading");
+      setMensage("Realizando cadastro...");
+      setSuccessVisible(true);
+
       try {
         const response = await http.post("usuario", {
           nome: data.nome,
@@ -48,25 +60,28 @@ function useSignUp() {
           cnh: data.cnh,
           datanascimento: new Date().toISOString(),
         });
-        
-        setSuccess(true);
-        setNotification(response.data.mensagem ?? "Cadastro realizado com sucesso!");
-        setSuccessVisible(true);
+
+        setSuccessVisible(false);
+        setTimeout(() => {
+          setStatus("success");
+          setMensage(response.data.mensagem ?? "Cadastro realizado com sucesso!");
+          setSuccessVisible(true);
+        }, 300);
 
         setTimeout(navigateToLogin, 800);
-      } catch (error) {
-        setSuccess(false);
-        setNotification("Erro ao realizar cadastro. Tente novamente.");
-        setSuccessVisible(true);
+      } catch (error: any) {
+        setSuccessVisible(false);
+        setTimeout(() => {
+          setStatus("error");
+          const serverMessage = error?.response?.data?.message as string | undefined;
+          setMensage(serverMessage ?? "Erro ao realizar cadastro. Tente novamente.");
+          setSuccessVisible(true);
+        }, 300);
         console.log("Registration error:", error);
       }
     },
     [navigateToLogin]
   );
-
-  const closeSuccessNotification = useCallback(() => {
-    setSuccessVisible(false);
-  }, []);
 
   const rules = {
     nome: {
@@ -99,8 +114,8 @@ function useSignUp() {
     handleSubmit,
     errors,
     rules,
-    success,
-    notification,
+    status,
+    mensage,
     successVisible,
     closeSuccessNotification,
     handleSignUp,

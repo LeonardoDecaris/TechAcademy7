@@ -27,23 +27,41 @@ function useLogin() {
 	const { control, handleSubmit, formState: { errors } } = useForm<MapLogin>({ mode: "onSubmit" });
 
 	const [mensage, setMensage] = useState("");
-	const [success, setSuccess] = useState(false);
+	const [success, setSuccess] = useState("");
 	const [failedAttempts, setFailedAttempts] = useState(0);
 	const [successVisible, setSuccessVisible] = useState(false);
 	const [lockUntil, setLockUntil] = useState<number | null>(null);
 
+	const [isDisabled, setDisabled] = useState(false);
+
 	const navigateToHome = useCallback(() => { navigation.navigate("MainTabs"); }, [navigation]);
+
+	const closeSuccessNotification = useCallback(() => {
+		setSuccessVisible(false);
+		if (success === "success") {
+			navigateToHome();
+		}
+	}, [success, navigateToHome]);
+
 
 	const handleLogin = useCallback(
 		async (data: MapLogin) => {
+			setDisabled(true);
+			setSuccess("loading");
+			setMensage("Carregando dados");
+			setSuccessVisible(true);
 
 			if (lockUntil && Date.now() < lockUntil) {
 				const remainingMs = lockUntil - Date.now();
 				const seconds = Math.ceil(remainingMs / 1000);
-
-				setSuccess(false);
-				setMensage(`Muitas tentativas de login. Tente novamente em ${seconds} segundos.`);
-				setSuccessVisible(true);
+				setSuccessVisible(false);
+				setTimeout(() => {
+					setSuccess("error");
+					setMensage(`Muitas tentativas de login. Tente novamente em ${seconds} segundos.`);
+					setSuccessVisible(true);
+				}, 300);
+				setDisabled(false);
+				return;
 			}
 
 			try {
@@ -58,35 +76,38 @@ function useLogin() {
 				setFailedAttempts(0);
 				setLockUntil(null);
 
-				setSuccess(true);
-				setMensage(response?.data?.message ?? "Login realizado com sucesso");
-				setSuccessVisible(true);
+				setSuccessVisible(false);
+				setTimeout(() => {
+					setSuccess("success");
+					setMensage(response?.data?.message ?? "Login realizado com sucesso");
+					setSuccessVisible(true);
+				}, 300);
 
-				setTimeout(navigateToHome, 800);
 			} catch (error: any) {
-				
 				const attempts = failedAttempts + 1;
 				setFailedAttempts(attempts);
-				setSuccess(false);
 
-				if (attempts >= 5) {
-					const until = Date.now() + 1 * 60 * 1000;
-					setLockUntil(until);
-					setMensage("Muitas tentativas de login. Tente novamente em 1 minuto.");
-				} else {
-					const serverMessage = error?.response?.data?.message as string | undefined;
-					setMensage(serverMessage ?? "Erro ao fazer login. Tente novamente.");
-				}
-				setSuccessVisible(true);
+				setSuccessVisible(false);
+				setTimeout(() => {
+					setSuccess("error");
+					if (attempts >= 5) {
+						const until = Date.now() + 1 * 60 * 1000;
+						setLockUntil(until);
+						setMensage("Muitas tentativas de login. Tente novamente em 1 minuto.");
+					} else {
+						const serverMessage = error?.response?.data?.message as string | undefined;
+						setMensage(serverMessage ?? "Erro ao fazer login. Tente novamente.");
+					}
+					setSuccessVisible(true);
+				}, 300);
+
 				console.log("Login error:", error);
+			} finally {
+				setDisabled(false);
 			}
 		},
 		[failedAttempts, lockUntil, login, navigateToHome]
 	);
-
-	const closeSuccessNotification = useCallback(() => {
-		setSuccessVisible(false);
-	}, []);
 
 	const rules = {
 		email: {
@@ -103,6 +124,7 @@ function useLogin() {
 		control,
 		errors,
 		success,
+		isDisabled,
 		handleLogin,
 		handleSubmit,
 		mensage,

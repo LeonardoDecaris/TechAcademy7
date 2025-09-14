@@ -11,7 +11,7 @@ import useSignUp from '@/src/hooks/hookAuth/useSignUp';
 import InputAuth from '@/src/components/form/InputAuth';
 import { ButtonPadrao } from '@/src/components/form/Buttons';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
-import AlertNotioncation from '@/src/components/modal/AlertNotioncation';
+import AlertNotification from '@/src/components/modal/AlertNotification';
 
 type NavigationProp = NativeStackNavigationProp<RootStackParamList>;
 
@@ -25,7 +25,7 @@ const SignUp = () => {
 	
 	const insets = useSafeAreaInsets();
 	const navigation = useNavigation<NavigationProp>();
-	const { control, handleSubmit, rules, handleSignUp, closeSuccessNotification, success, successVisible, notification } = useSignUp();
+	const { control, handleSubmit, rules, handleSignUp, closeSuccessNotification, status, successVisible, mensage } = useSignUp();
 	
 	const goLogin = useCallback(() => navigation.navigate('Login'), [navigation]);
 	const onSubmit = useCallback(() => handleSubmit(handleSignUp)(), [handleSubmit, handleSignUp]);
@@ -37,6 +37,13 @@ const SignUp = () => {
 				showsVerticalScrollIndicator={false}
 				keyboardShouldPersistTaps="handled"
 			>
+				<AlertNotification
+					visible={successVisible}
+					status={status as "success" | "error" | "loading"}
+					messagem={mensage}
+					onDismiss={closeSuccessNotification}
+				/>
+
 				<View className={headerWrapperStyle}>
 					<Text className={pageTitleStyle}>Cadastre-se</Text>
 					<Text className={pageSubtitleStyle}>Vamos começar</Text>
@@ -108,12 +115,6 @@ const SignUp = () => {
 					typeButton='normal'
 					classname='w-full my-[20px]'
 					onPress={onSubmit}
-				/>
-				<AlertNotioncation
-					visible={successVisible}
-					status={success}
-					messagem={notification}
-					onDismiss={closeSuccessNotification}
 				/>
 				<View className={footerWrapperStyle}>
 					<TouchableOpacity onPress={goLogin}>

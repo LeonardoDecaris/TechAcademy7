@@ -13,10 +13,10 @@ import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { ButtonPadrao } from '@/src/components/form/Buttons';
 import AcessoRapidoPerfil from '@/src/components/base/AcessoRapidoPerfil';
 
-import AlertDeleteUser from '@/src/components/modal/AlterDeleteUser';
 import useDeleteUsuario from '@/src/hooks/hookUser/useDeleteUsuario';
 import useGetUserData from '@/src/hooks/hookUser/useGetUserData';
 import useGetVehicleData from '@/src/hooks/hookVehicle/useGetVehicleData';
+import ModalConfirmation from '@/src/components/modal/ModalConfirmation';
 
 type NavigationProp = NativeStackNavigationProp<RootStackParamList>;
 
@@ -27,10 +27,10 @@ const logoInitialStyle = 'rounded-full bg-gray-200 items-center justify-center';
 const avatarStyle = 'w-28 h-28 absolute -bottom-[90px] left-1/2 transform -translate-x-1/2 -translate-y-1/2 rounded-full';
 
 const Profile = () => {
-	
+
 	const insets = useSafeAreaInsets();
 	const containerStyle = useMemo(() => ({ flex: 1, backgroundColor: '#FFFFFF', paddingHorizontal: 10, paddingTop: insets.top + 10 }), [insets.top]);
-	
+
 	const { logout } = useAuth();
 	const navigation = useNavigation<NavigationProp>()
 
@@ -148,16 +148,19 @@ const Profile = () => {
 					/>
 				</View>
 
-				<AlertDeleteUser
+				<ModalConfirmation
+					mode='cancel_contract'
 					visible={deletingAccount}
-					onConfirm={deleteUsuario}
+					loading={loggingOut}
+					onConfirm={deleteUsuario}	
 					onCancel={() => setDeletingAccount(false)}
 				/>
-				<LogoutModal
+				<ModalConfirmation
+					mode='logout'
 					visible={modalVisible}
-					loading={loggingOut}
-					onCancel={() => setModalVisible(false)}
 					onConfirm={handleConfirmLogout}
+					onCancel={() => setModalVisible(false)}
+					loading={loggingOut}
 				/>
 			</ScrollView >
 		</View >

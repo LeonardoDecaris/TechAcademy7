@@ -17,7 +17,7 @@ type NavigationProp = NativeStackNavigationProp<RootStackParamList>
 
 function NewPassword() {
 	const navigation = useNavigation<NavigationProp>()
-	const { control, handleSubmit, rules, handleForgotPassword, success, notification, successVisible, closeSuccessNotification, } = useForgotPassword()
+	const { control, handleSubmit, rules, handleForgotPassword, success, notification, successVisible, closeSuccessNotification, loading } = useForgotPassword()
 
 	const styleSubTitle = 'text-center text-sm text-black/80 font-medium';
 	const styleTitle = 'text-[48px] text-black text-center font-bold';
@@ -60,6 +60,7 @@ function NewPassword() {
 				typeButton='normal'
 				classname='w-full my-[20px]'
 				onPress={handleSubmit(handleForgotPassword)}
+				loading={loading}
 			/>
 
 			<AlertNotioncation

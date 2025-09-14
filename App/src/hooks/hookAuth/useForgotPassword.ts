@@ -7,6 +7,7 @@ import { validarPassword } from "@/src/utils/Validacao";
 import { RootStackParamList } from "@/src/navigation/Routes";
 import { useRoute, useNavigation } from "@react-navigation/native";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
+import { AxiosError } from "axios";
 
 type ForgotPasswordRoute = RouteProp<RootStackParamList, "ForgotPassword">;
 type NavigationProp = NativeStackNavigationProp<RootStackParamList>;
@@ -31,29 +32,32 @@ function useForgotPassword() {
     defaultValues: { token: tokenParam ?? "" },
   });
 
-  const [success, setSuccess] = useState(false);
-  const [notification, setNotification] = useState("");
-  const [successVisible, setSuccessVisible] = useState(false);
+  const [status, setStatus] = useState<"success" | "error" | "loading">("success");
+  const [message, setMessage] = useState("");
+  const [notificationVisible, setNotificationVisible] = useState(false);
+  const [loading, setLoading] = useState(false);
 
   const passwordValue = watch("password");
 
+  const closeNotification = useCallback(() => {
+    setNotificationVisible(false);
+  if (status === "success") {
+      navigation.navigate("Login");
+    }
+  }, [status, navigation]);
+
   const handleForgotPassword = useCallback(
     async (data: ForgotPassword) => {
+      setLoading(true);
+      setStatus("loading");
+      setMessage("Verificando dados...");
+      setNotificationVisible(true);
+
       try {
         const tokenToUse = tokenParam || data.token;
 
-        if (!email || !cpf) {
-          setSuccess(false);
-          setNotification("E-mail e CPF não informados. Volte e solicite novamente.");
-          setSuccessVisible(true);
-          return;
-        }
-
-        if (!tokenToUse) {
-          setSuccess(false);
-          setNotification("Token Não informado. Volte e solicite novamente.");
-          setSuccessVisible(true);
-          return;
+        if (!email || !cpf || !tokenToUse) {
+          throw new Error("Dados insuficientes. Por favor, solicite a redefinição novamente.");
         }
 
         const res = await http.post("reset-password", {
@@ -63,33 +67,35 @@ function useForgotPassword() {
           newPassword: data.password,
         });
 
-        const backendMessage =
-          res?.data?.message || "Senha redefinida com sucesso.";
-
-        setSuccess(true);
-        setNotification(backendMessage);
-        setSuccessVisible(true);
-
+        setNotificationVisible(false);
         setTimeout(() => {
-          navigation.navigate("Login");
-        }, 800);
-      } catch (error: any) {
+          setStatus("success");
+          setMessage(res?.data?.message || "Senha redefinida com sucesso.");
+          setNotificationVisible(true);
+        }, 300);
 
-        const backendMessage =
-          error?.response?.data?.message ||
-          "Erro ao redefinir senha. Verifique suas informações.";
+      } catch (err) {
+        const error = err as AxiosError<{ message?: string }> | Error;
+        let errorMessage: string;
 
-        setSuccess(false);
-        setNotification(backendMessage);
-        setSuccessVisible(true);
+        if ('isAxiosError' in error && error.isAxiosError) {
+          errorMessage = error.response?.data?.message || "Erro ao redefinir senha. Verifique suas informações.";
+        } else {
+          errorMessage = error.message;
+        }
+
+        setNotificationVisible(false);
+        setTimeout(() => {
+          setStatus("error");
+          setMessage(errorMessage);
+          setNotificationVisible(true);
+        }, 300);
+      } finally {
+        setLoading(false);
       }
     },
     [email, cpf, tokenParam, navigation]
   );
-
-  const closeSuccessNotification = useCallback(() => {
-    setSuccessVisible(false);
-  }, []);
 
   const rules = {
     token: !tokenParam ? { required: "Token é obrigatório" } : undefined,
@@ -108,11 +114,12 @@ function useForgotPassword() {
     rules,
     control,
     handleSubmit,
+    loading,
     errors,
-    success,
-    notification,
-    successVisible,
-    closeSuccessNotification,
+    status,
+    message,
+    notificationVisible,
+    closeNotification,
     handleForgotPassword,
     showTokenField: !tokenParam,
   };

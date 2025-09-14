@@ -97,3 +97,28 @@ export function maskCpf(value: string = ''): string {
     11
   )}`;
 }
+
+/**
+ * Formata uma data/hora para o padrão brasileiro.
+ * @param dateInput Data em string ou Date
+ * @param options Define se retorna 'data', 'hora' ou 'dataHora'
+ * @returns string formatada ou '--'
+ */
+export function formatDateTime(
+  dateInput?: string | Date | null,
+  options: 'data' | 'hora' | 'dataHora' = 'dataHora'
+): string {
+  if (!dateInput) return '--';
+  const date = new Date(dateInput);
+  if (isNaN(date.getTime())) return '--';
+
+  const dia = String(date.getDate()).padStart(2, '0');
+  const mes = String(date.getMonth() + 1).padStart(2, '0');
+  const ano = date.getFullYear();
+  const hora = String(date.getHours()).padStart(2, '0');
+  const min = String(date.getMinutes()).padStart(2, '0');
+
+  if (options === 'data') return `${dia}/${mes}/${ano}`;
+  if (options === 'hora') return `${hora}:${min}`;
+  return `${dia}/${mes}/${ano} ${hora}:${min}`;
+}

@@ -2,12 +2,13 @@ import { useCallback, useState } from "react";
 
 import http from "@/src/service/httpAxios";
 
-import { set, useForm } from "react-hook-form";
+import { useForm } from "react-hook-form";
 import { useAuth } from "@/src/context/AuthContext";
 
 import { useNavigation } from '@react-navigation/native';
 import { RootStackParamList } from '@/src/navigation/Routes';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
+import { AxiosError } from "axios";
 
 type NavigationProp = NativeStackNavigationProp<RootStackParamList>;
 interface Vehicle {
@@ -23,18 +24,30 @@ interface Vehicle {
 function useRegisterVehicle() {
 
     const { userId } = useAuth();
-    const { control, handleSubmit,setValue, formState: { errors }, watch } = useForm<Vehicle>({ mode: "onSubmit", });
+    const { control, handleSubmit, setValue, formState: { errors }, watch } = useForm<Vehicle>({ mode: "onSubmit", });
     const navigation = useNavigation<NavigationProp>();
 
-    const [success, setSuccess] = useState(false);
-    const [notification, setNotification] = useState("");
-    const [successVisible, setSuccessVisible] = useState(false);
+    const [status, setStatus] = useState<"success" | "error" | "loading">("success");
+    const [message, setMessage] = useState("");
+    const [notificationVisible, setNotificationVisible] = useState(false);
+    const [loading, setLoading] = useState(false);
 
     const handleNavigation = { profile: () => navigation.navigate('MainTabs', { screen: 'Profile' }) }
 
+    const closeNotification = () => {
+        setNotificationVisible(false);
+        if (status === "success") {
+            handleNavigation.profile();
+        }
+    }
+
     const handleEditar = useCallback(
         async (data: Vehicle) => {
-            console.log("data.imagemVeiculo_id:", data.imagemVeiculo_id);
+            setLoading(true);
+            setStatus("loading");
+            setMessage("Cadastrando veículo...");
+            setNotificationVisible(true);
+
             try {
                 await http.post(`/usuario/${userId}/veiculo`, {
                     marca: data.marca,
@@ -46,23 +59,27 @@ function useRegisterVehicle() {
                     imagemVeiculo_id: data.imagemVeiculo_id,
                 });
 
-                setSuccess(true);
-                setNotification("Veículo cadastrado com sucesso!");
-                setSuccessVisible(true);
-
+                setNotificationVisible(false);
                 setTimeout(() => {
-                    handleNavigation.profile();
-                }, 800);
-            } catch (error) {
-                setSuccess(false);
-                setNotification("Erro ao Cadastra o veiculo");
-                setSuccessVisible(true);
-            }
-        }, []);
+                    setStatus("success");
+                    setMessage("Veículo cadastrado com sucesso!");
+                    setNotificationVisible(true);
+                    setTimeout(handleNavigation.profile, 1000);
+                }, 300);
 
-    const closeSuccessNotification = () => {
-        setSuccessVisible(false);
-    }
+            } catch (err) {
+                const error = err as AxiosError<{ message?: string }>;
+                setNotificationVisible(false);
+                setTimeout(() => {
+                    setStatus("error");
+                    const serverMessage = error.response?.data?.message;
+                    setMessage(serverMessage || "Erro ao cadastrar o veículo.");
+                    setNotificationVisible(true);
+                }, 300);
+            } finally {
+                setLoading(false);
+            }
+        }, [userId, handleNavigation.profile]);
 
     const rules = {
         marca: {
@@ -90,13 +107,14 @@ function useRegisterVehicle() {
         control,
         handleSubmit,
         handleEditar,
-        success,
-        notification,  
-        successVisible,
+        status,
+        message,
+        notificationVisible,
         errors,
         setValue,
-        closeSuccessNotification,
-        watch
+        closeNotification,
+        watch,
+        loading,
     };
 }
 

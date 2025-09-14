@@ -23,14 +23,21 @@ interface imagemCarga {
   imgUrl: string;
 }
 
-interface carga {
-  id_carga: number;
+interface tipo {
+  id_tipo: number;
   nome: string;
-  descricao: string;
+}
+interface carga {
+  nome: string;
   peso: string;
+  id_carga: number;
+  descricao: string;
+  valor_carga: string;
   imagemCarga_id: number;
+  tipoCarga_id: number;
 
   imagemCarga: imagemCarga;
+  tipoCarga: tipo;
 }
 
 interface status {
