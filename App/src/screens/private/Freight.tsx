@@ -8,6 +8,7 @@ import CardCargo from '@/src/components/cards/CardCargo';
 import { RootStackParamList } from '@/src/navigation/Routes';
 import useFreight from '@/src/hooks/useFreight';
 import { calculateFreightDistance, useGeoLocation } from '@/src/hooks/geoLocalizacao';
+import AlertNotification from '@/src/components/modal/AlertNotification';
 
 interface CardCargaProps {
     nome?: string;
@@ -25,7 +26,6 @@ interface CardCargaProps {
 }
 
 type FreightItem = CardCargaProps & { id: string; };
-
 type NavigationProp = NativeStackNavigationProp<RootStackParamList, 'Freight'>;
 
 const styles = {
@@ -116,8 +116,7 @@ const LoadingIndicator = () => (
 );
 
 const Freight = () => {
-
-    const { freightData, getFreightDado, isLoading } = useFreight();
+    const { freightData, getFreightDado, isLoading, closeSuccessNotification } = useFreight();
     const navigation = useNavigation<NavigationProp>();
     const insets = useSafeAreaInsets();
 
@@ -128,21 +127,27 @@ const Freight = () => {
 
     const dataBase = useMemo<FreightItem[]>(() => {
         if (!Array.isArray(freightData)) return [];
-        return freightData.map(f => ({
-            id: String(f.id_frete),
-            saida: f.saida,
-            destino: f.destino,
-            nome: f.carga?.nome,
-            prazo: Number(f.prazo),
-            peso: String(f.carga?.peso),
-            tipo: f.carga?.tipoCarga?.nome,
-            valor: String(f.carga?.valor_carga),
-            logoEmpresa: f.empresa?.imagemEmpresa?.imgUrl,
-            imagemCarga: f.carga?.imagemCarga?.imgUrl,
-            valorFrete: String(f.valor_frete),
-            descricao: f.carga?.descricao,
-            distanciaDestino: calculateFreightDistance(f.saida, f.destino),
-        }));
+        return freightData
+            .filter(f => f.status?.id_status !== 5)
+            .map(f => ({
+                id: String(f.id_frete),
+                saida: f.saida,
+                destino: f.destino,
+                nome: f.carga?.nome,
+                prazo: Number(f.prazo),
+                peso: String(f.carga?.peso),
+                tipo: f.carga?.tipoCarga?.nome,
+                valor: String(f.carga?.valor_carga),
+                logoEmpresa: f.empresa?.imagemEmpresa?.imgUrl,
+                imagemCarga: f.carga?.imagemCarga?.imgUrl,
+                valorFrete: String(f.valor_frete),
+                descricao: f.carga?.descricao,
+                distanciaDestino: calculateFreightDistance(f.saida, f.destino),
+                nomeEmpresa: f.empresa?.nome,
+                tipoEmpresa: f.empresa?.tipo,
+                avaliacao: f.empresa?.avaliacao,
+                imagemEmpresa: f.empresa?.imagemEmpresa?.imgUrl,
+            }));
     }, [freightData]);
 
     const filteredData = useMemo<FreightItem[]>(() => {
@@ -165,7 +170,7 @@ const Freight = () => {
     const handleRadiusToggle = useCallback(() => {
         setRadiusKm(r => (r === 50 ? 100 : r === 100 ? 200 : r === null ? 50 : null));
     }, []);
-    
+
     const onRefresh = useCallback(async () => {
         setRefreshing(true);
         setSearchQuery('');
@@ -190,11 +195,18 @@ const Freight = () => {
         </View>
     ), [locError, dataBase.length]);
 
-
     const isInitialLoading = isLoading && !refreshing && dataBase.length === 0;
 
     return (
         <View className={styles.containerBase} style={{ paddingTop: insets.top + 10 }}>
+            <AlertNotification
+                status='loading'
+                title='Carregando'
+                messagem='Carregando dados'
+                visible={isLoading}
+                onDismiss={closeSuccessNotification}
+                topOffset={20}
+            />
             <FreightHeader />
             <SearchBar query={searchQuery} onSearch={handleSearch} />
             <FilterControls

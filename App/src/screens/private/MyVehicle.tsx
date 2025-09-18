@@ -17,14 +17,14 @@ const driverLabelStyle = 'text-sm font-semibold text-black/60';
 const driverCardStyle = 'w-full bg-white rounded-xl p-2.5 shadow-[0px_4px_4px_rgba(0,0,0,0.25)]';
 
 const MyVehicle = () => {
-
-	const { userData, getUserData } = useGetUserData();
+	
 	const [refreshing, setRefreshing] = useState(false);
 	const [modalVisible, setModalVisible] = useState(false);
-
+	
+	const { userData, getUserData } = useGetUserData();
 	const { getVehicleData, veiculo } = useGetVehicleData();
-	const { deleteVehicle, closeSuccessNotification, mensage, success, successVisible } = useDeleteVehicle();
 	const { getDados, dadosFrete } = useGetFreightConfirm(veiculo?.id_caminhoneiro || 0);
+	const { deleteVehicle, closeSuccessNotification, mensage, success, successVisible } = useDeleteVehicle();
 
 
 	const imagemUrl = useMemo(() => (

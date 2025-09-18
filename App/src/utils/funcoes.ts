@@ -1,7 +1,7 @@
 // Centralized constants for maintainability
 const CONSTANTS = {
   INITIALS: {
-    DEFAULT: 'UN', // Default for empty/invalid inputs
+    DEFAULT: '', // Default for empty/invalid inputs
     MAX_LENGTH: 2, // Maximum length of initials
   },
   DISPLAY_NAME: {
@@ -108,9 +108,9 @@ export function formatDateTime(
   dateInput?: string | Date | null,
   options: 'data' | 'hora' | 'dataHora' = 'dataHora'
 ): string {
-  if (!dateInput) return '--';
+  if (!dateInput) return 'sem horario';
   const date = new Date(dateInput);
-  if (isNaN(date.getTime())) return '--';
+  if (isNaN(date.getTime())) return 'sem horario';
 
   const dia = String(date.getDate()).padStart(2, '0');
   const mes = String(date.getMonth() + 1).padStart(2, '0');

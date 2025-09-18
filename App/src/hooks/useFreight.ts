@@ -82,6 +82,10 @@ function useFreight() {
   const [isLoading, setIsLoading] = useState(false);
   const [successVisible, setSuccessVisible] = useState(false);
 
+  const closeSuccessNotification = useCallback(() => {
+    setSuccessVisible(false);
+  }, []);
+
   const getFreightDado = useCallback(async () => {
 
     setMensage("");
@@ -101,10 +105,6 @@ function useFreight() {
       setIsLoading(false);
     }
 
-  }, []);
-
-  const closeSuccessNotification = useCallback(() => {
-    setSuccessVisible(false);
   }, []);
 
   return {

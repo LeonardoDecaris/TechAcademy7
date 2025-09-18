@@ -28,11 +28,12 @@ interface FieldConfig {
 
 const RegisterVehicle = () => {
 
-    const { control, handleSubmit, rules, handleEditar, message, status, notificationVisible, closeNotification, setValue } = useRegisterVehicle();
     const { uploadImage, loading, statusSuccess } = useImagemVehicle();
-    const [selectedImage, setSelectedImage] = useState<string | null>(null);
+    const { control, handleSubmit, rules, handleEditar, message, status, notificationVisible, closeNotification, setValue } = useRegisterVehicle();
+
     const [isSaving, setIsSaving] = useState(false);
     const [imageUploading, setImageUploading] = useState(false);
+    const [selectedImage, setSelectedImage] = useState<string | null>(null);
 
     const requestPermission = useCallback(async (type: 'camera' | 'gallery') => {
         const result = type === 'camera'

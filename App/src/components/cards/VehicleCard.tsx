@@ -9,6 +9,7 @@ import RegisterVehicle from "@/src/screens/private/RegisterVehicle";
 type NavigationProp = NativeStackNavigationProp<RootStackParamList>;
 
 interface Props {
+	codigo?: number;
 	modelo?: string;
 	marca?: string;
 	ano?: string;
@@ -30,7 +31,7 @@ const VehicleCard = (props: Props) => {
 	return (
 		<TouchableOpacity {...(props.TypeButton ? { onPress: props.onPress } : {activeOpacity: 1})} className="w-full flex-row justify-between px-2.5 pb-3 pt-5 bg-white rounded-2xl shadow-[0_2px_6px_rgba(0,0,0,0.35)]">
 
-			{!props.modelo && !props.marca && !props.ano && !props.placa && !props.imagem ? (
+			{!props.codigo ? (
 				<View className="flex-1 items-center justify-center">
 					<Text className="text-[16px] font-bold text-black/60 pb-2">Não tem Veiculo Cadastrado</Text>
 					<ButtonPadrao

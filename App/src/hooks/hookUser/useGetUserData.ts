@@ -34,8 +34,9 @@ function useGetUserData() {
   const [loading, setLoading] = useState(false);
 
   const getUserData = useCallback(async () => {
+
     if (!userId) {
-      console.error("User ID is not available for getUserData");
+      console.warn("User ID is not available.");
       return;
     }
 
@@ -47,8 +48,8 @@ function useGetUserData() {
     try {
       const { data } = await http.get<User>(`usuario/${userId}`);
       setUserData(data);
-
       setNotificationVisible(false);
+      console.log('estou aqui')
     } catch (err) {
       const error = err as AxiosError;
       console.error("Erro ao buscar dados do usuário:", error);

@@ -1,13 +1,13 @@
 import { useCallback, useState } from "react";
 import http from "../service/httpAxios";
 
+import { useNavigation } from "@react-navigation/core";
 import { RootStackParamList } from "@/src/navigation/Routes";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
-import { useNavigation } from "@react-navigation/core";
 
 type NavigationProp = NativeStackNavigationProp<RootStackParamList>;
 
-function useConfirmFreight() {
+function useConcluirFreight() {
     
     const navigation = useNavigation<NavigationProp>();
 
@@ -19,23 +19,19 @@ function useConfirmFreight() {
 
     const closeSuccessNotification = useCallback(() => {
         setSuccessVisible(false);
-        if (success === "success") {
-            handleNavigation.profile();
-        }
+        if (success === "success") { handleNavigation.profile(); }
     }, [success]);
 
-    const confirmFreight = useCallback(async (id: string, idCaminhoneiro?: number) => {
+    const concluirFrete = useCallback(async (id: string,) => {
         setSuccess("loading");
         setMensage("Confirmando frete");
         setSuccessVisible(true);
 
         try {
-            if (!idCaminhoneiro) {
-                throw new Error("Caminhoneiro ID is required");
-            }
-
             await http.put(`/frete/${id}`, {
-                caminhoneiro_id: idCaminhoneiro,
+                status_id: 5,
+                caminhoneiro_id: null,
+                data_chegada: new Date().toISOString(),
             });
 
             setSuccessVisible(false);
@@ -57,7 +53,7 @@ function useConfirmFreight() {
     }, []);
 
     return {
-        confirmFreight,
+        concluirFrete,
         mensage,
         success,
         successVisible,
@@ -65,4 +61,4 @@ function useConfirmFreight() {
     }
 }
 
-export default useConfirmFreight;
+export default useConcluirFreight;
