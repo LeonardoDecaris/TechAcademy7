@@ -106,7 +106,7 @@ export const deleteCaminhoneiro = async (req: Request<{ id: string }>, res: Resp
                     imagem.imgUrl.replace(/^[\\/]/, '')
                 );
                 if (fs.existsSync(imagePath)) {
-                    try { fs.unlinkSync(imagePath); } catch { /* ignora erro */ }
+                    try { fs.unlinkSync(imagePath); } catch {}
                 }
             }
             if (imagem) await imagem.destroy({ transaction: t });

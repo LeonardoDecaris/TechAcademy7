@@ -6,6 +6,7 @@ import { useNavigation } from "@react-navigation/native";
 import { RootStackParamList } from "@/src/navigation/Routes";
 import { validarCPF, validarEmail } from "@/src/utils/Validacao";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
+import { AxiosError } from "axios";
 
 type NavigationProp = NativeStackNavigationProp<RootStackParamList>;
 
@@ -15,20 +16,25 @@ interface RequestNewPassword {
 }
 
 /**
- * Custom hook to manage the password reset request form and submission.
- * @returns An object containing form control, submission handlers, and notification state.
+ * Hook responsável por gerenciar o formulário de solicitação de redefinição de senha.
+ * @returns Objeto com regras, controles, handlers de envio e estado de notificações.
  */
 function useRequestNewpassword() {
   const navigation = useNavigation<NavigationProp>();
 
   const { control, handleSubmit, formState: { errors } } = useForm<RequestNewPassword>({ mode: "onSubmit" });
-  
-  const [success, setSuccess] = useState(false);
-  const [notification, setNotification] = useState("");
-  const [successVisible, setSuccessVisible] = useState(false);
 
+  const [status, setStatus] = useState("");
+  const [message, setMessage] = useState("");
+  const [notificationVisible, setNotificationVisible] = useState(false);
+  const [loading, setLoading] = useState(false);
 
-  const handleRequestNewPassword = useCallback( async (data: RequestNewPassword) => {
+  const handleRequestNewPassword = useCallback(
+    async (data: RequestNewPassword) => {
+      setLoading(true);
+      setStatus("loading");
+      setMessage("Enviando solicitação...");
+      setNotificationVisible(true);
 
       try {
         const res = await http.post("request-password-reset", {
@@ -36,34 +42,48 @@ function useRequestNewpassword() {
           cpf: data.cpf,
         });
 
-
+        const backendMessage = res?.data?.message || "Solicitação registrada com sucesso.";
         const devToken = res?.data?.token as string | undefined;
-        setSuccess(true);
-        setNotification("Solicitação de nova senha enviada com sucesso!");
-        setSuccessVisible(true);
 
+        setNotificationVisible(false);
         setTimeout(() => {
-          navigation.navigate("ForgotPassword", { email: data.email, cpf: data.cpf, token: devToken });
-        }, 800);
+          setStatus("success");
+          setMessage(backendMessage);
+          setNotificationVisible(true);
 
-      } catch (error: any) {
-        setSuccess(false);
-        setNotification("Erro ao solicitar nova senha. Verifique suas informações.");
-        setSuccessVisible(true);
-        
-        console.log("[SolicitarNovaSenha] Erro na requisição", error);
+          setTimeout(() => {
+            navigation.navigate("ForgotPassword", {
+              email: data.email,
+              cpf: data.cpf,
+              token: devToken,
+            });
+          }, 1000);
+        }, 300);
+
+      } catch (err) {
+        const error = err as AxiosError<{ message?: string }>;
+        const backendMessage = error?.response?.data?.message || "Erro ao solicitar nova senha. Verifique os dados.";
+
+        setNotificationVisible(false);
+        setTimeout(() => {
+          setStatus("error");
+          setMessage(backendMessage);
+          setNotificationVisible(true);
+        }, 300);
+      } finally {
+        setLoading(false);
       }
     },
     [navigation]
   );
 
-  const closeSuccessNotification = useCallback(() => {
-    setSuccessVisible(false);
+  const closeNotification = useCallback(() => {
+    setNotificationVisible(false);
   }, []);
 
   const rules = {
     email: {
-      required: "Email é obrigatório",
+      required: "E-mail é obrigatório",
       validate: validarEmail,
     },
     cpf: {
@@ -77,11 +97,12 @@ function useRequestNewpassword() {
     control,
     handleSubmit,
     errors,
-    success,
-    notification,
-    successVisible,
-    closeSuccessNotification,
+    status,
+    message,
+    notificationVisible,
+    closeNotification,
     handleRequestNewPassword,
+    loading,
   };
 }
 

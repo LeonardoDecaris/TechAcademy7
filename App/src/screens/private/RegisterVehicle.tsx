@@ -7,6 +7,7 @@ import { ButtonPadrao, ButtonUpload } from '@/src/components/form/Buttons';
 import ErrorNotification from '@/src/components/modal/ErrorNotioncation';
 import useRegisterVehicle from '@/src/hooks/hookVehicle/useRegisterVehicle';
 import useImagemVehicle from '@/src/hooks/hookVehicle/useImagemVehicle';
+import AlertNotification from '@/src/components/modal/AlertNotification';
 
 const imageWrapperStyle = 'w-full py-5 flex-col gap-2 items-center';
 const imagePlaceholderStyle = 'w-full h-44 rounded-lg bg-gray-200 justify-center items-center';
@@ -27,11 +28,12 @@ interface FieldConfig {
 
 const RegisterVehicle = () => {
 
-    const { control, handleSubmit, rules, handleEditar, notification, success, successVisible, closeSuccessNotification, setValue } = useRegisterVehicle();
     const { uploadImage, loading, statusSuccess } = useImagemVehicle();
-    const [selectedImage, setSelectedImage] = useState<string | null>(null);
+    const { control, handleSubmit, rules, handleEditar, message, status, notificationVisible, closeNotification, setValue } = useRegisterVehicle();
+
     const [isSaving, setIsSaving] = useState(false);
     const [imageUploading, setImageUploading] = useState(false);
+    const [selectedImage, setSelectedImage] = useState<string | null>(null);
 
     const requestPermission = useCallback(async (type: 'camera' | 'gallery') => {
         const result = type === 'camera'
@@ -98,7 +100,6 @@ const RegisterVehicle = () => {
             await handleSubmit(handleEditar)();
         } catch (error) {
             console.error('Erro no registro:', error);
-            alert('Ocorreu um erro ao registrar o veículo.');
         } finally {
             setIsSaving(false);
             setImageUploading(false);
@@ -131,12 +132,11 @@ const RegisterVehicle = () => {
                 keyboardShouldPersistTaps="handled"
             >
 
-                <AlertNotioncation
-                    visible={successVisible}
-                    status={success}
-                    messagem={notification}
-                    onDismiss={closeSuccessNotification}
-                    topOffset={10}
+                <AlertNotification
+                    visible={notificationVisible}
+                    status={status as "success" | "error" | "loading"}
+                    messagem={message}
+                    onDismiss={closeNotification}
                 />
 
                 <View className={imageWrapperStyle}>
@@ -168,12 +168,12 @@ const RegisterVehicle = () => {
 
 
                     <ErrorNotification
-						loading={loading}
-						statusSuccess={statusSuccess}
-						loadingText="Carregando imagem..."
-						successText="Imagem enviada com sucesso!"
-						errorText="Erro ao enviar imagem."
-					/>
+                        loading={loading}
+                        statusSuccess={statusSuccess}
+                        loadingText="Carregando imagem..."
+                        successText="Imagem enviada com sucesso!"
+                        errorText="Erro ao enviar imagem."
+                    />
 
                     <View className='flex-row justify-center gap-2'>
                         <ButtonUpload onPress={handlePickImage} title={selectedImage ? 'Trocar Foto' : 'Escolher Foto'} disabled={imageUploading} />
@@ -182,12 +182,12 @@ const RegisterVehicle = () => {
                 </View>
 
                 <View className={formWrapperStyle}>
-            {fieldConfigs.map((f) => (
+                    {fieldConfigs.map((f) => (
                         <InputAuth
-                key={f.id}
+                            key={f.id}
                             control={control}
-                rules={rules[f.name]}
-                name={f.name as any}
+                            rules={rules[f.name]}
+                            name={f.name as any}
                             id={f.id}
                             placeholder={f.placeholder}
                             label={f.label}
@@ -196,12 +196,12 @@ const RegisterVehicle = () => {
                         />
                     ))}
                     <View className='w-full flex-row justify-between'>
-            {smallFieldConfigs.slice(0, 2).map((f) => (
+                        {smallFieldConfigs.slice(0, 2).map((f) => (
                             <InputAuth
-                key={f.id}
+                                key={f.id}
                                 control={control}
-                rules={rules[f.name]}
-                name={f.name as any}
+                                rules={rules[f.name]}
+                                name={f.name as any}
                                 id={f.id}
                                 placeholder={f.placeholder}
                                 label={f.label}
@@ -212,12 +212,12 @@ const RegisterVehicle = () => {
                         ))}
                     </View>
                     <View className='w-full flex-row justify-between'>
-            {smallFieldConfigs.slice(2, 3).map((f) => (
+                        {smallFieldConfigs.slice(2, 3).map((f) => (
                             <InputAuth
-                key={f.id}
+                                key={f.id}
                                 control={control}
-                rules={rules[f.name]}
-                name={f.name as any}
+                                rules={rules[f.name]}
+                                name={f.name as any}
                                 id={f.id}
                                 placeholder={f.placeholder}
                                 label={f.label}

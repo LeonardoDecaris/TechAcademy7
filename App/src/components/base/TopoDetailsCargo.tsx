@@ -6,12 +6,24 @@ interface TopoDetailsCargoProps {
 	saida?: string;
 	tipo?: string;
 	peso?: string;
-	valor?: string;
-	valorFrete?: string;
+	valor?: string | number;
+	valorFrete?: string | number;
 	descricao?: string;
 }
 
-const TopoDetailsCargo = ({ nome, destino, saida, tipo, peso, valor, valorFrete, descricao }: TopoDetailsCargoProps) => {
+const formatBRL = (raw: string | number | undefined, mostrarSimbolo: boolean = true) => {
+	if (raw === undefined || raw === null || raw === '') return '0,00';
+	const cleaned = String(raw)
+		.replace(/[^0-9,.-]/g, '')
+		.replace(/\.(?=[0-9]{3}(?:\.|,|$))/g, '')
+		.replace(',', '.');
+	const num = Number(cleaned);
+	if (isNaN(num)) return '0,00';
+	const valor = num.toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+	return mostrarSimbolo ? `R$ ${valor}` : valor;
+};
+
+const TopoDetailsCargo = ({ nome, destino, saida, tipo, peso, valor, valorFrete }: TopoDetailsCargoProps) => {
 	const modeloStyle = "text-2xl font-bold";
 	const marcaStyle = "text-base font-semibold text-black/60";
 	const quilometragemStyle = "text-base font-semibold text-black/60 bg-[#D0EBBC] p-2 rounded-lg";
@@ -27,7 +39,7 @@ const TopoDetailsCargo = ({ nome, destino, saida, tipo, peso, valor, valorFrete,
 					<Text className={marcaStyle}>Destino: {destino || '-'}</Text>
 					{saida && <Text className="text-sm font-semibold text-black/50">Saída: {saida}</Text>}
 				</View>
-				<Text className={quilometragemStyle}>{tipo || '-'} <Text>{peso || ''}</Text></Text>
+				<Text className={quilometragemStyle}>{tipo || '-'} <Text>/ {peso || ''}t</Text></Text>
 			</View>
 
 			<View className="w-full py-5">
@@ -35,8 +47,8 @@ const TopoDetailsCargo = ({ nome, destino, saida, tipo, peso, valor, valorFrete,
 			</View>
 
 			<View className="flex-row justify-between w-full">
-				<Text className={legendaValorStyle}>Frete: <Text className={anoPlacaInternoStyle}>{'R$ ' +valorFrete || '-'}</Text></Text>
-				<Text className={legendaValorStyle}>Valor: <Text className={anoPlacaInternoStyle}>{'R$ ' + valor || '-'}</Text></Text>
+				<Text className={legendaValorStyle}>Frete: <Text className={anoPlacaInternoStyle}>{formatBRL(valorFrete)}</Text></Text>
+				<Text className={legendaValorStyle}>Valor: <Text className={anoPlacaInternoStyle}>{formatBRL(valor)}</Text></Text>
 			</View>
 		</View>
 	);

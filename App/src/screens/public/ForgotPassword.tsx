@@ -10,6 +10,7 @@ import InputAuth from '@/src/components/form/InputAuth';
 import { ButtonPadrao } from '@/src/components/form/Buttons';
 import useForgotPassword from '@/src/hooks/hookAuth/useForgotPassword';
 import AlertNotioncation from '@/src/components/modal/AlertNotioncation';
+import AlertNotification from '@/src/components/modal/AlertNotification';
 
 type NavigationProp = NativeStackNavigationProp<RootStackParamList>;
 
@@ -21,7 +22,7 @@ const pageSubtitleStyle = 'text-center text-base text-black/80 font-medium';
 
 const ForgotPassword = () => {
 	const navigation = useNavigation<NavigationProp>();
-	const { control, handleSubmit, rules, handleForgotPassword, success, notification, successVisible, closeSuccessNotification, showTokenField } = useForgotPassword();
+	const { control, handleSubmit, rules, handleForgotPassword, status, message, closeNotification, notificationVisible, showTokenField } = useForgotPassword();
 	const insets = useSafeAreaInsets();
 
 	const goStart = useCallback(() => navigation.navigate('Start'), [navigation]);
@@ -34,6 +35,14 @@ const ForgotPassword = () => {
 				showsVerticalScrollIndicator={false}
 				keyboardShouldPersistTaps='handled'
 			>
+
+				<AlertNotification
+					visible={notificationVisible}
+					status={status as "success" | "error" | "loading"}
+					messagem={message}
+					onDismiss={closeNotification}
+				/>
+
 				<View className={headerWrapperStyle}>
 					<Text className={pageTitleStyle}>Esqueci Minha Senha</Text>
 					<Text className={pageSubtitleStyle}>Vamos redefinir sua senha</Text>
@@ -84,13 +93,6 @@ const ForgotPassword = () => {
 						<Text className='font-medium'>Voltar para o inicio</Text>
 					</TouchableOpacity>
 				</View>
-
-				<AlertNotioncation
-					visible={successVisible}
-					status={success}
-					messagem={notification}
-					onDismiss={closeSuccessNotification}
-				/>
 			</ScrollView>
 		</KeyboardAvoidingView>
 	);

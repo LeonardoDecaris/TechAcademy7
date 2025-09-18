@@ -13,7 +13,7 @@ export const createUsuario = async (req: Request, res: Response) => {
         if (error instanceof Error) {
             return res.status(500).json({ message: error.message });
         }
-        return res.status(500).json({ message: 'Internal server error' });
+        return res.status(500).json({ message: 'Erro interno do servidor.' });
     }
 };
 
@@ -25,7 +25,7 @@ export const getAllUsuarios = async (req: Request, res: Response) => {
         if (error instanceof Error) {
             return res.status(500).json({ message: error.message });
         }
-        return res.status(500).json({ message: 'Internal server error' });
+        return res.status(500).json({ message: 'Erro interno do servidor.' });
     }
 };
 
@@ -39,13 +39,17 @@ export const getUsuarioById = async (req: Request, res: Response) => {
                 required: false
             }]
         });
-        if (!usuario) return res.status(404).json({ message: 'Usuário não encontrado.' });
+
+        if (!usuario) {
+            return res.status(404).json({ message: 'Usuário não encontrado.' });
+        }
+
         return res.status(200).json(usuario);
     } catch (error) {
         if (error instanceof Error) {
             return res.status(500).json({ message: error.message });
         }
-        return res.status(500).json({ message: 'Internal server error' });
+        return res.status(500).json({ message: 'Erro interno do servidor.' });
     }
 };
 
@@ -53,7 +57,7 @@ export const updateUsuario = async (req: Request, res: Response) => {
     try {
         const usuario = await Usuario.findByPk(req.params.id);
         if (!usuario) {
-            return res.status(404).json({ message: 'Usuario not found' });
+            return res.status(404).json({ message: 'Usuário não encontrado.' });
         }
         await usuario.update(req.body);
         return res.status(200).json(usuario);
@@ -61,7 +65,7 @@ export const updateUsuario = async (req: Request, res: Response) => {
         if (error instanceof Error) {
             return res.status(500).json({ message: error.message });
         }
-        return res.status(500).json({ message: 'Internal server error' });
+        return res.status(500).json({ message: 'Erro interno do servidor.' });
     }
 };
 
@@ -69,7 +73,7 @@ export const deleteUsuario = async (req: Request, res: Response) => {
     try {
         const usuario = await Usuario.findByPk(req.params.id);
         if (!usuario) {
-            return res.status(404).json({ message: 'Usuario not found' });
+            return res.status(404).json({ message: 'Usuário não encontrado.' });
         }
         await usuario.destroy();
         return res.status(204).send();
@@ -77,28 +81,28 @@ export const deleteUsuario = async (req: Request, res: Response) => {
         if (error instanceof Error) {
             return res.status(500).json({ message: error.message });
         }
-        return res.status(500).json({ message: 'Internal server error' });
+        return res.status(500).json({ message: 'Erro interno do servidor.' });
     }
 };
 
 export const requestPasswordReset = async (req: Request, res: Response) => {
     try {
-
         const { email, cpf } = req.body as { email?: string; cpf?: string };
+
         if (!email || !cpf) {
-            return res.status(400).json({ message: 'Email e CPF são obrigatórios.' });
+            return res.status(400).json({ message: 'E-mail e CPF são obrigatórios.' });
         }
 
         const usuario = await Usuario.findOne({ where: { email, cpf } });
         if (!usuario) {
-            return res.status(404).json({ message: 'Usuário não encontrado com esse email e CPF.' });
+            return res.status(404).json({ message: 'Usuário não encontrado com esse e-mail e CPF.' });
         }
 
         const expMinutes = Number(process.env.RESET_TOKEN_EXP_MIN ?? 15);
         const baseSecret = process.env.RESET_PASSWORD_SECRET || process.env.JWT_SECRET;
 
         if (!baseSecret) {
-            return res.status(500).json({ message: 'RESET_PASSWORD_SECRET não configurado.' });
+            return res.status(500).json({ message: 'Variável RESET_PASSWORD_SECRET não configurada.' });
         }
 
         const senhaHashAtual = (usuario as any).password || (usuario as any).senha;
@@ -110,26 +114,23 @@ export const requestPasswordReset = async (req: Request, res: Response) => {
             { expiresIn: `${expMinutes}m` }
         );
 
-        const response: any = { message: 'Solicitação registrada. Verifique seu email.' };
+        const response: any = { message: 'Solicitação registrada' };
         if (process.env.NODE_ENV !== 'production') {
             response.token = token;
             response.expiresAt = new Date(Date.now() + expMinutes * 60 * 1000);
         }
-        
-        return res.status(200).json(response);
 
+        return res.status(200).json(response);
     } catch (error) {
         if (error instanceof Error) {
             return res.status(500).json({ message: error.message });
         }
-
-        return res.status(500).json({ message: 'Internal server error' });
+        return res.status(500).json({ message: 'Erro interno do servidor.' });
     }
 };
 
 export const resetPassword = async (req: Request, res: Response) => {
     try {
-
         const { email, cpf, token, newPassword } = req.body as {
             email?: string;
             cpf?: string;
@@ -138,7 +139,7 @@ export const resetPassword = async (req: Request, res: Response) => {
         };
 
         if (!email || !cpf || !token || !newPassword) {
-            return res.status(400).json({ message: 'Email, CPF, token e nova senha são obrigatórios.' });
+            return res.status(400).json({ message: 'E-mail, CPF, token e nova senha são obrigatórios.' });
         }
 
         if (newPassword.length < 6) {
@@ -147,12 +148,12 @@ export const resetPassword = async (req: Request, res: Response) => {
 
         const usuario = await Usuario.findOne({ where: { email, cpf } });
         if (!usuario) {
-            return res.status(404).json({ message: 'Usuário não encontrado com esse email e CPF.' });
+            return res.status(404).json({ message: 'Usuário não encontrado com esse e-mail e CPF.' });
         }
 
         const baseSecret = process.env.RESET_PASSWORD_SECRET || process.env.JWT_SECRET;
         if (!baseSecret) {
-            return res.status(500).json({ message: 'RESET_PASSWORD_SECRET não configurado.' });
+            return res.status(500).json({ message: 'Variável RESET_PASSWORD_SECRET não configurada.' });
         }
 
         const senhaHashAtual = (usuario as any).password || (usuario as any).senha;
@@ -174,7 +175,6 @@ export const resetPassword = async (req: Request, res: Response) => {
         if (error instanceof Error) {
             return res.status(500).json({ message: error.message });
         }
-
-        return res.status(500).json({ message: 'Internal server error' });
+        return res.status(500).json({ message: 'Erro interno do servidor.' });
     }
 };

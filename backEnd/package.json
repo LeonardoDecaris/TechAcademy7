@@ -22,7 +22,8 @@
     "mysql2": "^3.14.3",
     "sequelize": "^6.37.7",
     "swagger-ui-express": "^5.0.1",
-    "yamljs": "^0.3.0"
+    "yamljs": "^0.3.0",
+    "zod": "^4.1.8"
   },
   "devDependencies": {
     "@types/bcrypt": "^6.0.0",

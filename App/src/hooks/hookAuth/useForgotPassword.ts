@@ -7,6 +7,7 @@ import { validarPassword } from "@/src/utils/Validacao";
 import { RootStackParamList } from "@/src/navigation/Routes";
 import { useRoute, useNavigation } from "@react-navigation/native";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
+import { AxiosError } from "axios";
 
 type ForgotPasswordRoute = RouteProp<RootStackParamList, "ForgotPassword">;
 type NavigationProp = NativeStackNavigationProp<RootStackParamList>;
@@ -18,8 +19,7 @@ interface ForgotPassword {
 }
 
 /**
- * Custom hook to manage the password reset form and submission.
- * @returns An object containing form control, submission handlers, notification state, and token field visibility.
+ * Hook para redefinir senha.
  */
 function useForgotPassword() {
   const route = useRoute<ForgotPasswordRoute>();
@@ -32,56 +32,70 @@ function useForgotPassword() {
     defaultValues: { token: tokenParam ?? "" },
   });
 
-  const [success, setSuccess] = useState(false);
-  const [notification, setNotification] = useState("");
-  const [successVisible, setSuccessVisible] = useState(false);
+  const [status, setStatus] = useState<"success" | "error" | "loading">("success");
+  const [message, setMessage] = useState("");
+  const [notificationVisible, setNotificationVisible] = useState(false);
+  const [loading, setLoading] = useState(false);
 
   const passwordValue = watch("password");
 
+  const closeNotification = useCallback(() => {
+    setNotificationVisible(false);
+  if (status === "success") {
+      navigation.navigate("Login");
+    }
+  }, [status, navigation]);
 
   const handleForgotPassword = useCallback(
     async (data: ForgotPassword) => {
+      setLoading(true);
+      setStatus("loading");
+      setMessage("Verificando dados...");
+      setNotificationVisible(true);
+
       try {
         const tokenToUse = tokenParam || data.token;
-        if (!email || !cpf) {
-          setSuccess(false);
-          setNotification("Email e CPF não informados. Volte e solicite novamente.");
-          setSuccessVisible(true);
-          return;
-        }
-        if (!tokenToUse) {
-          setSuccess(false);
-          setNotification("Informe o token enviado para seu email.");
-          setSuccessVisible(true);
-          return;
+
+        if (!email || !cpf || !tokenToUse) {
+          throw new Error("Dados insuficientes. Por favor, solicite a redefinição novamente.");
         }
 
-        await http.post("reset-password", {
+        const res = await http.post("reset-password", {
           email,
           cpf,
           token: tokenToUse,
           newPassword: data.password,
         });
 
-        setSuccess(true);
-        setNotification("Senha redefinida com sucesso!");
-        setSuccessVisible(true);
-
+        setNotificationVisible(false);
         setTimeout(() => {
-          navigation.navigate("Login");
-        }, 800);
-      } catch (error) {
-        setSuccess(false);
-        setNotification("Erro ao redefinir senha. Verifique suas informações.");
-        setSuccessVisible(true);
+          setStatus("success");
+          setMessage(res?.data?.message || "Senha redefinida com sucesso.");
+          setNotificationVisible(true);
+        }, 300);
+
+      } catch (err) {
+        const error = err as AxiosError<{ message?: string }> | Error;
+        let errorMessage: string;
+
+        if ('isAxiosError' in error && error.isAxiosError) {
+          errorMessage = error.response?.data?.message || "Erro ao redefinir senha. Verifique suas informações.";
+        } else {
+          errorMessage = error.message;
+        }
+
+        setNotificationVisible(false);
+        setTimeout(() => {
+          setStatus("error");
+          setMessage(errorMessage);
+          setNotificationVisible(true);
+        }, 300);
+      } finally {
+        setLoading(false);
       }
     },
     [email, cpf, tokenParam, navigation]
   );
-
-  const closeSuccessNotification = useCallback(() => {
-    setSuccessVisible(false);
-  }, []);
 
   const rules = {
     token: !tokenParam ? { required: "Token é obrigatório" } : undefined,
@@ -91,19 +105,21 @@ function useForgotPassword() {
     },
     confirmaSenha: {
       required: "Confirmação de senha é obrigatória",
-      validate: (value: string) => value === passwordValue || "As senhas não conferem",
-    }
+      validate: (value: string) =>
+        value === passwordValue || "As senhas não conferem",
+    },
   };
 
   return {
     rules,
     control,
     handleSubmit,
+    loading,
     errors,
-    success,
-    notification,
-    successVisible,
-    closeSuccessNotification,
+    status,
+    message,
+    notificationVisible,
+    closeNotification,
     handleForgotPassword,
     showTokenField: !tokenParam,
   };

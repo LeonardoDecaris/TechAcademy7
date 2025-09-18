@@ -1,7 +1,7 @@
 // Centralized constants for maintainability
 const CONSTANTS = {
   INITIALS: {
-    DEFAULT: 'UN', // Default for empty/invalid inputs
+    DEFAULT: '', // Default for empty/invalid inputs
     MAX_LENGTH: 2, // Maximum length of initials
   },
   DISPLAY_NAME: {
@@ -96,4 +96,29 @@ export function maskCpf(value: string = ''): string {
     9,
     11
   )}`;
+}
+
+/**
+ * Formata uma data/hora para o padrão brasileiro.
+ * @param dateInput Data em string ou Date
+ * @param options Define se retorna 'data', 'hora' ou 'dataHora'
+ * @returns string formatada ou '--'
+ */
+export function formatDateTime(
+  dateInput?: string | Date | null,
+  options: 'data' | 'hora' | 'dataHora' = 'dataHora'
+): string {
+  if (!dateInput) return 'sem horario';
+  const date = new Date(dateInput);
+  if (isNaN(date.getTime())) return 'sem horario';
+
+  const dia = String(date.getDate()).padStart(2, '0');
+  const mes = String(date.getMonth() + 1).padStart(2, '0');
+  const ano = date.getFullYear();
+  const hora = String(date.getHours()).padStart(2, '0');
+  const min = String(date.getMinutes()).padStart(2, '0');
+
+  if (options === 'data') return `${dia}/${mes}/${ano}`;
+  if (options === 'hora') return `${hora}:${min}`;
+  return `${dia}/${mes}/${ano} ${hora}:${min}`;
 }

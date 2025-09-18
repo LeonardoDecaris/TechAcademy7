@@ -3,6 +3,7 @@ import { useState, useCallback, useMemo } from "react";
 import http from "@/src/service/httpAxios";
 import { useAuth } from "@/src/context/AuthContext";
 import { getInitials, getDisplayName } from "@/src/utils/funcoes";
+import { AxiosError } from "axios";
 
 interface UserImage {
   id_imagem: number;
@@ -27,44 +28,46 @@ function useGetUserData() {
   const { userId } = useAuth();
   const [userData, setUserData] = useState<User>();
 
-  const [mensage, setMensage] = useState("");
-	const [success, setSuccess] = useState(false);
-	const [successVisible, setSuccessVisible] = useState(false);
+  const [status, setStatus] = useState<"success" | "error" | "loading">("success");
+  const [message, setMessage] = useState("");
+  const [notificationVisible, setNotificationVisible] = useState(false);
+  const [loading, setLoading] = useState(false);
 
   const getUserData = useCallback(async () => {
+
     if (!userId) {
-      throw new Error("User ID is not available");
+      console.warn("User ID is not available.");
+      return;
     }
 
-    setUserData(undefined);
-    setMensage("");
-    setSuccess(false);
-    setSuccessVisible(false);
-
-    const TIMEOUT_MS = 10000;
+    setLoading(true);
+    setStatus("loading");
+    setMessage("Carregando dados...");
+    setNotificationVisible(true);
 
     try {
-      const timeoutPromise = new Promise<never>((_, reject) =>
-        setTimeout(() => reject(new Error("TIMEOUT")), TIMEOUT_MS)
-      );
-      const requestPromise = http.get<User>(`usuario/${userId}`);
-      const { data } = await Promise.race([requestPromise, timeoutPromise]);
+      const { data } = await http.get<User>(`usuario/${userId}`);
       setUserData(data);
-    } catch (error: any) {
-      if (error?.message === "TIMEOUT") {
-        setMensage("Tempo excedido ao buscar dados do usuário.");
-      } else {
-        setMensage("Erro ao buscar dados do usuário.");
-      }
-      setSuccess(false);
-      setSuccessVisible(true);
+      setNotificationVisible(false);
+      console.log('estou aqui')
+    } catch (err) {
+      const error = err as AxiosError;
+      console.error("Erro ao buscar dados do usuário:", error);
+
+      setNotificationVisible(false);
+      setTimeout(() => {
+        setStatus("error");
+        setMessage("Erro ao carregar dados do usuário.");
+        setNotificationVisible(true);
+      }, 300);
+    } finally {
+      setLoading(false);
     }
-    
   }, [userId]);
 
-  const closeSuccessNotification = useCallback(() => {
-		setSuccessVisible(false);
-	}, []);
+  const closeNotification = useCallback(() => {
+    setNotificationVisible(false);
+  }, []);
 
   const iniciasNomeUsuario = useMemo(
     () => getInitials(userData?.nome ?? ""),
@@ -81,10 +84,11 @@ function useGetUserData() {
     iniciasNomeUsuario,
     nomeAbreviado,
     getUserData,
-    mensage,
-    success,
-    successVisible,
-    closeSuccessNotification,
+    loading,
+    status,
+    message,
+    notificationVisible,
+    closeNotification,
   };
 }
 

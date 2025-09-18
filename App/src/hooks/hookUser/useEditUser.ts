@@ -22,21 +22,38 @@ interface FormValuesEditarPerfil {
 
 /**
  * Custom hook to manage user profile editing form and submission.
- * @param userId - The ID of the user to edit.
  * @returns An object containing form control, submission handlers, and notification state.
  */
 function useEditarUsuario() {
   const navigation = useNavigation<NavigationProp>();
   const { control, handleSubmit, setValue, setError, formState: { errors } } = useForm<FormValuesEditarPerfil>({ mode: "onSubmit" });
   const { userId } = useAuth();
-  const [success, setSuccess] = useState(false);
-  const [notification, setNotification] = useState("");
-  const [successVisible, setSuccessVisible] = useState(false);
 
-  const handleNavigation = { profile: () => navigation.navigate('MainTabs', { screen: 'Profile' }) }
+  const [status, setStatus] = useState<"success" | "error" | "loading">("success");
+  const [message, setMessage] = useState("");
+  const [notificationVisible, setNotificationVisible] = useState(false);
+  const [loading, setLoading] = useState(false);
+
+  const handleNavigation = { profile: () => navigation.navigate('MainTabs', { screen: 'Profile' }) };
+
+  const navigateToProfile = useCallback(() => {
+    handleNavigation.profile();
+  }, [handleNavigation]);
+
+  const closeNotification = useCallback(async () => {
+    setNotificationVisible(false);
+    if (status === "success") {
+      navigateToProfile();
+    }
+  }, [navigateToProfile, status]);
 
   const handleEditar = useCallback(
     async (data: FormValuesEditarPerfil) => {
+      setLoading(true);
+      setStatus("loading");
+      setMessage("Atualizando dados...");
+      setNotificationVisible(true);
+
       try {
         await http.put(`usuario/${userId}`, {
           nome: data.nome,
@@ -47,35 +64,39 @@ function useEditarUsuario() {
           imagemUsuario_id: data.imagemUsuario_id || null,
         });
 
-        setSuccess(true);
-        setNotification("Dados atualizados com sucesso!");
-        setSuccessVisible(true);
+        setNotificationVisible(false);
+        setTimeout(() => {
+          setStatus("success");
+          setMessage("Dados atualizados com sucesso!");
+          setNotificationVisible(true);
+        }, 300);
 
-        setTimeout(handleNavigation.profile, 800);
-        
       } catch (err) {
         const error = err as AxiosError<{ errors?: Record<string, string>; message?: string }>;
 
-        const fieldErrors = error.response?.data?.errors;
-        if (fieldErrors && typeof fieldErrors === "object") {
-          Object.entries(fieldErrors).forEach(([field, message]) => {
-            setError(field as keyof FormValuesEditarPerfil, {
-              type: "server",
-              message: String(message),
-            });
-          });
-        }
-        setSuccess(false);
-        setNotification("Erro ao atualizar dados");
-        setSuccessVisible(false);
-      } 
-    },
-    [setError, userId]
-  );
+        setNotificationVisible(false);
+        setTimeout(() => {
+          setStatus("error");
+          const serverMessage = error.response?.data?.message;
+          setMessage(serverMessage || "Erro ao atualizar dados.");
+          setNotificationVisible(true);
 
-  const closeSuccessNotification = useCallback(() => {
-    setSuccessVisible(false);
-  }, []);
+          const fieldErrors = error.response?.data?.errors;
+          if (fieldErrors && typeof fieldErrors === "object") {
+            Object.entries(fieldErrors).forEach(([field, msg]) => {
+              setError(field as keyof FormValuesEditarPerfil, {
+                type: "server",
+                message: String(msg),
+              });
+            });
+          }
+        }, 300);
+      } finally {
+        setLoading(false);
+      }
+    },
+    [setError, userId, handleNavigation.profile]
+  );
 
   const rules = {
     nome: {
@@ -99,13 +120,14 @@ function useEditarUsuario() {
     rules,
     errors,
     control,
-    success,
+    loading,
+    status,
+    message,
     setValue,
     handleEditar,
-    notification,
     handleSubmit,
-    successVisible,
-    closeSuccessNotification,
+    notificationVisible,
+    closeNotification,
   };
 }
 

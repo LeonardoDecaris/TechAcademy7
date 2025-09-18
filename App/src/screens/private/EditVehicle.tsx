@@ -9,7 +9,7 @@ import useRegisterVehicle from "@/src/hooks/hookVehicle/useRegisterVehicle";
 import ErrorNotification from "@/src/components/modal/ErrorNotioncation";
 
 function RegisterVehicle() {
-    const { control, handleSubmit, rules, } = useRegisterVehicle();
+    const { control, rules, } = useRegisterVehicle();
 
     return (
         <KeyboardAvoidingView

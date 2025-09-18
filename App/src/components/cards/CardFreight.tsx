@@ -53,7 +53,7 @@ const CardFreight = ({
 
   return (
     <TouchableOpacity
-      activeOpacity={TypeButton ? 0.7 : 1}
+      activeOpacity={TypeButton ? 0.1 : 1}
       onPress={handlePress}
       className={containerStyle}
       accessibilityRole={TypeButton ? 'button' : 'summary'}

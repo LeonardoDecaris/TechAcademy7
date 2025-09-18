@@ -21,6 +21,7 @@ import DetailsFreight from "../screens/private/DetailsFreight";
 import DetailsEnvio from "../screens/private/DetailsEnvio";
 import EditProfile from "../screens/private/EditProfile";
 import MyVehicle from "../screens/private/MyVehicle";
+import { DadosFreteType, UserDataType, VeiculoType } from "@/src/types/entities";
 
 export type RootStackParamList = {
   ForgotPassword: { email: string; cpf: string; token?: string };
@@ -39,18 +40,36 @@ export type RootStackParamList = {
       saida?: string;
       destino?: string;
       logoEmpresa?: string;
+      prazo?: number;
       imagemCarga?: string;
       valor?: string;
       valorFrete?: string;
       descricao?: string;
+      distanciaDestino?: number;
+
+      nomeEmpresa?: string;
+      tipoEmpresa?: string;
+      avaliacao?: number;
+      imagemEmpresa?: string;
     };
   };
 
   RegisterVehicle: undefined;
   DetailsVehicle: undefined;
-  DetailsEnvio: undefined;
+
+  DetailsEnvio: {
+    dadosFrete?: DadosFreteType;
+    userData?: UserDataType;
+    veiculo?: VeiculoType;
+  } | undefined;
+  
+  MyVehicle: {
+    userData?: UserDataType;
+    veiculo?: VeiculoType;
+    dadosFrete?: DadosFreteType;
+  } | undefined;
+  
   EditProfile: undefined;
-  MyVehicle: undefined;
   Profile: undefined;
   Freight: undefined;
   MainTabs: { screen?: string } | undefined;
