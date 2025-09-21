@@ -22,13 +22,11 @@ export interface LocalizacaoEndereco extends Coordenadas {
 export async function obterLocalizacao(
   { reverseGeocode = false, highAccuracy = false } = {}
 ): Promise<LocalizacaoEndereco> {
-  // Verifica / solicita permissão
   const { status } = await Location.requestForegroundPermissionsAsync();
   if (status !== 'granted') {
     throw new Error('Permissão de localização negada.');
   }
 
-  // Ajusta precisão
   const accuracy: Location.LocationAccuracy =
     highAccuracy ? Location.Accuracy.Highest : Location.Accuracy.Balanced;
 
@@ -62,7 +60,6 @@ export async function obterLocalizacao(
       ].filter(Boolean).join(', ');
     }
   } catch {
-    // silencioso
   }
 
   return base;
@@ -88,8 +85,8 @@ export async function observarLocalizacao(
   const subscription = await Location.watchPositionAsync(
     {
       accuracy,
-      timeInterval: 5000,      // ms
-      distanceInterval: 5      // metros
+      timeInterval: 5000,     
+      distanceInterval: 5
     },
     (pos) => {
       onUpdate({

@@ -1,5 +1,5 @@
 import React, { memo, useCallback, useEffect, useMemo, useState } from 'react';
-import { ScrollView, RefreshControl, View, Text, Alert } from 'react-native';
+import { ScrollView, RefreshControl, View, Text,  ActivityIndicator } from 'react-native';
 
 import { BASE_URL } from '@env';
 import { ButtonPadrao } from '@/src/components/form/Buttons';
@@ -8,26 +8,34 @@ import useGetUserData from '@/src/hooks/hookUser/useGetUserData';
 import InformationBox from '@/src/components/form/InformarionBox';
 import useGetVehicleData from '@/src/hooks/hookVehicle/useGetVehicleData';
 import useDeleteVehicle from '@/src/hooks/hookVehicle/useDeleteVehicle';
-import AlertNotioncation from '@/src/components/modal/AlertNotioncation';
+
 import ModalConfirmation from '@/src/components/modal/ModalConfirmation';
-import useGetFreightConfirm from '@/src/hooks/useGetFreightComfirm';
+import useGetFreightConfirm from '@/src/hooks/hookFreight/useGetFreightComfirm';
+
+import { useNavigation } from '@react-navigation/native';
+import { NativeStackNavigationProp } from '@react-navigation/native-stack';
+import { RootStackParamList } from '@/src/navigation/Routes';
+
+type NavigationProp = NativeStackNavigationProp<RootStackParamList>;
 
 const actionBarStyle = 'flex-row justify-between gap-4 pt-5';
 const driverLabelStyle = 'text-sm font-semibold text-black/60';
 const driverCardStyle = 'w-full bg-white rounded-xl p-2.5 shadow-[0px_4px_4px_rgba(0,0,0,0.25)]';
 
 const MyVehicle = () => {
-	
-	const [refreshing, setRefreshing] = useState(false);
-	const [modalVisible, setModalVisible] = useState(false);
-	
-	const { userData, getUserData } = useGetUserData();
-	const { getVehicleData, veiculo } = useGetVehicleData();
-	const { getDados, dadosFrete } = useGetFreightConfirm(veiculo?.id_caminhoneiro || 0);
-	const { deleteVehicle, closeSuccessNotification, mensage, success, successVisible } = useDeleteVehicle();
+	const navigation = useNavigation<NavigationProp>();
+    
+    const [refreshing, setRefreshing] = useState(false);
+    const [modalVisible, setModalVisible] = useState(false);
+    
+    const { userData, getUserData } = useGetUserData();
+    const { getVehicleData, veiculo } = useGetVehicleData();
+    const { getDados, dadosFrete } = useGetFreightConfirm(veiculo?.id_caminhoneiro || 0);
+    const { deleteVehicle } = useDeleteVehicle();
 
+    const handleToEditMyVehicle = useCallback(() => navigation.navigate('EditVehicle'), [navigation]);
 
-	const imagemUrl = useMemo(() => (
+    const imagemUrl = useMemo(() => (
 		veiculo?.veiculo?.imagemVeiculo?.imgUrl ? `${BASE_URL}${veiculo.veiculo.imagemVeiculo.imgUrl}` : ''
 	), [veiculo]);
 
@@ -46,23 +54,34 @@ const MyVehicle = () => {
 		}
 	}, [getUserData, getVehicleData]);
 
-	useEffect(() => {
-		(async () => {
-			await Promise.all([getUserData(), getVehicleData(), getDados()]);
-		})();
-	}, [getUserData, getVehicleData, getDados]);
 
+	useEffect(() => {
+		getUserData();
+		getVehicleData();
+	}, [getUserData, getVehicleData]);
+	
+	useEffect(() => {
+		if (veiculo?.id_caminhoneiro) {
+			getDados();
+		}
+	}, [veiculo?.id_caminhoneiro, getDados]);
+	
+	const isInitializing = useMemo(() => {
+		if (!userData || !veiculo) return true;
+		return false;
+	}, [userData, veiculo, dadosFrete]);
+	
+	if (isInitializing) {
+		return (
+			<View style={{ flex: 1, paddingTop: 10, justifyContent: 'center', alignItems: 'center' }}>
+				<ActivityIndicator size="large" color="#000" />
+			</View>
+		);
+	}
 
 	return (
 		<View style={{ flex: 1, paddingTop: 10 }}>
 
-			<AlertNotioncation
-				visible={successVisible}
-				status={success}
-				messagem={mensage}
-				onDismiss={closeSuccessNotification}
-				topOffset={10}
-			/>
 			<ModalConfirmation
 				mode='delete_vehicle'
 				visible={modalVisible}
@@ -115,7 +134,7 @@ const MyVehicle = () => {
 							title='Editar'
 							classname='w-[48%]'
 							typeButton='normal'
-							onPress={() => { Alert.alert('Editar veículo em desenvolvimento'); }}
+							onPress={handleToEditMyVehicle}
 						/>
 					</View>
 				</View>

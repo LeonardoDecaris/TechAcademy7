@@ -2,7 +2,6 @@ import React, { memo, useCallback, useMemo, useState } from 'react';
 import { Image, Platform, ScrollView, View, KeyboardAvoidingView, TouchableOpacity, Text } from 'react-native';
 import * as ImagePicker from 'expo-image-picker';
 import InputAuth from '@/src/components/form/InputAuth';
-import AlertNotioncation from '@/src/components/modal/AlertNotioncation';
 import { ButtonPadrao, ButtonUpload } from '@/src/components/form/Buttons';
 import ErrorNotification from '@/src/components/modal/ErrorNotioncation';
 import useRegisterVehicle from '@/src/hooks/hookVehicle/useRegisterVehicle';
@@ -56,7 +55,7 @@ const RegisterVehicle = () => {
         const result = await pickerFn({
             mediaTypes: ImagePicker.MediaTypeOptions.Images,
             allowsEditing: true,
-            aspect: [1, 1],
+            aspect: [16, 9],
             quality: 0.8,
         });
         if (!result.canceled && result.assets?.length) return result.assets[0].uri;

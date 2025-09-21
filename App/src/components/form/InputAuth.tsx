@@ -33,10 +33,10 @@ const spanStyle = 'text-red-500 text-sm pl-2.5';
 const labelStyle = 'font-semibold text-base pl-2.5 pb-0.5';
 const inputStyle = 'w-full py-2.5 px-2 font-semibold text-base border rounded-lg bg-white';
 const inputPasswordStyle = 'w-[85%] py-2.5 px-2 text-base font-semibold border rounded-lg bg-white';
-const mostrarPasswordStyle = 'flex items-center justify-center py-1.5 px-1.5 border border-black/40 rounded-lg bg-white shadow-[0_2px_4px_rgba(0,0,0,0.25)]';
+const mostrarPasswordStyle = 'flex items-center justify-center p-2 border border-black/20 rounded-lg bg-white ';
 
 const STATUS_INPUT: Record<'normal' | 'error', string> = {
-    normal: ' text-black/80 border-black/40 shadow-[0_2px_4px_rgba(0,0,0,0.25)] ',
+    normal: ' text-black/80 border-black/20',
     error: 'text-red-500 border-red-500/40 shadow-[0_2px_4px_rgba(255,0,0,0.25)] placeholder:text-red-500/80'
 };
 
@@ -85,7 +85,7 @@ const InputAuth = ({ label, labelProps, name, control, rules, span, statusInput,
                                 className={`${inputStyle} ${STATUS_INPUT[status]}`}
                                 onChangeText={handleChange}
                                 secureTextEntry={secureTextEntry}
-                                maxLength={quantity || undefined}
+                                maxLength={quantity}
                                 editable={!desabilitar}
                                 value={config === 'cpf' ? maskCpf(String(value ?? '')) : value}
                                 {...rest}
@@ -117,6 +117,7 @@ interface PropsPasswordInput {
 }
 
 const PasswordInput = ({ id, type, placeholder, inputPasswordStyle, statusInput, rest, onChange, value, inputProps, mostrarPasswordStyle }: PropsPasswordInput) => {
+    
     const [showPassword, setShowPassword] = useState(false);
 
     return (

@@ -11,13 +11,11 @@ import { NativeStackNavigationProp } from '@react-navigation/native-stack'
 import InputAuth from '@/src/components/form/InputAuth'
 import { useSafeAreaInsets } from 'react-native-safe-area-context'
 import useForgotPassword from '@/src/hooks/hookAuth/useForgotPassword'
-import AlertNotioncation from '@/src/components/modal/AlertNotioncation'
 
 type NavigationProp = NativeStackNavigationProp<RootStackParamList>
 
 function NewPassword() {
-	const navigation = useNavigation<NavigationProp>()
-	const { control, handleSubmit, rules, handleForgotPassword, success, notification, successVisible, closeSuccessNotification, loading } = useForgotPassword()
+	const { control, handleSubmit, rules, handleForgotPassword, loading } = useForgotPassword()
 
 	const styleSubTitle = 'text-center text-sm text-black/80 font-medium';
 	const styleTitle = 'text-[48px] text-black text-center font-bold';
@@ -63,12 +61,6 @@ function NewPassword() {
 				loading={loading}
 			/>
 
-			<AlertNotioncation
-				visible={successVisible}
-				status={success}
-				messagem={notification}
-				onDismiss={closeSuccessNotification}
-			/>
 
 		</KeyboardAwareScrollView>
 	)

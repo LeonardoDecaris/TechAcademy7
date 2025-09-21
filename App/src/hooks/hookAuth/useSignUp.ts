@@ -50,6 +50,7 @@ function useSignUp() {
       setStatus("loading");
       setMensage("Realizando cadastro...");
       setSuccessVisible(true);
+      console.log('estou aqui');
 
       try {
         const response = await http.post("usuario", {
@@ -70,10 +71,12 @@ function useSignUp() {
 
         setTimeout(navigateToLogin, 800);
       } catch (error: any) {
+        console.log(error);
         setSuccessVisible(false);
         setTimeout(() => {
           setStatus("error");
           const serverMessage = error?.response?.data?.message as string | undefined;
+          console.log(serverMessage);
           setMensage(serverMessage ?? "Erro ao realizar cadastro. Tente novamente.");
           setSuccessVisible(true);
         }, 300);

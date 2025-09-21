@@ -1,3 +1,4 @@
+import { BASE_URL } from "@env";
 import { Image, Text, View } from "react-native";
 
 interface TopoDetailsCargoProps {
@@ -9,6 +10,7 @@ interface TopoDetailsCargoProps {
 	valor?: string | number;
 	valorFrete?: string | number;
 	descricao?: string;
+	imagem?: string;
 }
 
 const formatBRL = (raw: string | number | undefined, mostrarSimbolo: boolean = true) => {
@@ -23,13 +25,15 @@ const formatBRL = (raw: string | number | undefined, mostrarSimbolo: boolean = t
 	return mostrarSimbolo ? `R$ ${valor}` : valor;
 };
 
-const TopoDetailsCargo = ({ nome, destino, saida, tipo, peso, valor, valorFrete }: TopoDetailsCargoProps) => {
+const TopoDetailsCargo = ({ nome, destino, saida, tipo, peso, valor, valorFrete, imagem }: TopoDetailsCargoProps) => {
 	const modeloStyle = "text-2xl font-bold";
 	const marcaStyle = "text-base font-semibold text-black/60";
 	const quilometragemStyle = "text-base font-semibold text-black/60 bg-[#D0EBBC] p-2 rounded-lg";
 
 	const legendaValorStyle = "w-[48%] text-black/80 font-semibold text-base text-center bg-[#98C2F4] py-2.5 rounded-lg";
 	const anoPlacaInternoStyle = "text-black/60 text-sm";
+
+	const imagemCarga = `${BASE_URL}${imagem}`
 
 	return (
 		<View className="pb-5">
@@ -43,7 +47,7 @@ const TopoDetailsCargo = ({ nome, destino, saida, tipo, peso, valor, valorFrete 
 			</View>
 
 			<View className="w-full py-5">
-				<Image source={require('../../assets/image/carga.png')} style={{ resizeMode: 'contain' }} className="w-full h-44 rounded-lg" />
+				<Image source={{ uri: imagemCarga }} style={{ resizeMode: 'contain' }} className="w-full h-44 rounded-lg" />
 			</View>
 
 			<View className="flex-row justify-between w-full">

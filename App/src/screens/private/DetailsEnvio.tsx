@@ -1,23 +1,24 @@
-import { useCallback, useEffect, useState, useMemo, memo } from 'react';
-import { RefreshControl, Image, ScrollView, Text, TouchableOpacity, View } from 'react-native';
+import React, { useCallback, useEffect, useState, useMemo, memo } from 'react';
+import { RefreshControl, Image, ScrollView, Text, TouchableOpacity, View, ActivityIndicator } from 'react-native';
 
 import { BASE_URL } from '@env';
 import { useNavigation } from '@react-navigation/native';
 import { RootStackParamList } from '@/src/navigation/Routes';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 import { formatDateTime } from '@/src/utils/funcoes';
-import useIniciarRota from '@/src/hooks/useIniciarRota';
 import CardCargo from '@/src/components/cards/CardCargo';
-import { ButtonPadrao } from '@/src/components/form/Buttons';
 import CardFreight from '@/src/components/cards/CardFreight';
-import useConcluirFreight from '@/src/hooks/useConcluirFreigth';
-import useGetUserData from '@/src/hooks/hookUser/useGetUserData';
+import { ButtonPadrao } from '@/src/components/form/Buttons';
 import InformationBox from '@/src/components/form/InformarionBox';
-import useGetFreightConfirm from '@/src/hooks/useGetFreightComfirm';
-import useGetVehicleData from '@/src/hooks/hookVehicle/useGetVehicleData';
 import AlertNotification from '@/src/components/modal/AlertNotification';
 
+import useGetUserData from '@/src/hooks/hookUser/useGetUserData';
+import useIniciarRota from '@/src/hooks/hookFreight/useIniciarRota';
+import useGetVehicleData from '@/src/hooks/hookVehicle/useGetVehicleData';
+import useConcluirFreight from '@/src/hooks/hookFreight/useConcluirFreigth';
+import useGetFreightConfirm from '@/src/hooks/hookFreight/useGetFreightComfirm';
 
 type NavigationProp = NativeStackNavigationProp<RootStackParamList>;
 
@@ -30,47 +31,58 @@ const actionRowStyle = 'w-full flex-row justify-end px-2.5 pt-5';
 
 const DetailsEnvio = () => {
 
+    const insets = useSafeAreaInsets();
+    const containerStyle = useMemo(() => ({ flex: 1, backgroundColor: containerBG, paddingTop: insets.top + 10 }), [insets.top]);
+
     const navigation = useNavigation<NavigationProp>();
-    const [refreshing, setRefreshing] = useState(false);
     const goProfile = useCallback(() => navigation.navigate('MainTabs', { screen: 'Profile' }), [navigation]);
+
+    const [refreshing, setRefreshing] = useState(false);
 
     const { getVehicleData, veiculo: data } = useGetVehicleData();
     const { userData, getUserData, nomeAbreviado, iniciasNomeUsuario } = useGetUserData();
     const { getDados: getDadosFrete, closeSuccessNotification, mensage, success, successVisible, dadosFrete } = useGetFreightConfirm(data?.id_caminhoneiro || 0);
-
-    const imagemUrl = `${BASE_URL}${userData?.imagemUsuario?.imgUrl}`;
-
     const { iniciarRota, closeSuccessNotification: closeSuccessNotificationIniciarRota, mensage: mensageIniciarRota, success: successIniciarRota, successVisible: successVisibleIniciarRota } = useIniciarRota();
     const { concluirFrete, closeSuccessNotification: closeSuccessNotificationConcluirFrete, mensage: mensageConcluirFrete, success: successConcluirFrete, successVisible: successVisibleConcluirFrete } = useConcluirFreight();
+    
+    const handleIniciarRota = useCallback(() => {
+        if (dadosFrete?.id_frete) iniciarRota(dadosFrete.id_frete.toString());
+    }, [iniciarRota, dadosFrete?.id_frete]);
 
-    const handleIniciarRota = useCallback(() => { if (dadosFrete?.id_frete) { iniciarRota(dadosFrete.id_frete.toString()); } }, [iniciarRota, dadosFrete?.id_frete]);
-    const handleConcluirFrete = useCallback(() => { if (dadosFrete?.id_frete) { concluirFrete(dadosFrete.id_frete.toString()); } }, [concluirFrete, dadosFrete?.id_frete]);
+    const handleConcluirFrete = useCallback(() => {
+        if (dadosFrete?.id_frete) concluirFrete(dadosFrete.id_frete.toString());
+    }, [concluirFrete, dadosFrete?.id_frete]);
+    
+    const imagemUrl = userData?.imagemUsuario?.imgUrl ? `${BASE_URL}${userData.imagemUsuario.imgUrl}` : null;
 
     const onRefresh = useCallback(async () => {
         setRefreshing(true);
         try {
             await Promise.all([getUserData(), getVehicleData()]);
-            if (data?.id_caminhoneiro) { await getDadosFrete(); }
+            if (data?.id_caminhoneiro) await getDadosFrete();
         } finally {
             setRefreshing(false);
         }
     }, [getUserData, getVehicleData, getDadosFrete, data?.id_caminhoneiro]);
 
     useEffect(() => {
-            (async () => {
-                await Promise.all([getUserData(), getVehicleData(), getDadosFrete()]);
-            })();
-    }, [getUserData, getVehicleData, getDadosFrete]);
+        getUserData();
+        getVehicleData();
+    }, [getUserData, getVehicleData]);
 
+    useEffect(() => {
+        if (data?.id_caminhoneiro) {
+            getDadosFrete();
+        }
+    }, [data?.id_caminhoneiro, getDadosFrete]);
 
     return (
-        <View style={{ flex: 1, backgroundColor: containerBG, paddingTop: 10 }}>
+        <View style={containerStyle}>
             <ScrollView
                 contentContainerStyle={{ paddingHorizontal: 20, paddingBottom: 40 }}
                 refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} />}
                 showsVerticalScrollIndicator={false}
             >
-
                 <AlertNotification
                     visible={successVisible}
                     status={success as 'success' | 'error' | 'loading'}
@@ -109,14 +121,14 @@ const DetailsEnvio = () => {
                 </View>
 
                 <CardCargo
-                    saida={dadosFrete?.saida || '--'}
-                    destino={dadosFrete?.destino || '--'}
-                    nome={dadosFrete?.carga?.nome || '--'}
-                    peso={dadosFrete?.carga?.peso || '--'}
-                    valorFrete={dadosFrete?.valor_frete || '--'}
-                    tipo={dadosFrete?.carga?.tipoCarga?.nome || '--'}
-                    imagemCarga={dadosFrete?.carga?.imagemCarga?.imgUrl || '--'}
-                    logoEmpresa={dadosFrete?.empresa?.imagemEmpresa?.imgUrl || '--'}
+                    saida={dadosFrete?.saida || 'sem local'}
+                    destino={dadosFrete?.destino || 'sem destino'}
+                    nome={dadosFrete?.carga?.nome || 'Nenhum'}
+                    peso={dadosFrete?.carga?.peso || '0'}
+                    valorFrete={dadosFrete?.valor_frete || '0'}
+                    tipo={dadosFrete?.carga?.tipoCarga?.nome || 'nenhum'}
+                    imagemCarga={dadosFrete?.carga?.imagemCarga?.imgUrl || ''}
+                    logoEmpresa={dadosFrete?.empresa?.imagemEmpresa?.imgUrl || ''}
                 />
 
                 <View className='py-2.5' />
@@ -130,14 +142,14 @@ const DetailsEnvio = () => {
 
                 <View className={cargoInfoWrapperStyle}>
                     <Text className={cargoInfoTitleStyle}>Informações de Carga</Text>
-                    <InformationBox title='Peso:' descricao={dadosFrete?.carga?.peso || '--'} />
-                    <InformationBox title='Frete' descricao={dadosFrete?.valor_frete || '--'} />
-                    <InformationBox title='Destino Final' descricao={dadosFrete?.destino || '--'} />
-                    <InformationBox title='Cidade de Origem' descricao={dadosFrete?.saida || '--'} />
+                    <InformationBox title='Peso' descricao={dadosFrete?.carga?.peso || 'sem peso'} />
+                    <InformationBox title='Frete' descricao={dadosFrete?.valor_frete || 'sem frete'} />
+                    <InformationBox title='Destino Final' descricao={dadosFrete?.destino || 'sem destino'} />
+                    <InformationBox title='Cidade de Origem' descricao={dadosFrete?.saida || 'sem cidade'} />
                     <InformationBox title='Incio' descricao={formatDateTime(dadosFrete?.data_saida)} />
-                    <InformationBox title='Tipo' descricao={dadosFrete?.carga?.tipoCarga?.nome || '--'} />
+                    <InformationBox title='Tipo' descricao={dadosFrete?.carga?.tipoCarga?.nome || 'sem tipo'} />
                     <InformationBox title='Chegada' descricao={formatDateTime(dadosFrete?.data_chegada)} />
-                    <InformationBox title='Valor da Carga' descricao={dadosFrete?.carga?.valor_carga || '--'} />
+                    <InformationBox title='Valor da Carga' descricao={dadosFrete?.carga?.valor_carga || 'sem valor'} />
                 </View>
 
                 <View className={actionRowStyle}>

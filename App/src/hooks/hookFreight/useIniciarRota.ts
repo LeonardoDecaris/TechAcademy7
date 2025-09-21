@@ -1,5 +1,5 @@
 import { useCallback, useState } from "react";
-import http from "../service/httpAxios";
+import http from "../../service/httpAxios";
 
 import { useNavigation } from "@react-navigation/core";
 import { RootStackParamList } from "@/src/navigation/Routes";
@@ -7,7 +7,7 @@ import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 
 type NavigationProp = NativeStackNavigationProp<RootStackParamList>;
 
-function useConcluirFreight() {
+function useIniciarRota() {
     
     const navigation = useNavigation<NavigationProp>();
 
@@ -22,16 +22,15 @@ function useConcluirFreight() {
         if (success === "success") { handleNavigation.profile(); }
     }, [success]);
 
-    const concluirFrete = useCallback(async (id: string,) => {
+    const iniciarRota = useCallback(async (id: string,) => {
         setSuccess("loading");
         setMensage("Confirmando frete");
         setSuccessVisible(true);
 
         try {
             await http.put(`/frete/${id}`, {
-                status_id: 5,
-                caminhoneiro_id: null,
-                data_chegada: new Date().toISOString(),
+                status_id: 2,
+                data_saida: new Date().toISOString(),
             });
 
             setSuccessVisible(false);
@@ -53,7 +52,7 @@ function useConcluirFreight() {
     }, []);
 
     return {
-        concluirFrete,
+        iniciarRota,
         mensage,
         success,
         successVisible,
@@ -61,4 +60,4 @@ function useConcluirFreight() {
     }
 }
 
-export default useConcluirFreight;
+export default  useIniciarRota;

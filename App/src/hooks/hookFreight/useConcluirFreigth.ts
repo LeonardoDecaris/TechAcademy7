@@ -1,13 +1,13 @@
 import { useCallback, useState } from "react";
-import http from "../service/httpAxios";
+import http from "../../service/httpAxios";
 
+import { useNavigation } from "@react-navigation/core";
 import { RootStackParamList } from "@/src/navigation/Routes";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
-import { useNavigation } from "@react-navigation/core";
 
 type NavigationProp = NativeStackNavigationProp<RootStackParamList>;
 
-function useConfirmFreight() {
+function useConcluirFreight() {
     
     const navigation = useNavigation<NavigationProp>();
 
@@ -19,45 +19,46 @@ function useConfirmFreight() {
 
     const closeSuccessNotification = useCallback(() => {
         setSuccessVisible(false);
-        if (success === "success") {
-            handleNavigation.profile();
-        }
+        if (success === "success") { handleNavigation.profile(); }
     }, [success]);
 
-    const confirmFreight = useCallback(async (id: string, idCaminhoneiro?: number) => {
+    const concluirFrete = useCallback(async (id: string,) => {
         setSuccess("loading");
         setMensage("Confirmando frete");
         setSuccessVisible(true);
 
         try {
-            if (!idCaminhoneiro) {
-                throw new Error("Caminhoneiro ID is required");
-            }
-
             await http.put(`/frete/${id}`, {
-                caminhoneiro_id: idCaminhoneiro,
+                status_id: 5,
+                caminhoneiro_id: null,
+                data_chegada: new Date().toISOString(),
             });
 
             setSuccessVisible(false);
             setTimeout(() => {
+                setSuccess("loading");
+                setMensage("concluindo frete aguarde...");
+                setSuccessVisible(true);
+            }, 300);
+            
+            setTimeout(() => {
                 setSuccess("success");
-                setMensage("Frete confirmado com sucesso");
+                setMensage("Entrega concluída com sucesso");
                 setSuccessVisible(true);
             }, 300);
 
         } catch (error) {
-            console.log(error);
             setSuccessVisible(false);
             setTimeout(() => {
                 setSuccess("error");
-                setMensage("Erro ao confirmar frete, tente novamente");
+                setMensage("Erro ao confirmar frete, tente novamente, se o erro persistir contate o suporte");
                 setSuccessVisible(true);
             }, 300);
         }
     }, []);
 
     return {
-        confirmFreight,
+        concluirFrete,
         mensage,
         success,
         successVisible,
@@ -65,4 +66,4 @@ function useConfirmFreight() {
     }
 }
 
-export default useConfirmFreight;
+export default useConcluirFreight;

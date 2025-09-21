@@ -6,7 +6,7 @@ const router = Router();
 router.post('/veiculo', authMiddleware, createVeiculo);
 router.get('/veiculo', authMiddleware, getAllVeiculos);
 router.get('/veiculo/:id', authMiddleware, getVeiculoById);
-router.put('/veiculo/:id', authMiddleware, updateVeiculo);
+router.put('/veiculo/:id',  updateVeiculo);
 router.delete('/veiculo/:id', authMiddleware, deleteVeiculo);
 
 router.get('/usuario/:usuarioId/veiculo', authMiddleware, getVeiculoByUsuarioId);

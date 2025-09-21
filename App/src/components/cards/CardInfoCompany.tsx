@@ -10,9 +10,7 @@ interface CardInfoCompanyProps {
 
 const CardInfoCompany = (props: CardInfoCompanyProps) => {
 
-    const imagemUrl = props.imagem ? `${BASE_URL}${props.imagem}` : '';
-
-    console.log('Imagem da empresa:', imagemUrl);
+    const imagemUrl =`${BASE_URL}${props.imagem}`;
 
     return (
         <View className="w-[48%] p-2.5 pt-5 bg-white rounded-lg shadow-[0_1px_4px_rgba(0,0,0,0.25)]">

@@ -19,9 +19,9 @@ import Start from "../screens/public/Start";
 import RegisterVehicle from "../screens/private/RegisterVehicle";
 import DetailsFreight from "../screens/private/DetailsFreight";
 import DetailsEnvio from "../screens/private/DetailsEnvio";
+import EditVehicle from "../screens/private/EditVehicle";
 import EditProfile from "../screens/private/EditProfile";
 import MyVehicle from "../screens/private/MyVehicle";
-import { DadosFreteType, UserDataType, VeiculoType } from "@/src/types/entities";
 
 export type RootStackParamList = {
   ForgotPassword: { email: string; cpf: string; token?: string };
@@ -56,27 +56,20 @@ export type RootStackParamList = {
 
   RegisterVehicle: undefined;
   DetailsVehicle: undefined;
-
-  DetailsEnvio: {
-    dadosFrete?: DadosFreteType;
-    userData?: UserDataType;
-    veiculo?: VeiculoType;
-  } | undefined;
-  
-  MyVehicle: {
-    userData?: UserDataType;
-    veiculo?: VeiculoType;
-    dadosFrete?: DadosFreteType;
-  } | undefined;
-  
+  DetailsEnvio: undefined;
+  MyVehicle: undefined;
   EditProfile: undefined;
   Profile: undefined;
   Freight: undefined;
   MainTabs: { screen?: string } | undefined;
+  EditVehicle: undefined;
 };
 
 const Stack = createNativeStackNavigator<RootStackParamList>();
 
+/**
+ * @returns Navigation routes for the application, including both public and private routes.
+ */
 function Routes() {
   return (
     <NavigationContainer>
@@ -105,6 +98,10 @@ function Routes() {
 
         <Stack.Screen name="MyVehicle" options={{ headerTitle: "Meu Veículo", headerTitleAlign: "center", headerBackVisible: true }}>
           {() => <PrivateRoutes><MyVehicle /></PrivateRoutes>}
+        </Stack.Screen>
+
+        <Stack.Screen name="EditVehicle" options={{ headerTitle: "Editar Veículo", headerTitleAlign: "center", headerBackVisible: true }}>
+          {() => <PrivateRoutes><EditVehicle /></PrivateRoutes>}
         </Stack.Screen>
 
         <Stack.Screen name="NewPassword" component={NewPassword} options={{ headerTitle: "Nova Senha", headerTitleAlign: "center", headerBackVisible: true }} />

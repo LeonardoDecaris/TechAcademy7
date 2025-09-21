@@ -1,188 +1,227 @@
 import React, { useEffect, useCallback, useState, useMemo, memo } from 'react';
-import { Image, ScrollView, RefreshControl, TouchableOpacity, View, Text } from 'react-native';
-
-import { BASE_URL } from '@env';
-import { useAuth } from '@/src/context/AuthContext';
-import useGetUserData from '@/src/hooks/hookUser/useGetUserData';
+import { Image, ScrollView, RefreshControl, TouchableOpacity, View, Text, ActivityIndicator } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
-
 import { useNavigation } from '@react-navigation/native';
-import { RootStackParamList } from '@/src/navigation/Routes';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
-
 import { Ionicons } from '@expo/vector-icons';
-import { formatDateTime } from '@/src/utils/funcoes';
-import CardFreight from '@/src/components/cards/CardFreight';
-import VehicleCard from '@/src/components/cards/VehicleCard';
-import AcessoRapido from '@/src/components/base/AcessoRapido';
-import CardMyContract from '@/src/components/cards/CardMyContract';
-import useGetFreightConfirm from '@/src/hooks/useGetFreightComfirm';
-import ModalConfirmation from '@/src/components/modal/ModalConfirmation';
-import AlertNotification from '@/src/components/modal/AlertNotification';
-import useGetVehicleData from '@/src/hooks/hookVehicle/useGetVehicleData';
 
+// --- Configuração e Tipos ---
+import { BASE_URL } from '@env';
+import { RootStackParamList } from '@/src/navigation/Routes';
 type NavigationProp = NativeStackNavigationProp<RootStackParamList>;
 
-const greetingTextStyle = 'text-2xl font-bold';
-const avatarTextStyle = 'text-[20px] font-bold text-white';
-const headerLeftRowStyle = 'flex-row items-center gap-2.5';
-const headerRowStyle = 'flex-row items-center justify-between pb-10';
-const avatarWrapperStyle = 'h-[50px] w-[50px] rounded-full bg-gray-300 items-center justify-center';
+// --- Contexto e Hooks ---
+import { useAuth } from '@/src/context/AuthContext';
+import useGetUserData from '@/src/hooks/hookUser/useGetUserData';
+import useGetVehicleData from '@/src/hooks/hookVehicle/useGetVehicleData';
+import useGetFreightConfirm from '@/src/hooks/hookFreight/useGetFreightComfirm';
+
+// --- Componentes ---
+import AcessoRapido from '@/src/components/base/AcessoRapido';
+import CardFreight from '@/src/components/cards/CardFreight';
+import VehicleCard from '@/src/components/cards/VehicleCard';
+import CardMyContract from '@/src/components/cards/CardMyContract';
+import ModalConfirmation from '@/src/components/modal/ModalConfirmation';
+import AlertNotification from '@/src/components/modal/AlertNotification';
+
+
+import { formatDateTime } from '@/src/utils/funcoes';
+
+const STYLES = {
+    greetingText: 'text-2xl font-semibold',
+    avatarText: 'text-[20px] font-bold text-white',
+    headerLeftRow: 'flex-row items-center gap-2.5',
+    headerRow: 'flex-row items-center justify-between pb-10',
+    avatarWrapper: 'h-[50px] w-[50px] rounded-full bg-gray-300 items-center justify-center',
+    avatarImage: 'w-full h-full rounded-full',
+};
 
 const Home = () => {
 
     const { logout } = useAuth();
     const navigation = useNavigation<NavigationProp>();
-
     const insets = useSafeAreaInsets();
-    const containerStyle = useMemo(() => ({ flex: 1, backgroundColor: '#FFFFFF', paddingTop: insets.top + 10 }), [insets.top]);
 
-    const { getVehicleData, veiculo } = useGetVehicleData();
     const { userData, getUserData, iniciasNomeUsuario, nomeAbreviado } = useGetUserData();
-    const { getDados: getDadosFrete, closeSuccessNotification, mensage, success, successVisible, dadosFrete } = useGetFreightConfirm(veiculo?.id_caminhoneiro || 0);
+    const { getVehicleData, veiculo } = useGetVehicleData();
+    const caminhoneiroId = veiculo?.id_caminhoneiro;
+    const {
+        getDados: getDadosFrete,
+        closeSuccessNotification,
+        mensage,
+        success,
+        successVisible,
+        dadosFrete
+    } = useGetFreightConfirm(caminhoneiroId || 0);
+
+    const [refreshing, setRefreshing] = useState(false);
+    const [isLogoutModalVisible, setLogoutModalVisible] = useState(false);
+    const [isNoVehicleModalVisible, setNoVehicleModalVisible] = useState(false);
+    const [noFreteModalVisible, setNoFreteModalVisible] = useState(false);
+
+    const containerStyle = useMemo(() => ({
+        flex: 1,
+        backgroundColor: '#FFFFFF',
+        paddingTop: insets.top + 20,
+    }), [insets.top]);
 
     const hasVehicle = Boolean(veiculo?.veiculo);
-    const [refreshing, setRefreshing] = useState(false);
-    const [showLogout, setShowLogout] = useState(false);
-    const [showNoVehicle, setShowNoVehicle] = useState(false);
+    const hasFrete = Boolean(dadosFrete?.id_frete);
+    const userImageUrl = userData?.imagemUsuario?.imgUrl ? `${BASE_URL}${userData.imagemUsuario.imgUrl}` : '';
+    const vehicleImageUrl = veiculo?.veiculo?.imagemVeiculo?.imgUrl ? `${BASE_URL}${veiculo.veiculo.imagemVeiculo.imgUrl}` : '';
 
-    const imagemUrl = `${BASE_URL}${userData?.imagemUsuario?.imgUrl}`;
-    const imagemVeiculo = `${BASE_URL}${veiculo?.veiculo?.imagemVeiculo?.imgUrl}`;
-    const imagemEmpresa = `${BASE_URL}${dadosFrete?.empresa?.imagemEmpresa?.imgUrl}`;
+    const fetchInitialData = useCallback(async () => {
+        await Promise.all([
+            getUserData(),
+            getVehicleData(),
+        ]);
+        if (caminhoneiroId) {
+            await getDadosFrete();
+        }
+    }, [getUserData, getVehicleData, getDadosFrete, caminhoneiroId]);
 
-    const goProfile = useCallback(() => navigation.navigate('Profile'), [navigation]);
-    const goMyVehicle = useCallback(() => { hasVehicle ? navigation.navigate('MyVehicle') : setShowNoVehicle(true); }, [hasVehicle, navigation]);
-
-    const handleConfirmCreateVehicle = useCallback(() => { setShowNoVehicle(false); navigation.navigate('RegisterVehicle'); }, [navigation]);
-    const handleLogout = useCallback(async () => { await logout(); navigation.reset({ index: 0, routes: [{ name: 'Login' as never }] }); }, [logout, navigation]);
-
-    const onRefresh = useCallback(async ( caminhoneiroId?: number ) => {
+    const onRefresh = useCallback(async () => {
         setRefreshing(true);
         try {
-            await Promise.all([getUserData(), getVehicleData()]);
-        if (caminhoneiroId) { await getDadosFrete(); }
-        } finally { setRefreshing(false); }
-    }, [getUserData, getVehicleData, getDadosFrete, veiculo?.id_caminhoneiro]);
+            await fetchInitialData();
+        } catch (error) {
+            console.error("Failed to refresh data:", error);
+        } finally {
+            setRefreshing(false);
+        }
+    }, [fetchInitialData]);
+
+    const closeAlertNotFreight = useCallback(() => {
+        setNoFreteModalVisible(false);
+    }, []);
+
+    const handleNavigateToProfile = useCallback(() => navigation.navigate('Profile'), [navigation]);
+    const handleNavigateToMyVehicle = useCallback(() => {
+        if (hasVehicle) {
+            navigation.navigate('MyVehicle');
+        } else {
+            setNoVehicleModalVisible(true);
+        }
+    }, [hasVehicle, navigation]);
+    const handleNavigateToDetailsEnvio = useCallback(() => {
+        if (hasFrete) {
+            navigation.navigate('DetailsEnvio');
+        } else {
+            setNoFreteModalVisible(true);
+        }
+    }, [hasFrete, navigation]);
+
+    const handleConfirmCreateVehicle = useCallback(() => {
+        setNoVehicleModalVisible(false);
+        navigation.navigate('RegisterVehicle');
+    }, [navigation]);
+
+    const handleLogout = useCallback(async () => {
+        await logout();
+        navigation.reset({ index: 0, routes: [{ name: 'Login' as never }] });
+    }, [logout, navigation]);
 
     useEffect(() => {
-        getUserData();
-        getVehicleData();
-        if (veiculo?.id_caminhoneiro) { getDadosFrete(); }
-    }, [getUserData, getVehicleData, getDadosFrete, veiculo?.id_caminhoneiro]);
-
-    const detailsEnvioParams = useMemo(() => ({
-        dadosFrete: {
-            ...dadosFrete,
-            data_saida: dadosFrete?.data_saida ? typeof dadosFrete.data_saida === 'string' ? dadosFrete.data_saida : dadosFrete.data_saida?.toISOString?.() ?? '' : undefined,
-            data_chegada: dadosFrete?.data_chegada ? typeof dadosFrete.data_chegada === 'string' ? dadosFrete.data_chegada : dadosFrete.data_chegada?.toISOString?.() ?? '' : undefined,
-        },
-        userData: userData ? {
-            ...userData,
-            imagemUsuario: userData.imagemUsuario ? { imgUrl: userData.imagemUsuario.imgUrl } : undefined,
-        } : undefined,
-        veiculo: veiculo?.veiculo,
-    }), [dadosFrete, userData, veiculo?.veiculo]);
+        fetchInitialData();
+    }, [fetchInitialData]);
 
     return (
         <View style={containerStyle}>
-            <ScrollView contentContainerStyle={{ paddingHorizontal: 10, paddingBottom: 50 }} 
-                refreshControl={ <RefreshControl refreshing={refreshing} onRefresh={onRefresh} /> }
+            <ScrollView
+                contentContainerStyle={{ paddingHorizontal: 10, paddingBottom: 50 }}
+                refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} />}
                 showsVerticalScrollIndicator={false}
             >
-                <View className={headerRowStyle}>   
-                    <View className={headerLeftRowStyle}>
+
+                <View className={STYLES.headerRow}>
+                    <View className={STYLES.headerLeftRow}>
                         <TouchableOpacity
-                            onPress={goProfile}
-                            className={avatarWrapperStyle}
+                            onPress={handleNavigateToProfile}
+                            className={STYLES.avatarWrapper}
                             accessibilityLabel="Ir para perfil"
                         >
-                            {imagemUrl ? (
-                                <Image
-                                    source={{ uri: imagemUrl }}
-                                    className="w-[50px] h-[50px] rounded-full bg-gray-200"
-                                />
+                            {userImageUrl ? (
+                                <Image source={{ uri: userImageUrl }} className={STYLES.avatarImage} />
                             ) : (
-                                <Text className={avatarTextStyle}>
-                                    {iniciasNomeUsuario}
-                                </Text>
+                                <Text className={STYLES.avatarText}>{iniciasNomeUsuario}</Text>
                             )}
                         </TouchableOpacity>
-                        <Text className={greetingTextStyle}>
+                        <Text className={STYLES.greetingText}>
                             Olá, {nomeAbreviado ?? 'Usuário'}!
                         </Text>
                     </View>
-                    <TouchableOpacity
-                        onPress={() => setShowLogout(true)}
-                        accessibilityLabel="Abrir modal de logout"
-                    >
+                    <TouchableOpacity onPress={() => setLogoutModalVisible(true)} accessibilityLabel="Sair da conta">
                         <Ionicons name="log-out-outline" size={30} color="black" />
                     </TouchableOpacity>
                 </View>
 
                 <CardMyContract
                     motorista={userData?.nome || 'Motorista'}
-                    nome={dadosFrete?.carga?.nome || 'nenhum'}
-                    tipo={dadosFrete?.carga?.tipoCarga?.nome || "nenhum"}
+                    nome={dadosFrete?.carga?.nome || 'Nenhum'}
+                    tipo={dadosFrete?.carga?.tipoCarga?.nome || "Nenhum"}
                     peso={dadosFrete?.carga?.peso || '0'}
-                    saida={dadosFrete?.saida || 'sem local'}
-                    destino={dadosFrete?.destino || 'sem destino'}
-                    logoEmpresa={imagemEmpresa || ''}
+                    saida={dadosFrete?.saida || 'Sem local'}
+                    destino={dadosFrete?.destino || 'Sem destino'}
+                    logoEmpresa={dadosFrete?.empresa?.imagemEmpresa?.imgUrl}
                     imagemCarga=""
                     valorFrete={dadosFrete?.valor_frete || '0'}
-                    saidaHora={formatDateTime(dadosFrete?.data_saida) || 'sem horario'}
-                    onPress={() => navigation.navigate('DetailsEnvio', detailsEnvioParams)}
+                    saidaHora={formatDateTime(dadosFrete?.data_saida) || 'Sem horário'}
+                    onPress={handleNavigateToDetailsEnvio}
                 />
-
                 <AcessoRapido
-                    onPress={() => navigation.navigate('DetailsEnvio', detailsEnvioParams)}
+                    onPress={handleNavigateToDetailsEnvio}
                     title="Detalhes do envio"
                 />
-
                 <CardFreight
-                    tipo={dadosFrete?.carga?.tipoCarga?.nome || 'nenhum'}
+                    tipo={dadosFrete?.carga?.tipoCarga?.nome || 'Nenhum'}
                     peso={dadosFrete?.carga?.peso || '0'}
-                    destino={dadosFrete?.destino || 'sem destino'}
+                    destino={dadosFrete?.destino || 'Sem destino'}
                     progresso={dadosFrete?.status?.id_status || 0}
                     TypeButton={true}
-                    onPress={() => navigation.navigate('DetailsEnvio', detailsEnvioParams)}
+                    onPress={handleNavigateToDetailsEnvio}
                 />
 
                 <AcessoRapido
-                    onPress={goMyVehicle}
+                    onPress={handleNavigateToMyVehicle}
                     title="Meu Veículo"
                 />
-
                 <VehicleCard
-                    onPress={goMyVehicle}
+                    onPress={handleNavigateToMyVehicle}
                     TypeButton={hasVehicle}
                     codigo={veiculo?.veiculo_id}
                     modelo={veiculo?.veiculo?.modelo}
                     marca={veiculo?.veiculo?.marca}
                     ano={veiculo?.veiculo?.ano}
                     placa={veiculo?.veiculo?.placa}
-                    imagem={imagemVeiculo}
+                    imagem={vehicleImageUrl}
                 />
             </ScrollView>
 
             <ModalConfirmation
                 mode="logout"
-                visible={showLogout}
+                visible={isLogoutModalVisible}
                 onConfirm={handleLogout}
-                onCancel={() => setShowLogout(false)}
+                onCancel={() => setLogoutModalVisible(false)}
             />
-
+            <ModalConfirmation
+                mode="no_vehicle"
+                visible={isNoVehicleModalVisible}
+                onConfirm={handleConfirmCreateVehicle}
+                onCancel={() => setNoVehicleModalVisible(false)}
+            />
             <AlertNotification
                 visible={successVisible}
                 status={success as 'success' | 'error' | 'loading'}
                 messagem={mensage}
                 onDismiss={closeSuccessNotification}
+                topOffset={30}
             />
-
-            <ModalConfirmation
-                mode="no_vehicle"
-                visible={showNoVehicle}
-                onConfirm={handleConfirmCreateVehicle}
-                onCancel={() => setShowNoVehicle(false)}
+            <AlertNotification
+                status='alert'
+                visible={noFreteModalVisible}
+                messagem="É preciso Ter um Frete Ativo"
+                onDismiss={closeAlertNotFreight}
+                topOffset={30}
             />
         </View>
     );

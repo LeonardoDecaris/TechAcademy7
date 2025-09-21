@@ -61,7 +61,7 @@ const emailSchemaForCreate = z.string().email("Invalid email address").refine(as
     const isUnique = await isEmailUnique(email);
 return isUnique;
   }, {
-    message: "Email already exists",
+    message: "Email ja cadastrado",
   });
 
 const cpfSchemaForCreate = z
@@ -81,14 +81,14 @@ const emailSchemaForUpdate = z.string().email("Invalid email address");
 const cpfSchemaForUpdate = z.string().nonempty("CPF is required").transform(validateAndFormatCPF);
 
 export const createUserSchema = z.object({
-  name: z.string().nonempty("Name is required"),
+  nome: z.string().nonempty("Nome é obrigatório"),
   cpf: cpfSchemaForCreate,
   email: emailSchemaForCreate,
   password: z.string().min(6, "Password must be at least 6 characters long"),
 });
 
 export const updateUserSchema = z.object({
-  name: z.string().nonempty("Name is required"),
+  nome: z.string().nonempty("Nome é obrigatório"),
   cpf: cpfSchemaForUpdate,
   email: emailSchemaForUpdate,
   password: z.string().min(6, "Password must be at least 6 characters long"),

@@ -4,7 +4,6 @@ import { ButtonPadrao } from "../form/Buttons";
 import { useNavigation } from '@react-navigation/native';
 import { RootStackParamList } from '@/src/navigation/Routes';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
-import RegisterVehicle from "@/src/screens/private/RegisterVehicle";
 
 type NavigationProp = NativeStackNavigationProp<RootStackParamList>;
 
@@ -48,7 +47,7 @@ const VehicleCard = (props: Props) => {
 						<Text className="text-[12px] font-semibold text-black/60">Ano: {props.ano}</Text>
 						<Text className="text-[12px] font-semibold text-black/60">Placa: {props.placa}</Text>
 					</View>
-					<View className="w-[46%]">
+					<View className="w-[50%]">
 						<Image source={{ uri: props.imagem }} className="w-full h-36 rounded-md" style={{ resizeMode: 'contain' }} />
 					</View>
 				</>
