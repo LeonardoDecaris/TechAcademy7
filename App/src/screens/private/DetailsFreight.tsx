@@ -9,10 +9,10 @@ import CardInfoCompany from '@/src/components/cards/CardInfoCompany';
 import CardDeliveryTime from '@/src/components/cards/CardDeliveryTime';
 import { ButtonPadrao } from '@/src/components/form/Buttons';
 import useGetVehicleData from '@/src/hooks/hookVehicle/useGetVehicleData';
-import useConfirmFreight from '@/src/hooks/useConfirmFreight';
+import useConfirmFreight from '@/src/hooks/hookFreight/useConfirmFreight';
 import AlertNotification from '@/src/components/modal/AlertNotification';
 import ModalConfirmation from '@/src/components/modal/ModalConfirmation';
-import useGetFreightConfirm from '@/src/hooks/useGetFreightComfirm';
+import useGetFreightConfirm from '@/src/hooks/hookFreight/useGetFreightComfirm';
 
 type DetailsRouteProp = RouteProp<RootStackParamList, 'DetailsFreight'>;
 type NavigationProp = NativeStackNavigationProp<RootStackParamList>;
@@ -71,6 +71,7 @@ const DetailsFreight = () => {
 		}
 	}, [veiculo?.id_caminhoneiro, confirmFreight, freight.id]);
 
+
 	return (
 		<View style={{ flex: 1, paddingTop: containerPaddingTop }}>
 			<ScrollView
@@ -103,6 +104,7 @@ const DetailsFreight = () => {
 					valor={freight.valor}
 					valorFrete={freight.valorFrete}
 					descricao={freight.descricao}
+					imagem={freight.imagemCarga}
 				/>
 
 				<Text className={sectionTitleStyle}>Detalhes</Text>

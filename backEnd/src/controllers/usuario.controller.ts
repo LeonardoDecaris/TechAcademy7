@@ -1,5 +1,7 @@
 import jwt from 'jsonwebtoken';
 import { Request, Response } from 'express';
+import { z } from 'zod';
+import { createUserSchema } from '../schemas/UsuarioValidation.schemas';
 
 import Usuario from '../models/usuario.model';
 import ImagemUsuario from '../models/imagem_usuario.model';
@@ -7,11 +9,16 @@ import ImagemUsuario from '../models/imagem_usuario.model';
 
 export const createUsuario = async (req: Request, res: Response) => {
     try {
-        const usuario = await Usuario.create(req.body);
+        const parsed = await createUserSchema.parseAsync(req.body);
+        const usuario = await Usuario.create(parsed);
         return res.status(201).json(usuario);
     } catch (error) {
+        if (error instanceof z.ZodError) {
+            console.log(error);
+            return res.status(400).json({ errors: error.issues });
+        }
         if (error instanceof Error) {
-            return res.status(500).json({ message: error.message });
+            return res.status(400).json({ message: error.message });
         }
         return res.status(500).json({ message: 'Erro interno do servidor.' });
     }

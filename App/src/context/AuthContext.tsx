@@ -5,19 +5,17 @@ import { jwtDecode } from "jwt-decode";
 interface TokenPayload {
     id_usuario: string;
     nome: string;
-    user?: {
-        id_usuario: string;
-        nome: string;
-    }
+    user?: { id_usuario: string; nome: string; }
 }
 
 interface AuthContextType {
   token: string | null;
   userId: string | null;
   userName: string | null;
+  isAuthenticated: boolean;
+
   login: (token: string) => Promise<void>;
   logout: () => Promise<void>; 
-  isAuthenticated: boolean;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);

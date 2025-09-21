@@ -4,7 +4,7 @@ import { Ionicons } from "@expo/vector-icons";
 import animation from "@/src/utils/animation";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 
-type AlertStatus = "success" | "error" | "loading";
+type AlertStatus = "success" | "error" | "loading" | "alert";
 
 type NotificacaoProps = {
     visible: boolean;
@@ -31,6 +31,11 @@ const STATUS_CONFIG = {
         icon: null,
         defaultTitle: "Carregando...",
     },
+    alert: {
+        style: "bg-yellow-500",
+        icon: "alert-circle-outline",
+        defaultTitle: "Notificação",
+    }
 };
 
 const containerBaseClass = "absolute left-5 right-5 rounded-lg p-4 z-[9999] flex-row items-center shadow-lg";

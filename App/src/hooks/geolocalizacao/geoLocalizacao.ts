@@ -1,9 +1,8 @@
 import { useState, useCallback, useMemo } from 'react';
-import { obterLocalizacao } from '@/src/utils/minhaLocalizacao';
+
 import { haversineKm } from '@/src/utils/distance';
 import { ORIGENS_PARANA } from '@/src/data/fretesCoordsParana';
-
-// --- Tipos e Constantes ---
+import { obterLocalizacao } from '@/src/utils/minhaLocalizacao';
 
 interface Coord {
     latitude: number;
@@ -70,24 +69,18 @@ export function useGeoLocation<T extends FreightItem>(
         setLocLoading(true);
 
         try {
-            // Etapa 1: Obter localização rápida (baixa precisão) primeiro.
-            console.log('Buscando localização rápida (baixa precisão)...');
             const fastLoc = await obterLocalizacao({ highAccuracy: false });
             setUserCoord({ latitude: fastLoc.latitude, longitude: fastLoc.longitude });
             setLocLoading(false); 
             obterLocalizacao({
                 highAccuracy: true
             }).then(preciseLoc => {
-                console.log('Localização refinada com sucesso!');
                 setUserCoord({ latitude: preciseLoc.latitude, longitude: preciseLoc.longitude });
             }).catch(preciseError => {
-                // Se a busca de alta precisão falhar, não é um erro crítico,
-                // pois já temos a localização de baixa precisão. Apenas registramos.
                 console.warn('Não foi possível refinar a localização:', preciseError);
             });
 
         } catch (initialError: unknown) {
-            // Se até mesmo a busca de baixa precisão falhar, é um erro.
             console.error('Falha ao obter a localização inicial (baixa precisão).', initialError);
             if (initialError instanceof Error) {
                 setLocError(initialError.message);
@@ -133,12 +126,11 @@ export function useGeoLocation<T extends FreightItem>(
  * @returns A distância em quilômetros ou `undefined` se as coordenadas não forem encontradas.
  */
 export const calculateFreightDistance = (saida?: string, destino?: string): number | undefined => {
-    const originMap = createOriginMap(); // Recria o mapa para uso isolado
+    const originMap = createOriginMap();
     const saidaCoord = saida ? originMap.get(normalizeName(saida)) : undefined;
     const destinoCoord = destino ? originMap.get(normalizeName(destino)) : undefined;
 
     if (saidaCoord && destinoCoord) {
         return Number(haversineKm(saidaCoord, destinoCoord).toFixed(DISTANCE_PRECISION));
     }
-    return undefined;
-};
+    return undefined;};

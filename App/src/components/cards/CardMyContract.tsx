@@ -23,7 +23,7 @@ interface Props {
 const CardMyContract = (props: Props) => {
 
     return (
-        <View className="w-full p-2.5 bg-amber-800/10 rounded-2xl border border-white" style={{ boxShadow: "0 4px 4px rgba(0, 0, 0, 0.10)" }} >
+        <View className="w-full p-2.5 bg-gray-100 rounded-2xl "  >
             <View className="pl-2.5 py-2.5">
                 <Text className="text-lg font-bold">Contrato atual</Text>
 

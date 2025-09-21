@@ -1,13 +1,16 @@
 import { useCallback, useState } from "react";
-import http from "../service/httpAxios";
+import http from "../../service/httpAxios";
 
-import { useNavigation } from "@react-navigation/core";
 import { RootStackParamList } from "@/src/navigation/Routes";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
+import { useNavigation } from "@react-navigation/core";
 
 type NavigationProp = NativeStackNavigationProp<RootStackParamList>;
 
-function useIniciarRota() {
+/**
+ * @returns função para confirmar o frete
+ */
+function useConfirmFreight() {
     
     const navigation = useNavigation<NavigationProp>();
 
@@ -19,18 +22,23 @@ function useIniciarRota() {
 
     const closeSuccessNotification = useCallback(() => {
         setSuccessVisible(false);
-        if (success === "success") { handleNavigation.profile(); }
+        if (success === "success") {
+            handleNavigation.profile();
+        }
     }, [success]);
 
-    const iniciarRota = useCallback(async (id: string,) => {
+    const confirmFreight = useCallback(async (id: string, idCaminhoneiro?: number) => {
         setSuccess("loading");
         setMensage("Confirmando frete");
         setSuccessVisible(true);
+        
+        if (!idCaminhoneiro) {
+            throw new Error("Caminhoneiro ID is required");
+        }
 
         try {
             await http.put(`/frete/${id}`, {
-                status_id: 2,
-                data_saida: new Date().toISOString(),
+                caminhoneiro_id: idCaminhoneiro,
             });
 
             setSuccessVisible(false);
@@ -52,7 +60,7 @@ function useIniciarRota() {
     }, []);
 
     return {
-        iniciarRota,
+        confirmFreight,
         mensage,
         success,
         successVisible,
@@ -60,4 +68,4 @@ function useIniciarRota() {
     }
 }
 
-export default  useIniciarRota;
+export default useConfirmFreight;

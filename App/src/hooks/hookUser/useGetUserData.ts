@@ -49,7 +49,6 @@ function useGetUserData() {
       const { data } = await http.get<User>(`usuario/${userId}`);
       setUserData(data);
       setNotificationVisible(false);
-      console.log('estou aqui')
     } catch (err) {
       const error = err as AxiosError;
       console.error("Erro ao buscar dados do usuário:", error);

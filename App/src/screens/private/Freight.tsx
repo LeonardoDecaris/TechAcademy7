@@ -1,16 +1,14 @@
 import React, { useCallback, useMemo, useState, memo, useEffect } from 'react';
 import { TouchableOpacity, FlatList, RefreshControl, Text, View, TextInput, Pressable, ActivityIndicator } from 'react-native';
+
 import { useNavigation } from '@react-navigation/native';
+import { RootStackParamList } from '@/src/navigation/Routes';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 
-import CardCargo from '@/src/components/cards/CardCargo';
-import { RootStackParamList } from '@/src/navigation/Routes';
-import useFreight from '@/src/hooks/useFreight';
-import { calculateFreightDistance, useGeoLocation } from '@/src/hooks/geoLocalizacao';
-import AlertNotification from '@/src/components/modal/AlertNotification';
-
-interface CardCargaProps {
+type ApiFreight = { [key: string]: any };
+interface FreightItem {
+    id: string;
     nome?: string;
     tipo?: string;
     peso?: string;
@@ -23,12 +21,16 @@ interface CardCargaProps {
     descricao?: string;
     prazo?: number;
     distancia?: number;
+    [key: string]: any;
 }
-
-type FreightItem = CardCargaProps & { id: string; };
 type NavigationProp = NativeStackNavigationProp<RootStackParamList, 'Freight'>;
 
-const styles = {
+import useFreight from '@/src/hooks/hookFreight/useFreight';
+import { calculateFreightDistance, useGeoLocation } from '@/src/hooks/geolocalizacao/geoLocalizacao';
+
+import CardCargo from '@/src/components/cards/CardCargo';
+
+const STYLES = {
     containerBase: 'flex-1 bg-white',
     headerWrapper: 'pb-2.5',
     headerTitle: 'text-2xl font-extrabold text-center',
@@ -41,22 +43,51 @@ const styles = {
     toggleBtnTxt: 'text-gray-800 font-medium text-xs',
     distanceBadge: 'absolute bottom-2 right-2 bg-black/70 px-2 py-1 rounded-md',
     distanceBadgeTxt: 'text-white text-[11px] font-semibold',
-    emptyWrapper: 'items-center mt-16',
-    emptyText: 'text-gray-500 text-base',
+    emptyWrapper: 'flex-1 justify-center items-center p-5',
+    emptyText: 'text-gray-500 text-base text-center',
     itemSeparator: 'h-5',
+    loadingContainer: 'flex-1 justify-center items-center',
+    loadingText: 'mt-2 text-gray-600',
 };
+const RADIUS_OPTIONS: (number | null)[] = [null, 50, 100, 200];
+const COMPLETED_STATUS_ID = 5;
+
+/**
+ * Transforma os dados brutos da API em um formato limpo para o componente.
+ * Esta é a etapa de "Tradução" ou "Adaptação" de dados.
+ */
+const mapApiToViewModel = (f: ApiFreight): FreightItem => ({
+    id: String(f.id_frete),
+    saida: f.saida,
+    destino: f.destino,
+    nome: f.carga?.nome,
+    prazo: Number(f.prazo),
+    peso: String(f.carga?.peso),
+    tipo: f.carga?.tipoCarga?.nome,
+    valor: String(f.carga?.valor_carga),
+    logoEmpresa: f.empresa?.imagemEmpresa?.imgUrl,
+    imagemCarga: f.carga?.imagemCarga?.imgUrl,
+    valorFrete: String(f.valor_frete),
+    descricao: f.carga?.descricao,
+    distanciaDestino: calculateFreightDistance(f.saida, f.destino),
+    nomeEmpresa: f.empresa?.nome,
+    tipoEmpresa: f.empresa?.tipo,
+    avaliacao: f.empresa?.avaliacao,
+    imagemEmpresa: f.empresa?.imagemEmpresa?.imgUrl,
+});
+
 
 const FreightHeader = memo(() => (
-    <View className={styles.headerWrapper}>
-        <Text className={styles.headerTitle}>Fretes Disponíveis</Text>
+    <View className={STYLES.headerWrapper}>
+        <Text className={STYLES.headerTitle}>Fretes Disponíveis</Text>
     </View>
 ));
 
 const SearchBar = memo(({ query, onSearch }: { query: string; onSearch: (q: string) => void }) => (
-    <View className={styles.searchWrapper}>
+    <View className={STYLES.searchWrapper}>
         <TextInput
-            className={styles.searchInput}
-            placeholder="Pesquise sua Carga"
+            className={STYLES.searchInput}
+            placeholder="Pesquisar por cidade, tipo ou nome..."
             value={query}
             onChangeText={onSearch}
             placeholderTextColor="#999"
@@ -75,33 +106,27 @@ interface FilterControlsProps {
     onToggleSort: () => void;
     onToggleRadius: () => void;
 }
-
 const FilterControls = memo(({ locLoading, sortNearest, radiusKm, onUpdateLocation, onToggleSort, onToggleRadius }: FilterControlsProps) => (
-    <View className={styles.locationBar}>
-        <Pressable onPress={onUpdateLocation} disabled={locLoading} className={styles.smallBtn}>
-            <Text className={styles.smallBtnTxt}>{locLoading ? '...' : 'Atualizar'}</Text>
+    <View className={STYLES.locationBar}>
+        <Pressable onPress={onUpdateLocation} disabled={locLoading} className={STYLES.smallBtn}>
+            <Text className={STYLES.smallBtnTxt}>{locLoading ? 'Localizando...' : 'Atualizar Local'}</Text>
         </Pressable>
-        <Pressable onPress={onToggleSort} className={styles.toggleBtn}>
-            <Text className={styles.toggleBtnTxt}>{sortNearest ? 'Ordem: Próx.' : 'Ordem: Original'}</Text>
+        <Pressable onPress={onToggleSort} className={STYLES.toggleBtn}>
+            <Text className={STYLES.toggleBtnTxt}>{sortNearest ? 'Mais Próximos' : 'Mais Recentes'}</Text>
         </Pressable>
-        <Pressable onPress={onToggleRadius} className={styles.toggleBtn}>
-            <Text className={styles.toggleBtnTxt}>
-                Raio: {radiusKm == null ? 'Todos' : `${radiusKm}km`}
-            </Text>
+        <Pressable onPress={onToggleRadius} className={STYLES.toggleBtn}>
+            <Text className={STYLES.toggleBtnTxt}>Raio: {radiusKm == null ? 'Todos' : `${radiusKm}km`}</Text>
         </Pressable>
     </View>
 ));
 
 const FreightListItem = memo(({ item, onNavigate }: { item: FreightItem; onNavigate: (item: FreightItem) => void }) => (
-    <TouchableOpacity
-        onPress={() => onNavigate(item)}
-        accessibilityLabel={`Ver detalhes do frete ${item.nome}. Distância até coleta ${item.distancia != null ? item.distancia + ' quilômetros' : 'não disponível'}`}
-    >
+    <TouchableOpacity onPress={() => onNavigate(item)} accessibilityLabel={`Ver detalhes do frete ${item.nome}`}>
         <View>
             <CardCargo {...item} />
             {item.distancia != null && (
-                <View className={styles.distanceBadge} accessibilityLabel={`Distância até a saída: ${item.distancia} km`}>
-                    <Text className={styles.distanceBadgeTxt}>{item.distancia} km</Text>
+                <View className={STYLES.distanceBadge}>
+                    <Text className={STYLES.distanceBadgeTxt}>Aprox. {item.distancia} km de você</Text>
                 </View>
             )}
         </View>
@@ -109,71 +134,80 @@ const FreightListItem = memo(({ item, onNavigate }: { item: FreightItem; onNavig
 ));
 
 const LoadingIndicator = () => (
-    <View className="flex-1 justify-center items-center">
-        <ActivityIndicator size="large" color="#0000ff" />
-        <Text className="mt-2 text-gray-600">Carregando fretes...</Text>
+    <View className={STYLES.loadingContainer}>
+        <ActivityIndicator size="large" color="#2563eb" />
+        <Text className={STYLES.loadingText}>Carregando fretes...</Text>
     </View>
 );
 
+interface ListEmptyStateProps {
+    locError: string | null;
+    hasSourceData: boolean;
+    searchQuery: string;
+}
+const ListEmptyState = memo(({ locError, hasSourceData, searchQuery }: ListEmptyStateProps) => {
+    const getMessage = () => {
+        if (locError) return locError;
+        if (!hasSourceData) return 'Nenhum frete disponível no momento.';
+        if (searchQuery) return `Nenhum frete encontrado para "${searchQuery}".`;
+        return 'Nenhum frete corresponde aos filtros aplicados.';
+    };
+
+    return (
+        <View className={STYLES.emptyWrapper}>
+            <Text className={STYLES.emptyText}>{getMessage()}</Text>
+        </View>
+    );
+});
+
+
 const Freight = () => {
-    const { freightData, getFreightDado, isLoading, closeSuccessNotification } = useFreight();
+
     const navigation = useNavigation<NavigationProp>();
     const insets = useSafeAreaInsets();
+    const { freightData, getFreightDado, isLoading } = useFreight();
+
 
     const [refreshing, setRefreshing] = useState(false);
     const [searchQuery, setSearchQuery] = useState('');
     const [sortNearest, setSortNearest] = useState(true);
-    const [radiusKm, setRadiusKm] = useState<number | null>(null);
+    const [radiusIndex, setRadiusIndex] = useState(0);
 
-    const dataBase = useMemo<FreightItem[]>(() => {
+
+    const radiusKm = RADIUS_OPTIONS[radiusIndex];
+
+    const baseData = useMemo<FreightItem[]>(() => {
         if (!Array.isArray(freightData)) return [];
         return freightData
-            .filter(f => f.status?.id_status !== 5)
-            .map(f => ({
-                id: String(f.id_frete),
-                saida: f.saida,
-                destino: f.destino,
-                nome: f.carga?.nome,
-                prazo: Number(f.prazo),
-                peso: String(f.carga?.peso),
-                tipo: f.carga?.tipoCarga?.nome,
-                valor: String(f.carga?.valor_carga),
-                logoEmpresa: f.empresa?.imagemEmpresa?.imgUrl,
-                imagemCarga: f.carga?.imagemCarga?.imgUrl,
-                valorFrete: String(f.valor_frete),
-                descricao: f.carga?.descricao,
-                distanciaDestino: calculateFreightDistance(f.saida, f.destino),
-                nomeEmpresa: f.empresa?.nome,
-                tipoEmpresa: f.empresa?.tipo,
-                avaliacao: f.empresa?.avaliacao,
-                imagemEmpresa: f.empresa?.imagemEmpresa?.imgUrl,
-            }));
+            .filter(f => f.status?.id_status !== COMPLETED_STATUS_ID)
+            .map(mapApiToViewModel);
     }, [freightData]);
 
     const filteredData = useMemo<FreightItem[]>(() => {
-        const q = searchQuery.trim().toLowerCase();
-        if (!q) return dataBase;
-        return dataBase.filter(
-            (item) =>
-                item.nome?.toLowerCase().includes(q) ||
-                item.tipo?.toLowerCase().includes(q) ||
-                item.saida?.toLowerCase().includes(q) ||
-                item.destino?.toLowerCase().includes(q)
+        const query = searchQuery.trim().toLowerCase();
+        if (!query) return baseData;
+        return baseData.filter(item =>
+            item.nome?.toLowerCase().includes(query) ||
+            item.tipo?.toLowerCase().includes(query) ||
+            item.saida?.toLowerCase().includes(query) ||
+            item.destino?.toLowerCase().includes(query)
         );
-    }, [searchQuery, dataBase]);
+    }, [searchQuery, baseData]);
 
     const { processedData, locLoading, locError, requestLocation } = useGeoLocation(filteredData, sortNearest, radiusKm);
 
+
+    const handleToggleSort = useCallback(() => setSortNearest(s => !s), []);
     const handleSearch = useCallback((query: string) => setSearchQuery(query), []);
-    const toggleSort = useCallback(() => setSortNearest(s => !s), []);
-    const handleNavigateDetails = useCallback((item: FreightItem) => navigation.navigate('DetailsFreight', { freight: item }), [navigation]);
     const handleRadiusToggle = useCallback(() => {
-        setRadiusKm(r => (r === 50 ? 100 : r === 100 ? 200 : r === null ? 50 : null));
+        setRadiusIndex(currentIndex => (currentIndex + 1) % RADIUS_OPTIONS.length);
     }, []);
+    const handleNavigateDetails = useCallback((item: FreightItem) => {
+        navigation.navigate('DetailsFreight', { freight: item });
+    }, [navigation]);
 
     const onRefresh = useCallback(async () => {
         setRefreshing(true);
-        setSearchQuery('');
         await Promise.all([getFreightDado(), requestLocation()]);
         setRefreshing(false);
     }, [getFreightDado, requestLocation]);
@@ -187,26 +221,10 @@ const Freight = () => {
         <FreightListItem item={item} onNavigate={handleNavigateDetails} />
     ), [handleNavigateDetails]);
 
-    const ListEmptyComponent = useMemo(() => (
-        <View className={styles.emptyWrapper}>
-            <Text className={styles.emptyText}>
-                {locError ? locError : dataBase.length === 0 ? 'Nenhum frete carregado' : 'Nenhum frete corresponde à busca'}
-            </Text>
-        </View>
-    ), [locError, dataBase.length]);
-
-    const isInitialLoading = isLoading && !refreshing && dataBase.length === 0;
+    const isInitialLoading = isLoading && !refreshing && baseData.length === 0;
 
     return (
-        <View className={styles.containerBase} style={{ paddingTop: insets.top + 10 }}>
-            <AlertNotification
-                status='loading'
-                title='Carregando'
-                messagem='Carregando dados'
-                visible={isLoading}
-                onDismiss={closeSuccessNotification}
-                topOffset={20}
-            />
+        <View className={STYLES.containerBase} style={{ paddingTop: insets.top }}>
             <FreightHeader />
             <SearchBar query={searchQuery} onSearch={handleSearch} />
             <FilterControls
@@ -214,7 +232,7 @@ const Freight = () => {
                 sortNearest={sortNearest}
                 radiusKm={radiusKm}
                 onUpdateLocation={requestLocation}
-                onToggleSort={toggleSort}
+                onToggleSort={handleToggleSort}
                 onToggleRadius={handleRadiusToggle}
             />
             {isInitialLoading ? (
@@ -224,11 +242,11 @@ const Freight = () => {
                     data={processedData}
                     keyExtractor={(item) => item.id}
                     renderItem={renderItem}
-                    ItemSeparatorComponent={() => <View className={styles.itemSeparator} />}
-                    contentContainerStyle={{ paddingBottom: 30, paddingHorizontal: 10, flexGrow: 1 }}
+                    ItemSeparatorComponent={() => <View className={STYLES.itemSeparator} />}
+                    contentContainerStyle={{ paddingBottom: insets.bottom + 20, paddingHorizontal: 10, flexGrow: 1 }}
                     showsVerticalScrollIndicator={false}
-                    refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} />}
-                    ListEmptyComponent={ListEmptyComponent}
+                    refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} colors={["#2563eb"]} tintColor={"#2563eb"} />}
+                    ListEmptyComponent={<ListEmptyState locError={locError} hasSourceData={baseData.length > 0} searchQuery={searchQuery} />}
                     keyboardShouldPersistTaps="handled"
                 />
             )}

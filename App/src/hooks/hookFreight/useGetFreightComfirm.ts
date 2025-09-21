@@ -1,5 +1,5 @@
 import { useCallback, useState } from "react";
-import http from "../service/httpAxios";
+import http from "../../service/httpAxios";
 
 
 interface imagemEmpresa {

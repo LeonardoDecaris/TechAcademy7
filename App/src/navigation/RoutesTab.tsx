@@ -40,7 +40,7 @@ const MainTabs = () => {
         tabBarInactiveTintColor: '#8E8E93',
       })}
     >
-      <Tab.Screen name="Home" component={Home} options={{ tabBarLabel: 'Inicio' }} />
+      <Tab.Screen name="Home" component={Home} options={{ tabBarLabel: 'Inicio',}} />
       <Tab.Screen name="Freight" component={Freight} options={{ tabBarLabel: 'Fretes' }} />
       <Tab.Screen name="Profile" component={Profile} options={{ tabBarLabel: 'Perfil' }} />
     </Tab.Navigator>

@@ -1,37 +1,33 @@
-// Centralized constants for maintainability
 const CONSTANTS = {
   INITIALS: {
-    DEFAULT: '', // Default for empty/invalid inputs
-    MAX_LENGTH: 2, // Maximum length of initials
+    DEFAULT: '', 
+    MAX_LENGTH: 2, 
   },
   DISPLAY_NAME: {
-    DEFAULT: '', // Default for empty/invalid inputs
-    MAX_PARTS: 2, // Maximum name parts to display
+    DEFAULT: '',
+    MAX_PARTS: 2, 
   },
   CPF: {
-    MAX_LENGTH: 14, // Maximum length of masked CPF (###.###.###-##)
+    MAX_LENGTH: 14,
     MASK_REGEX: [
-      { pattern: /\D/g, replacement: '' }, // Remove non-digits
-      { pattern: /(\d{3})(\d)/, replacement: '$1.$2' }, // Add first dot
-      { pattern: /(\d{3})(\d)/, replacement: '$1.$2' }, // Add second dot
-      { pattern: /(\d{3})(\d{1,2})$/, replacement: '$1-$2' }, // Add hyphen
+      { pattern: /\D/g, replacement: '' }, 
+      { pattern: /(\d{3})(\d)/, replacement: '$1.$2' }, 
+      { pattern: /(\d{3})(\d)/, replacement: '$1.$2' }, 
+      { pattern: /(\d{3})(\d{1,2})$/, replacement: '$1-$2' },
     ],
   },
 } as const;
 
-// Utility for cleaning and normalizing strings
 const cleanString = (input: string): string =>
   input
-    .normalize('NFD') // Normalize accented characters
-    .replace(/[\u0300-\u036f]/g, '') // Remove diacritics
-    .trim() // Remove leading/trailing spaces
-    .replace(/\s+/g, ' '); // Normalize multiple spaces
+    .normalize('NFD') 
+    .replace(/[\u0300-\u036f]/g, '')
+    .trim() 
+    .replace(/\s+/g, ' ');
 
-// Utility for splitting and filtering name parts
 const getNameParts = (input: string): string[] =>
   cleanString(input).split(' ').filter(Boolean);
 
-// Get initials from a full name
 export function getInitials(fullName: string = ''): string {
   if (!fullName || typeof fullName !== 'string') {
     return CONSTANTS.INITIALS.DEFAULT;
@@ -57,7 +53,11 @@ export function getInitials(fullName: string = ''): string {
     : initials.slice(0, CONSTANTS.INITIALS.MAX_LENGTH);
 }
 
-// Get display name from a full name
+/**
+ * Get display name from a full name
+ * @param fullName string
+ * @returns string
+ */
 export function getDisplayName(fullName: string = ''): string {
   if (!fullName || typeof fullName !== 'string') {
     return CONSTANTS.DISPLAY_NAME.DEFAULT;
@@ -72,22 +72,23 @@ export function getDisplayName(fullName: string = ''): string {
     return parts[0];
   }
 
-  // Return first and last name, or first two parts if more than two
   return parts.length <= CONSTANTS.DISPLAY_NAME.MAX_PARTS
     ? parts.join(' ')
     : `${parts[0]} ${parts[parts.length - 1]}`;
 }
 
-// Mask CPF input
+/**
+ * Mascarar CPF
+ * @param value string
+ * @returns string
+ */
 export function maskCpf(value: string = ''): string {
   if (!value || typeof value !== 'string') {
     return '';
   }
 
-  // Remove tudo que não for dígito e limita a 11 dígitos
   let digits = value.replace(/\D/g, '').slice(0, 11);
 
-  // Aplica a máscara manualmente
   if (digits.length <= 3) return digits;
   if (digits.length <= 6) return `${digits.slice(0, 3)}.${digits.slice(3)}`;
   if (digits.length <= 9)

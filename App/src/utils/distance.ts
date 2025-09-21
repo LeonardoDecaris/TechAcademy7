@@ -3,7 +3,12 @@ export interface LatLng {
   longitude: number;
 }
 
-/** Distância Haversine em KM */
+/** 
+ * Calculate the Haversine distance between two points in kilometers.
+ * @param a First point
+ * @param b Second point
+ * @returns Distance in kilometers
+*/
 export function haversineKm(a: LatLng, b: LatLng): number {
   const R = 6371;
   const dLat = (b.latitude - a.latitude) * Math.PI / 180;

@@ -21,7 +21,7 @@ import useGetVehicleData from '@/src/hooks/hookVehicle/useGetVehicleData';
 type NavigationProp = NativeStackNavigationProp<RootStackParamList>;
 
 const quickAccessWrapperStyle = 'py-2.5 gap-5';
-const actionsWrapperStyle = 'flex-row justify-between items-center pt-5';
+const actionsWrapperStyle = 'flex-row justify-end items-center pt-5';
 const sectionTitleStyle = 'text-base text-black/60 font-semibold pt-5 pl-5';
 const nameInitialsStyle = 'font-bold text-2xl text-black text-center';
 
@@ -41,7 +41,6 @@ const Profile = () => {
 	const [modalImageVisible, setModalImageVisible] = useState(false);
 
 	const goMyVehicle = useCallback(() => navigation.navigate('MyVehicle'), [navigation]);
-	const goNewPassword = useCallback(() => navigation.navigate('NewPassword'), [navigation]);
 	const goEditProfile = useCallback(() => navigation.navigate('EditProfile'), [navigation]);
 	const goRegisterVehicle = useCallback(() => navigation.navigate('RegisterVehicle'), [navigation]);
 
@@ -57,7 +56,7 @@ const Profile = () => {
 			await logout();
 			setModalVisible(false);
 			navigation.reset({ index: 0, routes: [{ name: 'Login' as never }] });
-		} catch (error) {} finally { setLoggingOut(false); }
+		} catch (error) { } finally { setLoggingOut(false); }
 	}, [logout, navigation]);
 
 	const onRefresh = useCallback(async () => {
@@ -70,10 +69,10 @@ const Profile = () => {
 	}, [getUserData, getVehicleData]);
 
 	useEffect(() => {
-		getUserData(),
-		getVehicleData()
+		getUserData();
+		getVehicleData();
 	}, [getUserData, getVehicleData]);
-	
+
 	return (
 		<View style={containerStyle}>
 			<ScrollView contentContainerStyle={{ paddingHorizontal: 6, paddingBottom: 140 }}
@@ -107,13 +106,6 @@ const Profile = () => {
 				<Text className={sectionTitleStyle}>Funcionamento do sistema</Text>
 
 				<View className={actionsWrapperStyle}>
-					<ButtonPadrao
-						title="Redefinir Senha"
-						typeButton="normal"
-						classname="px-5"
-						onPress={goNewPassword}
-					/>
-
 					<ButtonPadrao
 						title="Logout"
 						typeButton="logOutExcluir"

@@ -1,6 +1,6 @@
 export interface OrigemParana {
   id: string;
-  nome: string; 
+  nome: string;
   saidaCoord: { latitude: number; longitude: number };
 }
 
