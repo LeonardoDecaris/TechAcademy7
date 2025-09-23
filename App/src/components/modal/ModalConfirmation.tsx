@@ -80,13 +80,13 @@ const modalStyles = {
   spinner: 'mr-2',
 };
 
-const ModalConfirmation: React.FC<ModalConfirmationProps> = ({
+const ModalConfirmation = ({
   visible,
   mode,
   loading = false,
   onConfirm,
   onCancel,
-}) => {
+}: ModalConfirmationProps) => {
   const confirmingRef = useRef(false);
   const { title, message, confirmText, cancelText, iconName, confirmColor } = mapContent[mode];
   const iconColorValue = confirmColor.includes('red') ? '#ef4444' : '#3b82f6';

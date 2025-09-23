@@ -1,3 +1,4 @@
+import { formatBRL } from "@/src/utils/funcoes";
 import { BASE_URL } from "@env";
 import { Image, Text, View } from "react-native";
 
@@ -12,18 +13,6 @@ interface TopoDetailsCargoProps {
 	descricao?: string;
 	imagem?: string;
 }
-
-const formatBRL = (raw: string | number | undefined, mostrarSimbolo: boolean = true) => {
-	if (raw === undefined || raw === null || raw === '') return '0,00';
-	const cleaned = String(raw)
-		.replace(/[^0-9,.-]/g, '')
-		.replace(/\.(?=[0-9]{3}(?:\.|,|$))/g, '')
-		.replace(',', '.');
-	const num = Number(cleaned);
-	if (isNaN(num)) return '0,00';
-	const valor = num.toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
-	return mostrarSimbolo ? `R$ ${valor}` : valor;
-};
 
 const TopoDetailsCargo = ({ nome, destino, saida, tipo, peso, valor, valorFrete, imagem }: TopoDetailsCargoProps) => {
 	const modeloStyle = "text-2xl font-bold";

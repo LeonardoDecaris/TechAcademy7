@@ -27,37 +27,37 @@ interface TopoEditProfileProps {
     setSelectedImage: (image: string | null) => void;
 }
 
-const TopoEditProfile = (props: TopoEditProfileProps) => {
+const TopoEditProfile = ({ buttonsRowStyle, handlePickImage, handleTakePhoto, imagemUrl, iniciasNomeUsuario, loading, loadingUpdate, modalImageVisible, selectedImage, setModalImageVisible, setSelectedImage, statusSuccess, statusSuccessUpdate }: TopoEditProfileProps) => {
     return (
         <View className={avatarContainerStyle}>
-            {props.selectedImage ? (
+            {selectedImage ? (
                 <TouchableOpacity
-                    onPress={() => props.setSelectedImage(null)}
+                    onPress={() => setSelectedImage(null)}
                     accessibilityLabel='Remover nova imagem selecionada'
                 >
                     <Image
-                        source={{ uri: props.selectedImage }}
+                        source={{ uri: String(selectedImage) }}
                         style={{ width: avatarSize, height: avatarSize, borderRadius: avatarSize / 2 }}
                     />
                 </TouchableOpacity>
-            ) : props.imagemUrl ? (
+            ) : imagemUrl ? (
                 <TouchableOpacity
-                    onPress={() => props.setModalImageVisible(true)}
+                    onPress={() => setModalImageVisible(true)}
                     accessibilityLabel='Ampliar imagem do perfil'
                 >
                     <Image
-                        source={{ uri: props.imagemUrl }}
+                        source={{ uri: imagemUrl }}
                         style={{ width: avatarSize, height: avatarSize, borderRadius: avatarSize / 2 }}
                     />
                 </TouchableOpacity>
             ) : (
                 <View className={avatarFallbackWrapperStyle}>
-                    <Text className={avatarFallbackTextStyle}>{props.iniciasNomeUsuario}</Text>
+                    <Text className={avatarFallbackTextStyle}>{iniciasNomeUsuario}</Text>
                 </View>
             )}
 
-            <Modal visible={props.modalImageVisible} transparent animationType='fade'>
-                <TouchableWithoutFeedback onPress={() => props.setModalImageVisible(false)}>
+            <Modal visible={modalImageVisible} transparent animationType='fade'>
+                <TouchableWithoutFeedback onPress={() => setModalImageVisible(false)}>
                     <View
                         style={{
                             flex: 1,
@@ -68,14 +68,14 @@ const TopoEditProfile = (props: TopoEditProfileProps) => {
                     >
                         <TouchableOpacity
                             className={imageModalCloseStyle}
-                            onPress={() => props.setModalImageVisible(false)}
+                            onPress={() => setModalImageVisible(false)}
                             accessibilityLabel='Fechar visualização da imagem'
                         >
                             <Text className='text-white text-2xl'>✕</Text>
                         </TouchableOpacity>
                         <TouchableWithoutFeedback>
                             <Image
-                                source={{ uri: props.imagemUrl }}
+                                source={{ uri: imagemUrl }}
                                 style={{ minWidth: 100, minHeight: 100, width: 300, height: 300, borderRadius: 20 }}
                                 resizeMode='contain'
                             />
@@ -85,28 +85,28 @@ const TopoEditProfile = (props: TopoEditProfileProps) => {
             </Modal>
 
             <ErrorNotification
-                loading={props.loading}
-                statusSuccess={props.statusSuccess}
+                loading={loading}
+                statusSuccess={statusSuccess}
                 loadingText='Carregando imagem...'
                 successText='Imagem enviada com sucesso!'
                 errorText='Erro ao enviar imagem.'
             />
             <ErrorNotification
-                loading={props.loadingUpdate}
-                statusSuccess={props.statusSuccessUpdate}
+                loading={loadingUpdate}
+                statusSuccess={statusSuccessUpdate}
                 loadingText='Atualizando...'
                 successText='Imagem atualizada com sucesso!'
                 errorText='Erro ao atualizar imagem.'
             />
 
-            <View className={props.buttonsRowStyle}>
+            <View className={buttonsRowStyle}>
                 <ButtonUpload
-                    onPress={props.handlePickImage}
+                    onPress={handlePickImage}
                     title='Alterar Foto'
                     accessibilityLabel='Selecionar nova foto da galeria'
                 />
                 <ButtonUpload
-                    onPress={props.handleTakePhoto}
+                    onPress={handleTakePhoto}
                     title='Tirar Foto'
                     accessibilityLabel='Tirar foto com a câmera'
                 />

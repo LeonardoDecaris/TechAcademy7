@@ -48,7 +48,7 @@ const Profile = () => {
 	const { userData, iniciasNomeUsuario, nomeAbreviado, getUserData } = useGetUserData();
 
 	const hasVehicle = Boolean(veiculo?.veiculo);
-	const imagemUrl = `${BASE_URL}${userData?.imagemUsuario?.imgUrl}`;
+	const imagemUrl = userData?.imagemUsuario?.imgUrl ? `${BASE_URL}${userData.imagemUsuario.imgUrl}` : '';
 
 	const handleConfirmLogout = useCallback(async () => {
 		setLoggingOut(true);
@@ -80,7 +80,7 @@ const Profile = () => {
 				showsVerticalScrollIndicator={false}
 			>
 				<TopoProfile
-					imagemUrl={imagemUrl}
+					imageUser={imagemUrl}
 					modalImageVisible={modalImageVisible}
 					iniciasNomeUsuario={iniciasNomeUsuario}
 					setModalImageVisible={setModalImageVisible}

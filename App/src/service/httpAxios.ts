@@ -1,6 +1,6 @@
 import axios, { InternalAxiosRequestConfig, AxiosError, AxiosResponse } from 'axios';
 import { Platform } from 'react-native';
-import AsyncStorage from '@react-native-async-storage/async-storage';
+import * as SecureStore from 'expo-secure-store';
 import { BASE_URL as ENV_BASE_URL } from '@env';
 
 const defaultURL = Platform.select({
@@ -19,9 +19,9 @@ let tokenLoaded = false;
 export const setAuthToken = async (token: string | null) => {
   authTokenCache = token;
   if (token) {
-    await AsyncStorage.setItem('authToken', token);
+    await SecureStore.setItemAsync('authToken', token);
   } else {
-    await AsyncStorage.removeItem('authToken');
+    await SecureStore.deleteItemAsync('authToken');
   }
 };
 
@@ -39,11 +39,13 @@ http.interceptors.request.use(
   async (config: InternalAxiosRequestConfig) => {
     try {
       if (!tokenLoaded || authTokenCache === null) {
-        authTokenCache = (await AsyncStorage.getItem('authToken')) || null;
+        authTokenCache = (await SecureStore.getItemAsync('authToken')) || null;
         tokenLoaded = true;
       }
       if (authTokenCache) {
         config.headers.Authorization = `Bearer ${authTokenCache}`;
+      } else {
+        console.log('httpAxios: no auth token available');
       }
       (config.headers as any)['X-Request-Id'] = `${Date.now()}-${Math.random()
         .toString(16)

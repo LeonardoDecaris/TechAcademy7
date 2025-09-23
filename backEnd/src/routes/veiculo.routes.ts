@@ -6,11 +6,11 @@ const router = Router();
 router.post('/veiculo', authMiddleware, createVeiculo);
 router.get('/veiculo', authMiddleware, getAllVeiculos);
 router.get('/veiculo/:id', authMiddleware, getVeiculoById);
-router.put('/veiculo/:id',  updateVeiculo);
+router.put('/veiculo/:id',  authMiddleware, updateVeiculo);
 router.delete('/veiculo/:id', authMiddleware, deleteVeiculo);
 
 router.get('/usuario/:usuarioId/veiculo', authMiddleware, getVeiculoByUsuarioId);
-router.post('/usuario/:usuarioId/veiculo', createVeiculoByUsuarioId);
+router.post('/usuario/:usuarioId/veiculo', authMiddleware, createVeiculoByUsuarioId);
 router.put('/usuario/:usuarioId/veiculo/:id', authMiddleware, updateVeiculoByUsuarioId);
 router.delete('/usuario/:usuarioId/veiculo', authMiddleware, deleteVeiculoByUsuarioId);
 
