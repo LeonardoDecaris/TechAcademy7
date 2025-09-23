@@ -28,7 +28,7 @@ const btnConfirmClass = 'bg-red-500';
 const txtCancelClass = 'font-semibold text-gray-800';
 const txtConfirmClass = 'font-semibold text-white';
 
-const AlertLogout: React.FC<Props> = ({
+const AlertLogout = ({
   visible,
   onConfirm,
   onCancel,
@@ -37,7 +37,7 @@ const AlertLogout: React.FC<Props> = ({
   confirmText = 'Sair',
   cancelText = 'Cancelar',
   loading = false
-}) => {
+}: Props) => {
   const confirmingRef = useRef(false);
 
   const handleCancel = useCallback(() => {

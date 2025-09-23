@@ -50,7 +50,6 @@ function useSignUp() {
       setStatus("loading");
       setMensage("Realizando cadastro...");
       setSuccessVisible(true);
-      console.log('estou aqui');
 
       try {
         const response = await http.post("usuario", {

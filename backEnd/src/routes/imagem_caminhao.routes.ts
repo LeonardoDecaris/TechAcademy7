@@ -5,7 +5,7 @@ import { uploadSingleImage } from '../middleware/uploadMiddleware';
 
 const router = Router();
 
-router.post('/imgCaminhao', uploadSingleImage('imgUrl'), createImagemVeiculo);
+router.post('/imgCaminhao', authMiddleware, uploadSingleImage('imgUrl'), createImagemVeiculo);
 router.get('/imgCaminhao', authMiddleware, getAllImagensVeiculo);
 router.get('/imgCaminhao/:id', authMiddleware, getImagemVeiculoById);
 router.put('/imgCaminhao/:id', authMiddleware, uploadSingleImage('imgUrl'), updateImagemVeiculo);

@@ -1,3 +1,4 @@
+import { formatBRL } from "@/src/utils/funcoes";
 import { BASE_URL } from "@env";
 import { Image, Text, View } from "react-native";
 
@@ -12,18 +13,6 @@ interface CardCargaProps {
     valorFrete?: string | number;
     descricao?: string;
 }
-
-const formatBRL = (raw: string | number | undefined) => {
-    if (raw === undefined || raw === null || raw === '') return 'R$ 0,00';
-    const cleaned = String(raw)
-        .replace(/[^0-9,.-]/g, '')
-        .replace(/\.(?=[0-9]{3}(?:\.|,|$))/g, '')
-        .replace(',', '.');
-    const num = Number(cleaned);
-    if (isNaN(num)) return 'R$ 0,00';
-    const valor = num.toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
-    return `R$ ${valor}`;
-};
 
 const CardCargo = (props: CardCargaProps) => {
     

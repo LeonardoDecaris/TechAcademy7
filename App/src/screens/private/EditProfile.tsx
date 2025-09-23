@@ -11,7 +11,7 @@ import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import * as ImagePicker from 'expo-image-picker';
 import DropDown from '@/src/components/form/DropDown';
 import InputAuth from '@/src/components/form/InputAuth';
-import { ButtonPadrao} from '@/src/components/form/Buttons';
+import { ButtonPadrao } from '@/src/components/form/Buttons';
 
 import useImageUser from '@/src/hooks/hookUser/useImageUser';
 import useEditarUsuario from '@/src/hooks/hookUser/useEditUser';
@@ -41,7 +41,7 @@ const EditProfile = () => {
     const [modalImageVisible, setModalImageVisible] = useState(false);
     const [selectedImage, setSelectedImage] = useState<string | null>(null);
 
-    const imagemUrl = `${BASE_URL}${userData?.imagemUsuario?.imgUrl}`;
+    const imagemUrl = userData?.imagemUsuario?.imgUrl ? `${BASE_URL}${userData.imagemUsuario.imgUrl}` : '';
 
     const requestPermission = useCallback(async (type: 'camera' | 'gallery') => {
         if (type === 'camera') {

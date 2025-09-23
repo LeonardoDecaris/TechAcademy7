@@ -1,4 +1,4 @@
-import { AntDesign, FontAwesome, FontAwesome5 } from "@expo/vector-icons";
+import { AntDesign, FontAwesome5 } from "@expo/vector-icons";
 import { Text, TouchableOpacity, View } from "react-native";
 
 interface AcessoRapidoPerfilProps {

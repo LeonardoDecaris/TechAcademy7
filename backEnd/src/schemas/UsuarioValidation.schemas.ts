@@ -84,6 +84,7 @@ export const createUserSchema = z.object({
   nome: z.string().nonempty("Nome é obrigatório"),
   cpf: cpfSchemaForCreate,
   email: emailSchemaForCreate,
+  cnh: z.string().nonempty("CNH é obrigatória"),
   password: z.string().min(6, "Password must be at least 6 characters long"),
 });
 
@@ -91,5 +92,6 @@ export const updateUserSchema = z.object({
   nome: z.string().nonempty("Nome é obrigatório"),
   cpf: cpfSchemaForUpdate,
   email: emailSchemaForUpdate,
+  cnh: z.string().nonempty("CNH é obrigatória"),
   password: z.string().min(6, "Password must be at least 6 characters long"),
 });
