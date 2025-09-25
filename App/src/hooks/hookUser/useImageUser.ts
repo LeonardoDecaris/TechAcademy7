@@ -35,11 +35,11 @@ function useImageUser(): UseImageUserReturn {
       setStatusSuccess(true);
       return response.data.id_imagem;
 
-    } catch (error: any ) {
+    } catch (error: any) {
 
       const errorMessage = error.response?.data?.message || "Erro ao enviar imagem.";
       console.error("Erro ao enviar imagem:", error.response?.data || error);
-      
+
       setError(errorMessage);
       setStatusSuccess(false);
       return null;
