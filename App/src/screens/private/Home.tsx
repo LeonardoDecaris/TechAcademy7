@@ -163,7 +163,7 @@ const Home = () => {
                     saida={dadosFrete?.saida || 'Sem local'}
                     destino={dadosFrete?.destino || 'Sem destino'}
                     logoEmpresa={dadosFrete?.empresa?.imagemEmpresa?.imgUrl}
-                    imagemCarga=""
+                    imagemCarga={dadosFrete?.carga?.imagemCarga?.imgUrl}
                     valorFrete={dadosFrete?.valor_frete || '0'}
                     saidaHora={formatDateTime(dadosFrete?.data_saida) || 'Sem horário'}
                     onPress={handleNavigateToDetailsEnvio}
